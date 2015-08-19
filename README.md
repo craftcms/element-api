@@ -59,64 +59,79 @@ return [
 
 Endpoint configuration arrays can contain the following settings:
 
-* **`elementType`** _(required)_ – The element type class name that the API should be associated with. Possible values are `Asset`, `Category`, `Entry`, `GlobalSet`, `MatrixBlock`, `Tag`, and `User`, as well as any plugin-based element type class names.
+#### `elementType` _(Required)_
 
-* **`criteria`** – An array of parameters that should be set on the [ElementCriteriaModel](http://buildwithcraft.com/docs/templating/elementcriteriamodel) that will be fetching the elements.
+The element type class name that the API should be associated with. Possible values are `Asset`, `Category`, `Entry`, `GlobalSet`, `MatrixBlock`, `Tag`, and `User`, as well as any plugin-based element type class names.
 
-* **`transformer`** – The [transformer](http://fractal.thephpleague.com/transformers/) that should be used to define the data that should be returned for each element.
+#### `criteria`
 
-    ```php
-    // Can be set to a function
-    'transformer' => function(EntryModel $entry) {
-        return [
-            'title' => $entry->title,
-            'id' => $entry->id,
-            'url' => $entry->url,
-        ];
-    },
+An array of parameters that should be set on the [ElementCriteriaModel](http://buildwithcraft.com/docs/templating/elementcriteriamodel) that will be fetching the elements.
 
-    // Or a string/array that defines a Transformer class configuration
-    'transformer' => 'MyTransformerClassName',
+#### `transformer`
 
-    // Or a Transformer class instance
-    'transformer' => new MyTransformerClassName(),
-    ```
+The [transformer](http://fractal.thephpleague.com/transformers/) that should be used to define the data that should be returned for each element.
 
-    Note that if you return a Transformer class configuration or instance, you will need to load the class yourself ahead of time.
+```php
+// Can be set to a function
+'transformer' => function(EntryModel $entry) {
+    return [
+        'title' => $entry->title,
+        'id' => $entry->id,
+        'url' => $entry->url,
+    ];
+},
 
-    ```php
-    'entries.json' => function() {
-        require craft()->path->getConfigPath().'EntryTransformer.php';
+// Or a string/array that defines a Transformer class configuration
+'transformer' => 'MyTransformerClassName',
 
-        return [
-            'elementType' => 'Entry',
-            'transformer' => 'EntryTransformer',
-        ];
-    }
-    ```
+// Or a Transformer class instance
+'transformer' => new MyTransformerClassName(),
+```
 
-* **`first`** – Whether only the _first_ matching element should be returned. This is set to `false` by default, meaning that _all_ matching elements will be returned.
+Note that if you return a Transformer class configuration or instance, you will need to load the class yourself ahead of time.
 
-    ```php
-    'first' => true,
-    ```
+```php
+'entries.json' => function() {
+    require craft()->path->getConfigPath().'EntryTransformer.php';
 
-* **`paginate`** – Whether the results should be paginated. This is set to `true` by default, meaning that only a subset of the matched elements will be included in each response, accompanied by additional metadata that describes pagination information.
+    return [
+        'elementType' => 'Entry',
+        'transformer' => 'EntryTransformer',
+    ];
+}
+```
 
-    ```php
-    'paginate' => false,
-    ```
+#### `first`
 
-* **`elementsPerPage`** – The max number of elements that should be included in each page, if pagination is enabled. By default this is set to 100.
-    ```php
-    'elementsPerPage' => 10,
-    ```
+Whether only the _first_ matching element should be returned. This is set to `false` by default, meaning that _all_ matching elements will be returned.
 
-* **`pageParam`** – The query string param name that should be used to identify which page is being requested. By default this is set to `'page'`.
+```php
+'first' => true,
+```
 
-    ```php
-    'pageParam' => 'p',
-    ```
+#### `paginate`
+
+Whether the results should be paginated. This is set to `true` by default, meaning that only a subset of the matched elements will be included in each response, accompanied by additional metadata that describes pagination information.
+
+```php
+'paginate' => false,
+```
+
+#### `elementsPerPage`
+
+The max number of elements that should be included in each page, if pagination is enabled. By default this is set to 100.
+
+```php
+'elementsPerPage' => 10,
+```
+
+#### `pageParam`
+
+The query string param name that should be used to identify which page is being requested. By default this is set to `'page'`.
+
+```php
+'pageParam' => 'p',
+```
 
 
 ### Dynamic URL Patterns and Endpoint Configurations
