@@ -67,9 +67,20 @@ Endpoint configuration arrays can contain the following settings:
 
 The element type class name that the API should be associated with. Possible values are `Asset`, `Category`, `Entry`, `GlobalSet`, `MatrixBlock`, `Tag`, and `User`, as well as any plugin-based element type class names like `SproutForms_Entry`.
 
+```php
+'elementType' => 'Entry',
+````
+
 #### `criteria`
 
 An array of parameters that should be set on the [ElementCriteriaModel](http://buildwithcraft.com/docs/templating/elementcriteriamodel) that will be fetching the elements.
+
+```php
+'criteria' => [
+    'section' => 'news',
+    'type' => 'article',
+],
+```
 
 #### `transformer`
 
