@@ -208,7 +208,7 @@ Here are a few endpoint examples, and what their response would look like.
 ],
 ```
 
-```json
+```json5
 {
     "data": [
         {
@@ -256,7 +256,7 @@ Here are a few endpoint examples, and what their response would look like.
 },
 ```
 
-```json
+```json5
 {
     "title": "Gin",
     "url": "\/ingredients\/gin",
