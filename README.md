@@ -63,7 +63,7 @@ Endpoint configuration arrays can contain the following settings:
 
 #### `elementType` _(Required)_
 
-The element type class name that the API should be associated with. Possible values are `Asset`, `Category`, `Entry`, `GlobalSet`, `MatrixBlock`, `Tag`, and `User`, as well as any plugin-based element type class names.
+The element type class name that the API should be associated with. Possible values are `Asset`, `Category`, `Entry`, `GlobalSet`, `MatrixBlock`, `Tag`, and `User`, as well as any plugin-based element type class names like `SproutForms_Entry`.
 
 #### `criteria`
 
