@@ -32,8 +32,9 @@ return [
             'transformer' => function(EntryModel $entry) {
                 return [
                     'title' => $entry->title,
-                    'id' => $entry->id,
                     'url' => $entry->url,
+                    'jsonUrl' => UrlHelper::getUrl('news/'.$entry->id.'.json'),
+                    'summary' => $entry->summary,
                 ];
             },
         ],
@@ -45,8 +46,9 @@ return [
                 'transformer' => function(EntryModel $entry) {
                     return [
                         'title' => $entry->title,
-                        'id' => $entry->id,
                         'url' => $entry->url,
+                        'summary' => $entry->summary,
+                        'body' => $entry->body,
                     ];
                 },
             ];
@@ -69,7 +71,7 @@ An array of parameters that should be set on the [ElementCriteriaModel](http://b
 
 #### `transformer`
 
-The [transformer](http://fractal.thephpleague.com/transformers/) that should be used to define the data that should be returned for each element.
+The [transformer](http://fractal.thephpleague.com/transformers/) that should be used to define the data that should be returned for each element. If you don’t set this, the default transformer will be used, which includes all of the element’s direct attribute values, but no custom field values.
 
 ```php
 // Can be set to a function
@@ -145,6 +147,7 @@ Endpoint configurations can also be dynamic, by using a function instead of an a
     return [
         'elementType' => 'Entry',
         'criteria' => ['id' => $entryId],
+        'first' => true,
     ];
 },
 ```
