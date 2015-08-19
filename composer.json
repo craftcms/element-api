@@ -1,0 +1,8 @@
+{
+    "config": {
+        "vendor-dir": "elementapi/vendor"
+    },
+    "require": {
+        "league/fractal": "^0.12.0"
+    }
+}
