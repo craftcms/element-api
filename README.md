@@ -33,7 +33,7 @@ return [
                 return [
                     'title' => $entry->title,
                     'url' => $entry->url,
-                    'jsonUrl' => UrlHelper::getUrl('news/'.$entry->id.'.json'),
+                    'jsonUrl' => UrlHelper::getUrl("news/{$entry->id}.json"),
                     'summary' => $entry->summary,
                 ];
             },
