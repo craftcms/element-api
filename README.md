@@ -65,30 +65,26 @@ Endpoint configuration arrays can contain the following settings:
 
 * **`transformer`** – The [transformer](http://fractal.thephpleague.com/transformers/) that should be used to define the data that should be returned for each element.
 
-    This can be set to the following things:
+    ```php
+    // Can be set to a function
+    'transformer' => function(EntryModel $entry) {
+        return [
+            'title' => $entry->title,
+            'id' => $entry->id,
+            'url' => $entry->url,
+        ];
+    },
 
-    - A function that is directly responsible for returning the transformed array
-        ```php
-        'transformer' => function(EntryModel $entry) {
-            return [
-                'title' => $entry->title,
-                'id' => $entry->id,
-                'url' => $entry->url,
-            ];
-        },
-        ```
-    - A string or array that defines a Transformer class configuration, which is compatible with [Yii::createComponent()](http://www.yiiframework.com/doc/api/1.1/YiiBase#createComponent-detail)
-        ```php
-        'transformer' => 'MyTransformerClassName',
-        ```
-    - An instance of a Transformer class
-        ```php
-        'transformer' => new MyTransformerClassName(),
-        ```
+    // Or a string/array that defines a Transformer class configuration
+    'transformer' => 'MyTransformerClassName',
+
+    // Or a Transformer class instance
+    'transformer' => new MyTransformerClassName(),
+    ```
 
     Note that if you return a Transformer class configuration or instance, you will need to load the class yourself ahead of time.
 
-    ```
+    ```php
     'entries.json' => function() {
         require craft()->path->getConfigPath().'EntryTransformer.php';
 
@@ -112,6 +108,9 @@ Endpoint configuration arrays can contain the following settings:
     ```
 
 * **`elementsPerPage`** – The max number of elements that should be included in each page, if pagination is enabled. By default this is set to 100.
+    ```php
+    'elementsPerPage' => 10,
+    ```
 
 * **`pageParam`** – The query string param name that should be used to identify which page is being requested. By default this is set to `'page'`.
 
