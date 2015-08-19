@@ -2,6 +2,8 @@
 
 This plugin makes it easy to create a JSON API for your entries (and other element types) in [Craft](http://buildwithcraft.com).
 
+It’s powered by Phil Sturgeon’s excellent [Fractal](http://fractal.thephpleague.com/) package.
+
 
 ## Requirements
 
