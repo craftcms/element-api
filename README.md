@@ -140,7 +140,7 @@ Note that it cannot be set to `'p'` because that’s the parameter Craft uses to
 
 ### Dynamic URL Patterns and Endpoint Configurations
 
-URL patterns can contain dynamic subpatterns in the format of `<subpatternName:regex>`, where `subpatternName` is the name of the subpattern, and `regex` is a valid regular expression. For example, the URL pattern “`news/<entryId:\d+>.json`” will match URLs like `news/100.json`.
+URL patterns can contain dynamic subpatterns in the format of `<subpatternName:regex>`, where `subpatternName` is the name of the subpattern, and `regex` is a valid regular expression. For example, the URL pattern “`news/<entryId:\d+>.json`” will match URLs like `news/100.json`. You can also use the tokens `{handle}` and `{slug}` within your regular expression, which will be replaced with the appropriate regex patterns for matching handles and  element slugs.
 
 Endpoint configurations can also be dynamic, by using a function instead of an array. If you do this, the function should return an array of configuration settings. Any subpattern matches in the URL pattern will be mapped to the function’s arguments. For example, if a URL pattern contains an `entryId` subpattern, and the endpoint configuration is a function with an `$entryId` argument, then whatever matches the URL subpattern will be passed to that function argument. This makes it easy to modify the resulting endpoint configuration based on the URL subpattern matches.
 
@@ -186,4 +186,83 @@ return [
         },
     ]
 ];
+```
+
+## Examples
+
+Here are a few endpoint examples, and what their response would look like.
+
+### Paginated Entry Index Endpoint
+
+```php
+'ingredients.json' => [
+    'criteria' => ['section' => 'ingredients'],
+    'elementsPerPage' => 10,
+    'transformer' => function(EntryModel $entry) {
+        return [
+            'title' => $entry->title,
+            'url' => $entry->url,
+            'jsonUrl' => UrlHelper::getUrl("ingredients/{$entry->slug}.json"),
+        ];
+    },
+],
+```
+
+```json
+{
+    "data": [
+        {
+            "title": "Gin",
+            "url": "\/ingredients\/gin",
+            "jsonUrl": "\/ingredients\/gin.json"
+        },
+        {
+            "title": "Tonic Water",
+            "url": "\/ingredients\/tonic-water",
+            "jsonUrl": "\/ingredients\/tonic-water.json"
+        },
+        // ...
+    ],
+    "meta": {
+        "pagination": {
+            "total": 66,
+            "count": 10,
+            "per_page": 10,
+            "current_page": 1,
+            "total_pages": 7,
+            "links": {
+                "next": "\/ingredients.json?p=2"
+            }
+        }
+    }
+}
+```
+
+### Single Entry Endpoint
+
+```php
+'ingredients/<slug:{slug}>.json' => function($slug) {
+    'criteria' => ['section' => 'ingredients', 'slug' => $slug],
+    'first' => true,
+    'transformer' => function(EntryModel $entry) {
+        return [
+            $photos = []
+            'title' => $entry->title,
+            'url' => $entry->url,
+            'description' => (string) $entry->description,
+            'photos' => $photos
+        ];
+    },
+},
+```
+
+```json
+{
+    "title": "Gin",
+    "url": "\/ingredients\/gin",
+    "description": "<p>Gin is a spirit which derives its predominant flavour from juniper berries.<\/p>",
+    "photos": [
+        "\/images\/drinks\/GinAndTonic1.jpg"
+    ]
+}
 ```
