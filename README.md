@@ -242,17 +242,27 @@ Here are a few endpoint examples, and what their response would look like.
 
 ```php
 'ingredients/<slug:{slug}>.json' => function($slug) {
-    'criteria' => ['section' => 'ingredients', 'slug' => $slug],
-    'first' => true,
-    'transformer' => function(EntryModel $entry) {
-        return [
-            $photos = []
-            'title' => $entry->title,
-            'url' => $entry->url,
-            'description' => (string) $entry->description,
-            'photos' => $photos
-        ];
-    },
+    return [
+        'criteria' => [
+            'section' => 'ingredients',
+            'slug' => $slug
+        ],
+        'first' => true,
+        'transformer' => function(EntryModel $entry) {
+            // Create an array of all the photo URLs
+            $photos = [];
+            foreach ($entry->photos as $photo) {
+                $photos[] = $photo->url;
+            }
+
+            return [
+                'title' => $entry->title,
+                'url' => $entry->url,
+                'description' => (string) $entry->description,
+                'photos' => $photos
+            ];
+        },
+    ];
 },
 ```
 
