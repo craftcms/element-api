@@ -49,6 +49,11 @@ class ElementApiController extends BaseController
 			$config
 		);
 
+		if ($config['pageParam'] == 'p')
+		{
+			throw new Exception('The pageParam setting cannot be set to "p" because that’s the parameter Craft uses to check the requested path.');
+		}
+
 		if (!isset($config['elementType']))
 		{
 			throw new Exception('Element API configs must specify the elementType.');

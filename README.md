@@ -132,8 +132,10 @@ The max number of elements that should be included in each page, if pagination i
 The query string param name that should be used to identify which page is being requested. By default this is set to `'page'`.
 
 ```php
-'pageParam' => 'p',
+'pageParam' => 'pg',
 ```
+
+Note that it cannot be set to `'p'` because that’s the parameter Craft uses to check the requested path.
 
 
 ### Dynamic URL Patterns and Endpoint Configurations
@@ -162,7 +164,7 @@ return [
     'defaults' => [
         'elementType' => 'Entry',
         'elementsPerPage' => 10,
-        'pageParam' => 'p',
+        'pageParam' => 'pg',
         'transformer' => function(EntryModel $entry) {
             return [
                 'title' => $entry->title,

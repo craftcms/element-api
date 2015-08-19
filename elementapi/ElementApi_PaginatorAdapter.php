@@ -137,7 +137,7 @@ class ElementApi_PaginatorAdapter implements PaginatorInterface
 		{
 			$currentPage = $this->totalPages > 0 ? $this->totalPages : 1;
 		}
-		else if ($currentPage < 0)
+		else if (!is_numeric($currentPage) || $currentPage < 0)
 		{
 			$currentPage = 1;
 		}
