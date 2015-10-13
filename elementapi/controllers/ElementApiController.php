@@ -101,10 +101,10 @@ class ElementApiController extends BaseController
 		{
 			// Create the paginator
 			require $pluginPath.'ElementApi_PaginatorAdapter.php';
-			$paginator = new ElementApi_PaginatorAdapter($config['elementsPerPage'], $criteria->total(), $config['pageParam']);
+			$paginator = new ElementApi_PaginatorAdapter($config['elementsPerPage'], $criteria->total() - $criteria->offset, $config['pageParam']);
 
 			// Fetch this page's elements
-			$criteria->offset = $config['elementsPerPage'] * ($paginator->getCurrentPage() - 1);
+			$criteria->offset += $config['elementsPerPage'] * ($paginator->getCurrentPage() - 1);
 			$criteria->limit = $config['elementsPerPage'];
 			$elements = $criteria->find();
 			$paginator->setCount(count($elements));
