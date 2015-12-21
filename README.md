@@ -289,3 +289,14 @@ Here are a few endpoint examples, and what their response would look like.
     ]
 }
 ```
+
+
+## Changelog
+
+### 1.1
+
+- Updated to take advantage of new Craft 2.5 plugin features.
+
+### 1.0
+
+- Initial release

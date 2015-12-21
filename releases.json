@@ -1,0 +1,10 @@
+[
+    {
+        "version": "1.1",
+        "downloadUrl": "https://github.com/pixelandtonic/ElementAPI/archive/1.1.zip",
+        "date": "2015-20-20T12:00:00-08:00",
+        "notes": [
+            "[Improved] Updated to take advantage of new Craft 2.5 plugin features."
+        ]
+    }
+]
