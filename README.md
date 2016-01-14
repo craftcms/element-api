@@ -107,12 +107,33 @@ Note that if you return a Transformer class configuration or instance, you will 
 
 ```php
 'entries.json' => function() {
-    require craft()->path->getConfigPath().'EntryTransformer.php';
+    require craft()->path->getConfigPath().'MyTransformerClassName.php';
 
     return [
         'elementType' => 'Entry',
-        'transformer' => 'EntryTransformer',
+        'transformer' => 'MyTransformerClassName',
     ];
+}
+```
+
+Your custom transformer class would look something like this:
+
+```php
+<?php
+namespace Craft;
+
+require craft()->path->getPluginsPath().'elementapi/vendor/autoload.php';
+
+use League\Fractal\TransformerAbstract;
+
+class MyTransformerClassName extends TransformerAbstract
+{
+    public function transform(EntryModel $entry)
+    {
+        return [
+            ...
+        ];
+    }
 }
 ```
 
