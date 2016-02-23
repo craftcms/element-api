@@ -119,9 +119,12 @@ class ElementApi_PaginatorAdapter implements PaginatorInterface
 	 */
 	public function getUrl($page)
 	{
-		return UrlHelper::getUrl(craft()->request->getPath(), [
-			$this->pageParam => $page
-		]);
+		$params = $_GET;
+    $params[$this->pageParam] = $page;
+    //remove the path parameter
+    unset($params['p']);
+
+    return UrlHelper::getUrl(craft()->request->getPath(), $params);
 	}
 
 	/**
