@@ -1,8 +1,19 @@
 {
+    "name": "pixelandtonic/elementapi",
+    "description": "A plugin makes it easy to create a JSON API for your entries (and other element types) in Craft",
+    "type": "craft-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pixel & Tonic",
+            "email": "support@pixelandtonic.com"
+        }
+    ],
     "config": {
         "vendor-dir": "elementapi/vendor"
     },
     "require": {
+        "composer/installers": "~1.0",
         "league/fractal": "^0.12.0"
     }
 }
