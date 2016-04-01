@@ -14,8 +14,12 @@ Element API requires PHP 5.4 or later and Craft 2.1 or later.
 
 To install Element API, follow these steps:
 
-1.  Upload the elementapi/ folder to your craft/plugins/ folder.
+1.  Upload this folder to your craft/plugins/ folder.
 2.  Go to Settings > Plugins from your Craft control panel and enable the Element API plugin.
+
+Or:
+
+1.  Require `pixelandtonic/elementapi` with composer.
 
 
 ## Setup
