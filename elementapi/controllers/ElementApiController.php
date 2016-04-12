@@ -117,8 +117,6 @@ class ElementApiController extends BaseController
 			$resource = new Collection($criteria, $transformer);
 		}
 
-		JsonHelper::sendJsonHeaders();
-
 		$data = $fractal->createData($resource);
 
 		// Fire an 'onBeforeSendData' event
@@ -126,10 +124,7 @@ class ElementApiController extends BaseController
 			'data' => $data,
 		]));
 
-		echo $data->toJson();
-
-		// End the request
-		craft()->end();
+		$this->returnJson($data->toArray());
 	}
 
 	/**
