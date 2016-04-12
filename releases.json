@@ -22,5 +22,13 @@
         "notes": [
             "[Added] Added the `elementApi.onBeforeSendData` event."
         ]
-    }
+    },
+    {
+          "version": "1.2.1",
+          "downloadUrl": "https://github.com/pixelandtonic/ElementAPI/archive/1.2.1.zip",
+          "date": "2016-04-12T06:00:00-08:00",
+          "notes": [
+              "[Improved] Pagination URLs will now honor any existing query string parameters."
+          ]
+      }
 ]
