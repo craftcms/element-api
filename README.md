@@ -97,7 +97,7 @@ The [transformer](http://fractal.thephpleague.com/transformers/) that should be 
 },
 
 // Or a string/array that defines a Transformer class configuration
-'transformer' => 'MyTransformerClassName',
+'transformer' => 'Craft\MyTransformerClassName',
 
 // Or a Transformer class instance
 'transformer' => new MyTransformerClassName(),
