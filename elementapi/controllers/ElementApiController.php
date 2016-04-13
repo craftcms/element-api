@@ -108,6 +108,8 @@ class ElementApiController extends BaseController
 			$criteria->offset = $config['elementsPerPage'] * ($paginator->getCurrentPage() - 1);
 			$criteria->limit = $config['elementsPerPage'];
 
+			$elements = $criteria->find();
+
 			$paginator->setCount(count($elements));
 
 			$resource = new Collection($elements, $transformer);
