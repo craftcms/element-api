@@ -108,7 +108,7 @@ class ElementApiController extends BaseController
 			$criteria->offset = $config['elementsPerPage'] * ($paginator->getCurrentPage() - 1);
 			$criteria->limit = $config['elementsPerPage'];
 
-			$elements = $criteria->find();
+			$elements = craft()->elementApi->executeElementQuery($criteria);
 
 			$paginator->setCount(count($elements));
 
