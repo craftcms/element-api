@@ -37,17 +37,13 @@ class ElementApiController extends BaseController
 		}
 
 		// Merge in default config options
-		$config = array_merge(
-			[
-				'paginate' => true,
-				'pageParam' => 'page',
-				'elementsPerPage' => 100,
-				'first' => false,
-				'transformer' => 'Craft\ElementApi_ElementTransformer',
-			],
-			craft()->config->get('defaults', 'elementapi'),
-			$config
-		);
+		$config = array_merge([
+			'paginate' => true,
+			'pageParam' => 'page',
+			'elementsPerPage' => 100,
+			'first' => false,
+			'transformer' => 'Craft\ElementApi_ElementTransformer',
+		], craft()->config->get('defaults', 'elementapi'), $config);
 
 		if ($config['pageParam'] == 'p')
 		{
@@ -66,7 +62,12 @@ class ElementApiController extends BaseController
 
 		if (!empty($config['criteria']))
 		{
-			$criteria->setAttributes($config['criteria']);
+			// If a locale isn't specified, pre-populate it with the current
+			// app language. Without this, the serialized ElementCriterModel
+			// attributes aren't the same before and after fetching.
+			$criteria->setAttributes(array_merge([
+				'locale' => craft()->getLanguage()
+			], $config['criteria']));
 		}
 
 		// Load Fractal
@@ -88,7 +89,7 @@ class ElementApiController extends BaseController
 
 		if ($config['first'])
 		{
-			$element = $criteria->first();
+			$element = craft()->elementApi->executeSingleElementQuery($criteria);
 
 			if (!$element)
 			{
@@ -106,7 +107,7 @@ class ElementApiController extends BaseController
 			// Fetch this page's elements
 			$criteria->offset = $config['elementsPerPage'] * ($paginator->getCurrentPage() - 1);
 			$criteria->limit = $config['elementsPerPage'];
-			$elements = $criteria->find();
+
 			$paginator->setCount(count($elements));
 
 			$resource = new Collection($elements, $transformer);
@@ -114,7 +115,8 @@ class ElementApiController extends BaseController
 		}
 		else
 		{
-			$resource = new Collection($criteria, $transformer);
+			$elements = craft()->elementApi->executeElementQuery($criteria);
+			$resource = new Collection($elements, $transformer);
 		}
 
 		JsonHelper::sendJsonHeaders();
