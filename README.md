@@ -36,7 +36,6 @@ return [
                     'title' => $entry->title,
                     'url' => $entry->url,
                     'jsonUrl' => UrlHelper::getUrl("news/{$entry->id}.json"),
-                    'summary' => $entry->summary,
                 ];
             },
         ],
@@ -49,8 +48,7 @@ return [
                     return [
                         'title' => $entry->title,
                         'url' => $entry->url,
-                        'summary' => $entry->summary,
-                        'body' => $entry->body,
+                        'body' => $entry->body->getParsedContent(),
                     ];
                 },
             ];
