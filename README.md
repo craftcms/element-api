@@ -318,10 +318,18 @@ Here are a few endpoint examples, and what their response would look like.
 
 ## Changelog
 
+### 1.0
+
+- Initial release.
+
 ### 1.1
 
 - Updated to take advantage of new Craft 2.5 plugin features.
 
-### 1.0
+### 1.2
 
-- Initial release
+- Added the `elementApi.onBeforeSendData` event.
+
+### 1.2.1
+
+- Pagination URLs will now honor any existing query string parameters.

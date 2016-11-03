@@ -118,7 +118,15 @@ class ElementApiController extends BaseController
 		}
 
 		JsonHelper::sendJsonHeaders();
-		echo $fractal->createData($resource)->toJson();
+
+		$data = $fractal->createData($resource);
+
+		// Fire an 'onBeforeSendData' event
+		craft()->elementApi->onBeforeSendData(new Event($this, [
+			'data' => $data,
+		]));
+
+		echo $data->toJson();
 
 		// End the request
 		craft()->end();
