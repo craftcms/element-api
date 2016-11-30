@@ -171,6 +171,21 @@ The query string param name that should be used to identify which page is being 
 
 Note that it cannot be set to `'p'` because that’s the parameter Craft uses to check the requested path.
 
+#### `cache`
+
+A boolean Weather or not the response should be cached. This is set to false by default.
+
+```php
+'cache' => true,
+```
+
+#### `cacheDuration`
+
+The length of time Craft will store response caches. Set to craft's Global configuration for `cacheDuration` (see [Config Settings](https://craftcms.com/docs/config-settings)).
+
+```php
+'cacheDuration' => 3600,
+```
 
 ### Dynamic URL Patterns and Endpoint Configurations
 

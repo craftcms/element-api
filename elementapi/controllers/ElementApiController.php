@@ -22,7 +22,7 @@ class ElementApiController extends BaseController
 	 * Returns the requested elements as JSON
 	 *
 	 * @param callable|null $configFactory A function for generating the config
-	 * @param array|null    $config        The API endpoint configuration
+	 * @param array|null	$config		The API endpoint configuration
 	 *
 	 * @throws Exception
 	 * @throws HttpException
@@ -44,89 +44,115 @@ class ElementApiController extends BaseController
 				'elementsPerPage' => 100,
 				'first' => false,
 				'transformer' => 'Craft\ElementApi_ElementTransformer',
+				'cache' => false,
+				'cacheDuration' => craft()->config->get('cacheDuration'),
 			],
 			craft()->config->get('defaults', 'elementapi'),
 			$config
 		);
 
-		if ($config['pageParam'] == 'p')
-		{
-			throw new Exception('The pageParam setting cannot be set to "p" because that’s the parameter Craft uses to check the requested path.');
+		// if cache is enabled check key
+		if ( $config['cache'] ) {
+
+			$queryParams = craft()->request->getQuery();
+
+			$key = json_encode($config) . '-' . json_encode($queryParams);
+
+			$response = craft()->cache->get($key);
+
 		}
 
-		if (!isset($config['elementType']))
-		{
-			throw new Exception('Element API configs must specify the elementType.');
-		}
+		if ( !$response ) {
 
-		/** @var ElementCriteriaModel $criteria */
-		$criteria = craft()->elements->getCriteria($config['elementType'], [
-			'limit' => null
-		]);
-
-		if (!empty($config['criteria']))
-		{
-			$criteria->setAttributes($config['criteria']);
-		}
-
-		// Load Fractal
-		$pluginPath = craft()->path->getPluginsPath().'elementapi/';
-		require $pluginPath.'vendor/autoload.php';
-		$fractal = new Manager();
-		$fractal->setSerializer(new ArraySerializer());
-
-		// Define the transformer
-		if (is_callable($config['transformer']) || $config['transformer'] instanceof TransformerAbstract)
-		{
-			$transformer = $config['transformer'];
-		}
-		else
-		{
-			Craft::import('plugins.elementapi.ElementApi_ElementTransformer');
-			$transformer = Craft::createComponent($config['transformer']);
-		}
-
-		if ($config['first'])
-		{
-			$element = $criteria->first();
-
-			if (!$element)
+			if ($config['pageParam'] == 'p')
 			{
-				throw new HttpException(404);
+				throw new Exception('The pageParam setting cannot be set to "p" because that’s the parameter Craft uses to check the requested path.');
 			}
 
-			$resource = new Item($element, $transformer);
-		}
-		else if ($config['paginate'])
-		{
-			// Create the paginator
-			require $pluginPath.'ElementApi_PaginatorAdapter.php';
-			$paginator = new ElementApi_PaginatorAdapter($config['elementsPerPage'], $criteria->total(), $config['pageParam']);
+			if (!isset($config['elementType']))
+			{
+				throw new Exception('Element API configs must specify the elementType.');
+			}
 
-			// Fetch this page's elements
-			$criteria->offset = $config['elementsPerPage'] * ($paginator->getCurrentPage() - 1);
-			$criteria->limit = $config['elementsPerPage'];
-			$elements = $criteria->find();
-			$paginator->setCount(count($elements));
+			/** @var ElementCriteriaModel $criteria */
+			$criteria = craft()->elements->getCriteria($config['elementType'], [
+				'limit' => null
+			]);
 
-			$resource = new Collection($elements, $transformer);
-			$resource->setPaginator($paginator);
-		}
-		else
-		{
-			$resource = new Collection($criteria, $transformer);
+			if (!empty($config['criteria']))
+			{
+				$criteria->setAttributes($config['criteria']);
+			}
+
+			// Load Fractal
+			$pluginPath = craft()->path->getPluginsPath().'elementapi/';
+			require $pluginPath.'vendor/autoload.php';
+			$fractal = new Manager();
+			$fractal->setSerializer(new ArraySerializer());
+
+			// Define the transformer
+			if (is_callable($config['transformer']) || $config['transformer'] instanceof TransformerAbstract)
+			{
+				$transformer = $config['transformer'];
+			}
+			else
+			{
+				Craft::import('plugins.elementapi.ElementApi_ElementTransformer');
+				$transformer = Craft::createComponent($config['transformer']);
+			}
+
+			if ($config['first'])
+			{
+				$element = $criteria->first();
+
+				if (!$element)
+				{
+					throw new HttpException(404);
+				}
+
+				$resource = new Item($element, $transformer);
+			}
+			else if ($config['paginate'])
+			{
+				// Create the paginator
+				require $pluginPath.'ElementApi_PaginatorAdapter.php';
+				$paginator = new ElementApi_PaginatorAdapter($config['elementsPerPage'], $criteria->total(), $config['pageParam']);
+
+				// Fetch this page's elements
+				$criteria->offset = $config['elementsPerPage'] * ($paginator->getCurrentPage() - 1);
+				$criteria->limit = $config['elementsPerPage'];
+				$elements = $criteria->find();
+				$paginator->setCount(count($elements));
+
+				$resource = new Collection($elements, $transformer);
+				$resource->setPaginator($paginator);
+			}
+			else
+			{
+				$resource = new Collection($criteria, $transformer);
+			}
+
+			$data = $fractal->createData($resource);
+
+			// Fire an 'onBeforeSendData' event
+			craft()->elementApi->onBeforeSendData(new Event($this, [
+				'data' => $data,
+			]));
+
+			$response = $data->toJson();
+
+			// Cache data response
+			if ( $config['cache'] ) {
+
+				craft()->cache->set($key, $response, $config['cacheDuration']);
+
+			}
+
 		}
 
 		JsonHelper::sendJsonHeaders();
 
-		$data = $fractal->createData($resource);
-
-		// Fire an 'onBeforeSendData' event
-		craft()->elementApi->onBeforeSendData(new Event($this, [
-			'data' => $data,
-		]));
-
-		echo $data->toJson();
+		echo $response;
 
 		// End the request
 		craft()->end();
