@@ -1,22 +1,29 @@
-# Element API plugin for Craft
+Element API for Craft CMS
+=========================
 
-This plugin makes it easy to create a JSON API for your entries (and other element types) in [Craft](http://buildwithcraft.com).
+This plugin makes it easy to create a JSON API for your entries (and other element types) in [Craft CMS](http://buildwithcraft.com).
 
 It’s powered by Phil Sturgeon’s excellent [Fractal](http://fractal.thephpleague.com/) package.
 
 
 ## Requirements
 
-Element API requires PHP 5.4 or later and Craft 2.1 or later.
+This plugin requires Craft CMS 3.0.0-beta.1 or later.
 
 
 ## Installation
 
-To install Element API, follow these steps:
+To install the plugin, follow these instructions.
 
-1.  Upload the elementapi/ folder to your craft/plugins/ folder.
-2.  Go to Settings > Plugins from your Craft control panel and enable the Element API plugin.
+1. Open your terminal and go to your Craft project:
 
+        cd /path/to/project
+
+2. Then tell Composer to load the plugin:
+
+        composer require craftcms/element-api
+
+3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Element API.
 
 ## Setup
 
@@ -24,28 +31,30 @@ To define your API endpoints, create a new `elementapi.php` file within your cra
 
 ```php
 <?php
-namespace Craft;
+
+use craft\elements\Entry;
+use craft\helpers\UrlHelper;
 
 return [
     'endpoints' => [
         'news.json' => [
-            'elementType' => 'Entry',
+            'elementType' => Entry::class,
             'criteria' => ['section' => 'news'],
-            'transformer' => function(EntryModel $entry) {
+            'transformer' => function(Entry $entry) {
                 return [
                     'title' => $entry->title,
                     'url' => $entry->url,
-                    'jsonUrl' => UrlHelper::getUrl("news/{$entry->id}.json"),
+                    'jsonUrl' => UrlHelper::url("news/{$entry->id}.json"),
                     'summary' => $entry->summary,
                 ];
             },
         ],
         'news/<entryId:\d+>.json' => function($entryId) {
             return [
-                'elementType' => 'Entry',
+                'elementType' => Entry::class,
                 'criteria' => ['id' => $entryId],
-                'first' => true,
-                'transformer' => function(EntryModel $entry) {
+                'one' => true,
+                'transformer' => function(Entry $entry) {
                     return [
                         'title' => $entry->title,
                         'url' => $entry->url,
@@ -65,10 +74,18 @@ Endpoint configuration arrays can contain the following settings:
 
 #### `elementType` _(Required)_
 
-The element type class name that the API should be associated with. Possible values are `Asset`, `Category`, `Entry`, `GlobalSet`, `MatrixBlock`, `Tag`, and `User`, as well as any plugin-based element type class names like `SproutForms_Entry`.
+The class name of the element type that the API should be associated with. Craft’s built-in element type classes are:
+
+- `craft\elements\Asset`
+- `craft\elements\Category`
+- `craft\elements\Entry`
+- `craft\elements\GlobalSet`
+- `craft\elements\MatrixBlock`
+- `craft\elements\Tag`
+- `craft\elements\User`
 
 ```php
-'elementType' => 'Entry',
+'elementType' => craft\elements\Entry::class,
 ````
 
 #### `criteria`
@@ -88,7 +105,7 @@ The [transformer](http://fractal.thephpleague.com/transformers/) that should be 
 
 ```php
 // Can be set to a function
-'transformer' => function(EntryModel $entry) {
+'transformer' => function(craft\elements\Entry $entry) {
     return [
         'title' => $entry->title,
         'id' => $entry->id,
@@ -103,46 +120,31 @@ The [transformer](http://fractal.thephpleague.com/transformers/) that should be 
 'transformer' => new MyTransformerClassName(),
 ```
 
-Note that if you return a Transformer class configuration or instance, you will need to load the class yourself ahead of time.
-
-```php
-'entries.json' => function() {
-    require craft()->path->getConfigPath().'MyTransformerClassName.php';
-
-    return [
-        'elementType' => 'Entry',
-        'transformer' => 'MyTransformerClassName',
-    ];
-}
-```
-
 Your custom transformer class would look something like this:
 
 ```php
 <?php
-namespace Craft;
 
-require craft()->path->getPluginsPath().'elementapi/vendor/autoload.php';
-
+use craft\elements\Entry;
 use League\Fractal\TransformerAbstract;
 
 class MyTransformerClassName extends TransformerAbstract
 {
-    public function transform(EntryModel $entry)
+    public function transform(Entry $entry)
     {
         return [
-            ...
+            // ...
         ];
     }
 }
 ```
 
-#### `first`
+#### `one`
 
-Whether only the _first_ matching element should be returned. This is set to `false` by default, meaning that _all_ matching elements will be returned.
+Whether only the first matching element should be returned. This is set to `false` by default, meaning that _all_ matching elements will be returned.
 
 ```php
-'first' => true,
+'one' => true,
 ```
 
 #### `paginate`
@@ -181,9 +183,9 @@ Endpoint configurations can also be dynamic, by using a function instead of an a
 ```php
 'news/<entryId:\d+>.json' => function($entryId) {
     return [
-        'elementType' => 'Entry',
+        'elementType' => craft\elements\Entry::class,
         'criteria' => ['id' => $entryId],
-        'first' => true,
+        'one' => true,
     ];
 },
 ```
@@ -194,12 +196,14 @@ Endpoint configurations can also be dynamic, by using a function instead of an a
 You can specify default values for your endpoint configuration settings by adding a `defaults` key alongside your `endpoints` key (**not** within it).
 
 ```php
+use craft\elements\Entry;
+
 return [
     'defaults' => [
-        'elementType' => 'Entry',
+        'elementType' => Entry::class,
         'elementsPerPage' => 10,
         'pageParam' => 'pg',
-        'transformer' => function(EntryModel $entry) {
+        'transformer' => function(Entry $entry) {
             return [
                 'title' => $entry->title,
                 'id' => $entry->id,
@@ -215,7 +219,7 @@ return [
         'news/<entryId:\d+>.json' => function($entryId) {
             return [
                 'criteria' => ['id' => $entryId],
-                'first' => true,
+                'one' => true,
             ];
         },
     ]
@@ -232,11 +236,11 @@ Here are a few endpoint examples, and what their response would look like.
 'ingredients.json' => [
     'criteria' => ['section' => 'ingredients'],
     'elementsPerPage' => 10,
-    'transformer' => function(EntryModel $entry) {
+    'transformer' => function(craft\elements\Entry $entry) {
         return [
             'title' => $entry->title,
             'url' => $entry->url,
-            'jsonUrl' => UrlHelper::getUrl("ingredients/{$entry->slug}.json"),
+            'jsonUrl' => UrlHelper::url("ingredients/{$entry->slug}.json"),
         ];
     },
 ],
@@ -281,8 +285,8 @@ Here are a few endpoint examples, and what their response would look like.
             'section' => 'ingredients',
             'slug' => $slug
         ],
-        'first' => true,
-        'transformer' => function(EntryModel $entry) {
+        'one' => true,
+        'transformer' => function(craft\elements\Entry $entry) {
             // Create an array of all the photo URLs
             $photos = [];
             foreach ($entry->photos as $photo) {
@@ -310,22 +314,3 @@ Here are a few endpoint examples, and what their response would look like.
     ]
 }
 ```
-
-
-## Changelog
-
-### 1.0
-
-- Initial release.
-
-### 1.1
-
-- Updated to take advantage of new Craft 2.5 plugin features.
-
-### 1.2
-
-- Added the `elementApi.onBeforeSendData` event.
-
-### 1.2.1
-
-- Pagination URLs will now honor any existing query string parameters.

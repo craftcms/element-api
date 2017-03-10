@@ -1,19 +1,42 @@
 {
-    "name": "pixelandtonic/elementapi",
-    "description": "A plugin makes it easy to create a JSON API for your entries (and other element types) in Craft",
-    "type": "craft-plugin",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Pixel & Tonic",
-            "email": "support@pixelandtonic.com"
-        }
-    ],
-    "config": {
-        "vendor-dir": "elementapi/vendor"
-    },
-    "require": {
-        "composer/installers": "~1.0",
-        "league/fractal": "^0.12.0"
+  "name": "craftcms/element-api",
+  "description": "Create a JSON API for your elements in Craft",
+  "version": "2.0.0",
+  "type": "craft-plugin",
+  "keywords": [
+    "api",
+    "cms",
+    "craftcms",
+    "json",
+    "yii2"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Pixel & Tonic",
+      "homepage": "https://pixelandtonic.com/"
     }
+  ],
+  "support": {
+    "email": "support@craftcms.com",
+    "issues": "https://github.com/craftcms/element-api/issues?state=open",
+    "source": "https://github.com/craftcms/element-api",
+    "docs": "https://github.com/craftcms/element-api",
+    "rss": "https://github.com/craftcms/element-api/commits/master.atom"
+  },
+  "require": {
+    "craftcms/cms": "~3.0.0-beta.1",
+    "league/fractal": "^0.15.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "craft\\elementapi\\": "src/"
+    }
+  },
+  "extra": {
+    "name": "Element API",
+    "handle": "elementApi",
+    "changelogUrl": "https://raw.githubusercontent.com/craftcms/element-api/master/CHANGELOG.md",
+    "downloadUrl": "https://github.com/craftcms/element-api/archive/master.zip"
+  }
 }
