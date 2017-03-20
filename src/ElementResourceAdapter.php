@@ -90,7 +90,7 @@ class ElementResourceAdapter extends Object implements ResourceAdapterInterface
 
         if ($this->paginate) {
             // Make sure the page param != the path param
-            $pathParam = Craft::$app->getConfig()->get('pathParam');
+            $pathParam = Craft::$app->getConfig()->getGeneral()->pathParam;
             if ($this->pageParam === $pathParam) {
                 throw new InvalidConfigException("The pageParam cannot be set to \"{$pathParam}\" because that's the parameter Craft uses to check the requested path.");
             }

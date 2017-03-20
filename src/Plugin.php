@@ -10,6 +10,9 @@ use yii\base\Event;
 /**
  * Element API plugin.
  *
+ * @property Settings $settings
+ * @method Settings getSettings()
+ *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since  2.0
  */
@@ -17,12 +20,6 @@ class Plugin extends \craft\base\Plugin
 {
     // Properties
     // =========================================================================
-
-    /**
-     * @var array The configured API endpoints
-     * @see getEndpoints()
-     */
-    private $_endpoints;
 
     /**
      * @var array The default Fractal resource adapter configuration
@@ -44,20 +41,6 @@ class Plugin extends \craft\base\Plugin
     }
 
     /**
-     * Returns the configured API endpoints.
-     *
-     * @return array
-     */
-    public function getEndpoints()
-    {
-        if ($this->_endpoints !== null) {
-            return $this->_endpoints;
-        }
-
-        return $this->_endpoints = Craft::$app->getConfig()->get('endpoints', 'elementapi');
-    }
-
-    /**
      * Returns the endpoint config for a given URL pattern.
      *
      * @param string $pattern
@@ -66,13 +49,7 @@ class Plugin extends \craft\base\Plugin
      */
     public function getEndpoint($pattern)
     {
-        $endpoints = $this->getEndpoints();
-
-        if (!isset($endpoints[$pattern])) {
-            return null;
-        }
-
-        return $endpoints[$pattern];
+        return $this->getSettings()->endpoints[$pattern] ?? null;
     }
 
     /**
@@ -86,7 +63,7 @@ class Plugin extends \craft\base\Plugin
             return $this->_defaultResourceAdapterConfig;
         }
 
-        return $this->_defaultResourceAdapterConfig = Craft::$app->getConfig()->get('defaults', 'elementapi');
+        return $this->_defaultResourceAdapterConfig = $this->getSettings()->defaults;
     }
 
     /**
@@ -96,7 +73,7 @@ class Plugin extends \craft\base\Plugin
      */
     public function registerUrlRules(RegisterUrlRulesEvent $event)
     {
-        foreach ($this->getEndpoints() as $pattern => $config) {
+        foreach ($this->getSettings()->endpoints as $pattern => $config) {
             $event->rules[$pattern] = [
                 'route' => 'element-api',
                 'defaults' => ['pattern' => $pattern],
@@ -126,5 +103,13 @@ class Plugin extends \craft\base\Plugin
         }
 
         return Craft::createObject($config);
+    }
+
+    // Public Methods
+    // =========================================================================
+
+    protected function createSettingsModel()
+    {
+        return new Settings();
     }
 }
