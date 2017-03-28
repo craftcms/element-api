@@ -102,7 +102,7 @@ class DefaultController extends Controller
      */
     private function _callWithParams($func, $params)
     {
-        if (!$params) {
+        if (empty($params)) {
             return $func();
         }
 
