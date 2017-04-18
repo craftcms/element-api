@@ -1,6 +1,11 @@
 Changelog
 =========
 
+## 2.0.2 - 2017-04-18
+
+### Fixed
+- Fixed a PHP error that occurred when paginating results. ([#36](https://github.com/craftcms/element-api/issues/36))
+
 ## 2.0.1 - 2017-03-24
 
 ### Changed
