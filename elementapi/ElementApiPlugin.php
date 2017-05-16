@@ -48,7 +48,7 @@ class ElementApiPlugin extends BasePlugin
 	 */
 	public function getPluginUrl()
 	{
-		return 'https://github.com/pixelandtonic/ElementAPI';
+		return 'https://github.com/craftcms/element-api/tree/v1';
 	}
 
 	/**
@@ -56,7 +56,7 @@ class ElementApiPlugin extends BasePlugin
 	 */
 	public function getDocumentationUrl()
 	{
-		return $this->getPluginUrl().'/blob/master/README.md';
+		return $this->getPluginUrl().'/blob/v1/README.md';
 	}
 
 	/**
@@ -64,7 +64,7 @@ class ElementApiPlugin extends BasePlugin
 	 */
 	public function getReleaseFeedUrl()
 	{
-		return 'https://raw.githubusercontent.com/pixelandtonic/ElementAPI/master/releases.json';
+		return 'https://raw.githubusercontent.com/craftcms/element-api/v1/releases.json';
 	}
 
 	/**
