@@ -22,7 +22,7 @@
     "issues": "https://github.com/craftcms/element-api/issues?state=open",
     "source": "https://github.com/craftcms/element-api",
     "docs": "https://github.com/craftcms/element-api",
-    "rss": "https://github.com/craftcms/element-api/commits/master.atom"
+    "rss": "https://github.com/craftcms/element-api/commits/v2.atom"
   },
   "require": {
     "craftcms/cms": "~3.0.0-beta.13",
@@ -42,7 +42,7 @@
   "extra": {
     "name": "Element API",
     "handle": "elementApi",
-    "changelogUrl": "https://raw.githubusercontent.com/craftcms/element-api/master/CHANGELOG.md",
-    "downloadUrl": "https://github.com/craftcms/element-api/archive/master.zip"
+    "changelogUrl": "https://raw.githubusercontent.com/craftcms/element-api/v2/CHANGELOG.md",
+    "downloadUrl": "https://github.com/craftcms/element-api/archive/v2.zip"
   }
 }

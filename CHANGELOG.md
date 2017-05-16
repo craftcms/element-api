@@ -1,6 +1,11 @@
 Changelog
 =========
 
+## Unreleased
+
+### Fixed
+- Fixed the changelog and download URLs.
+
 ## 2.0.2 - 2017-04-18
 
 ### Fixed
