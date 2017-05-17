@@ -3,6 +3,9 @@ Changelog
 
 ## Unreleased
 
+### Added
+- Added support for a `resourceKey` endpoint config setting (default is `'data'`).
+
 ### Fixed
 - Fixed the changelog and download URLs.
 

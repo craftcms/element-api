@@ -67,11 +67,9 @@ class DefaultController extends Controller
             $config = $this->_callWithParams($config, $params);
         }
 
-        $adapter = $plugin->createResourceAdapter($config);
-
         // Get the data resource
         try {
-            $resource = $adapter->getResource();
+            $resource = $plugin->createResource($config);
         } catch (\Exception $e) {
             throw new NotFoundHttpException(null, 0, $e);
         }

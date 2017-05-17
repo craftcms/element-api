@@ -4,7 +4,10 @@ namespace craft\elementapi;
 
 use Craft;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\ArrayHelper;
 use craft\web\UrlManager;
+use League\Fractal\Resource\ResourceAbstract;
+use League\Fractal\Resource\ResourceInterface;
 use yii\base\Event;
 
 /**
@@ -82,16 +85,20 @@ class Plugin extends \craft\base\Plugin
     }
 
     /**
-     * Creates a Fractal resource adapter based on the given config.
+     * Creates a Fractal resource based on the given config.
      *
-     * @param array|ResourceAdapterInterface
+     * @param array|ResourceInterface|ResourceAdapterInterface
      *
-     * @return ResourceAdapterInterface
+     * @return ResourceInterface
      */
-    public function createResourceAdapter($config): ResourceAdapterInterface
+    public function createResource($config): ResourceInterface
     {
-        if ($config instanceof ResourceAdapterInterface) {
+        if ($config instanceof ResourceInterface) {
             return $config;
+        }
+
+        if ($config instanceof ResourceAdapterInterface) {
+            return $config->getResource();
         }
 
         // Merge in the defaults
@@ -102,7 +109,18 @@ class Plugin extends \craft\base\Plugin
             $config['class'] = ElementResourceAdapter::class;
         }
 
-        return Craft::createObject($config);
+        $resourceKey = ArrayHelper::remove($config, 'resourceKey');
+        $resource = Craft::createObject($config);
+
+        if ($resource instanceof ResourceAdapterInterface) {
+            $resource = $resource->getResource();
+        }
+
+        if ($resource instanceof ResourceAbstract && $resourceKey !== null) {
+            $resource->setResourceKey($resourceKey);
+        }
+
+        return $resource;
     }
 
     // Public Methods
