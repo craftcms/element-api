@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## Unreleased
+## 2.1.0 - 2017-05-16
 
 ### Added
 - Added support for a `resourceKey` endpoint config setting (default is `'data'`).
