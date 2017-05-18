@@ -130,6 +130,7 @@ class PaginatorAdapter implements PaginatorInterface
     {
         $request = Craft::$app->getRequest();
         $params = $request->getQueryParamsWithoutPath();
+        unset($params['pattern']);
         $params[$this->pageParam] = $page;
 
         return UrlHelper::url($request->getPathInfo(), $params);

@@ -1,6 +1,11 @@
 Changelog
 =========
 
+## Unreleased
+
+### Fixed
+- Fixed a bug where pagination URLs contained an extra `pattern` query param.
+
 ## 2.1.0 - 2017-05-16
 
 ### Added
