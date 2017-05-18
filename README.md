@@ -363,7 +363,6 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
     'criteria' => ['section' => 'news'],
     'transformer' => function(EntryModel $entry) {
         $image = $entry->photos->first();
-        $author = $entry->getAuthor();
 
         return [
             'id' => (string) $entry->id,
@@ -374,7 +373,7 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
             'image' => $image ? $image->url : null,
             'date_published' => $entry->postDate->format(\DateTime::ATOM),
             'date_modified' => $entry->dateUpdated->format(\DateTime::ATOM),
-            'author' => ['name' => $author->name],
+            'author' => ['name' => $entry->author->name],
             'tags' => array_map('strval', $entry->tags->find()),
         ];
     },
