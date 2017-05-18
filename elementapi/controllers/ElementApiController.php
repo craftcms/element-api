@@ -86,6 +86,8 @@ class ElementApiController extends BaseController
 			$transformer = Craft::createComponent($config['transformer']);
 		}
 
+		$resourceKey = isset($config['resourceKey']) ? $config['resourceKey'] : null;
+
 		if ($config['first'])
 		{
 			$element = $criteria->first();
@@ -95,7 +97,7 @@ class ElementApiController extends BaseController
 				throw new HttpException(404);
 			}
 
-			$resource = new Item($element, $transformer);
+			$resource = new Item($element, $transformer, $resourceKey);
 		}
 		else if ($config['paginate'])
 		{
@@ -109,18 +111,13 @@ class ElementApiController extends BaseController
 			$elements = $criteria->find();
 			$paginator->setCount(count($elements));
 
-			$resource = new Collection($elements, $transformer);
+			$resource = new Collection($elements, $transformer, $resourceKey);
 			$resource->setPaginator($paginator);
 		}
 		else
 		{
-			$resource = new Collection($criteria, $transformer);
+			$resource = new Collection($criteria, $transformer, $resourceKey);
 		}
-
-        if (isset($config['resourceKey']))
-        {
-            $resource->setResourceKey($config['resourceKey']);
-        }
 
         JsonHelper::sendJsonHeaders();
 
