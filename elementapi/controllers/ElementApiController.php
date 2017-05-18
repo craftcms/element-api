@@ -5,6 +5,9 @@ use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use League\Fractal\Serializer\ArraySerializer;
+use League\Fractal\Serializer\DataArraySerializer;
+use League\Fractal\Serializer\JsonApiSerializer;
+use League\Fractal\Serializer\SerializerAbstract;
 use League\Fractal\TransformerAbstract;
 
 /**
@@ -73,7 +76,24 @@ class ElementApiController extends BaseController
 		$pluginPath = craft()->path->getPluginsPath().'elementapi/';
 		require $pluginPath.'vendor/autoload.php';
 		$fractal = new Manager();
-		$fractal->setSerializer(new ArraySerializer());
+
+		// Set the serializer
+        $serializer = isset($config['serializer']) ? $config['serializer'] : null;
+        if (!$serializer instanceof SerializerAbstract)
+        {
+            switch ($serializer)
+            {
+                case 'dataArray':
+                    $serializer = new DataArraySerializer();
+                    break;
+                case 'jsonApi':
+                    $serializer = new JsonApiSerializer();
+                    break;
+                default:
+                    $serializer = new ArraySerializer();
+            }
+        }
+		$fractal->setSerializer($serializer);
 
 		// Define the transformer
 		if (is_callable($config['transformer']) || $config['transformer'] instanceof TransformerAbstract)

@@ -171,6 +171,16 @@ The query string param name that should be used to identify which page is being 
 
 Note that it cannot be set to `'p'` because that’s the parameter Craft uses to check the requested path.
 
+#### `serializer`
+
+The [serializer](http://fractal.thephpleague.com/serializers/) that should be used to format the returned data.
+
+Possible values are:
+
+- `'array'` _(default)_ – formats data using the [ArraySerializer](http://fractal.thephpleague.com/serializers/#arrayserializer).
+- `'dataArray'` – formats data using the [DataArraySerializer](http://fractal.thephpleague.com/serializers/#dataarrayserializer).
+- `'jsonApi'` – formats data using the [JsonApiSerializer](http://fractal.thephpleague.com/serializers/#jsonapiserializer).
+- A custom serializer instance.
 
 ### Dynamic URL Patterns and Endpoint Configurations
 

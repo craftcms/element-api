@@ -3,6 +3,10 @@ Changelog
 
 ## Unreleased
 
+### Added
+- Added the `serializer` endpoint config setting.
+
+### Changed
 - Updated Fractal to 0.16.
 
 ## 1.3.0 - 2017-05-16
