@@ -67,6 +67,11 @@ class ElementResourceAdapter extends Object implements ResourceAdapterInterface
      */
     public $resourceKey;
 
+    /**
+     * @var array|null Custom meta values
+     */
+    public $meta;
+
     // Public Methods
     // =========================================================================
 
@@ -147,10 +152,8 @@ class ElementResourceAdapter extends Object implements ResourceAdapterInterface
                 throw new Exception('No element exists that matches the endpoint criteria');
             }
 
-            return new Item($element, $transformer, $this->resourceKey);
-        }
-
-        if ($this->paginate) {
+            $resource = new Item($element, $transformer, $this->resourceKey);
+        } else if ($this->paginate) {
             // Create the paginator
             $paginator = new PaginatorAdapter($this->elementsPerPage, $query->count(), $this->pageParam);
 
@@ -162,10 +165,14 @@ class ElementResourceAdapter extends Object implements ResourceAdapterInterface
 
             $resource = new Collection($elements, $transformer, $this->resourceKey);
             $resource->setPaginator($paginator);
-
-            return $resource;
+        } else {
+            $resource = new Collection($query, $transformer, $this->resourceKey);
         }
 
-        return new Collection($query, $transformer, $this->resourceKey);
+        if ($this->meta !== null) {
+            $resource->setMeta($this->meta);
+        }
+
+        return $resource;
     }
 }
