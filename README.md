@@ -173,6 +173,43 @@ The query string param name that should be used to identify which page is being 
 
 Note that it cannot be set to `'p'` because that’s the parameter Craft uses to check the requested path.
 
+### `resourceKey`
+
+The key that the elements should be nested under in the response data. By default this will be `'data'`.
+
+```php
+'resourceKey' => 'entries',
+```
+
+#### `meta`
+
+Any custom meta values that should be included in the response data.
+
+```php
+'meta' => [
+    'description' => 'Recent news from Happy Lager',
+],
+```
+
+#### `serializer`
+
+The [serializer](http://fractal.thephpleague.com/serializers/) that should be used to format the returned data.
+
+Possible values are:
+
+- `'array'` _(default)_ – formats data using the [ArraySerializer](http://fractal.thephpleague.com/serializers/#arrayserializer).
+- `'dataArray'` – formats data using the [DataArraySerializer](http://fractal.thephpleague.com/serializers/#dataarrayserializer).
+- `'jsonApi'` – formats data using the [JsonApiSerializer](http://fractal.thephpleague.com/serializers/#jsonapiserializer).
+- `'jsonFeed'` – formats data based on [JSON Feed V1](https://jsonfeed.org/version/1) (see the [JSON Feed](#json-feed) example below).
+- A custom serializer instance.
+
+#### `jsonOptions`
+
+The value of the `$options` argument that will be passed to [`json_encode()`](http://php.net/manual/en/function.json-encode.php) when preparing the response. By default no options will be passed.
+
+```php
+'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
+```
 
 ### Dynamic URL Patterns and Endpoint Configurations
 
@@ -243,6 +280,7 @@ Here are a few endpoint examples, and what their response would look like.
             'jsonUrl' => UrlHelper::url("ingredients/{$entry->slug}.json"),
         ];
     },
+    'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
 ],
 ```
 
@@ -251,13 +289,13 @@ Here are a few endpoint examples, and what their response would look like.
     "data": [
         {
             "title": "Gin",
-            "url": "\/ingredients\/gin",
-            "jsonUrl": "\/ingredients\/gin.json"
+            "url": "/ingredients/gin",
+            "jsonUrl": "/ingredients/gin.json"
         },
         {
             "title": "Tonic Water",
-            "url": "\/ingredients\/tonic-water",
-            "jsonUrl": "\/ingredients\/tonic-water.json"
+            "url": "/ingredients/tonic-water",
+            "jsonUrl": "/ingredients/tonic-water.json"
         },
         // ...
     ],
@@ -269,7 +307,7 @@ Here are a few endpoint examples, and what their response would look like.
             "current_page": 1,
             "total_pages": 7,
             "links": {
-                "next": "\/ingredients.json?p=2"
+                "next": "/ingredients.json?p=2"
             }
         }
     }
@@ -300,6 +338,7 @@ Here are a few endpoint examples, and what their response would look like.
                 'photos' => $photos
             ];
         },
+        'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
     ];
 },
 ```
@@ -307,10 +346,86 @@ Here are a few endpoint examples, and what their response would look like.
 ```json5
 {
     "title": "Gin",
-    "url": "\/ingredients\/gin",
-    "description": "<p>Gin is a spirit which derives its predominant flavour from juniper berries.<\/p>",
+    "url": "/ingredients/gin",
+    "description": "<p>Gin is a spirit which derives its predominant flavour from juniper berries.</p>",
     "photos": [
-        "\/images\/drinks\/GinAndTonic1.jpg"
+        "/images/drinks/GinAndTonic1.jpg"
+    ]
+}
+```
+
+### JSON Feed
+
+Here’s how to set up a [JSON Feed](https://jsonfeed.org/) ([Version 1](https://jsonfeed.org/version/1)) for your site with Element API.
+
+Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
+
+```php
+'feed.json' => [
+    'serializer' => 'jsonFeed',
+    'elementType' => 'Entry',
+    'criteria' => ['section' => 'news'],
+    'transformer' => function(EntryModel $entry) {
+        $image = $entry->photos->first();
+
+        return [
+            'id' => (string) $entry->id,
+            'url' => $entry->url,
+            'title' => $entry->title,
+            'content_html' => (string) $entry->body,
+            'summary' => $entry->summary,
+            'image' => $image ? $image->url : null,
+            'date_published' => $entry->postDate->format(\DateTime::ATOM),
+            'date_modified' => $entry->dateUpdated->format(\DateTime::ATOM),
+            'author' => ['name' => $entry->author->name],
+            'tags' => array_map('strval', $entry->tags->find()),
+        ];
+    },
+    'meta' => [
+        'description' => 'Recent news from Happy Lager',
+    ],
+    'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
+]
+```
+
+```json5
+{
+    "version": "https://jsonfeed.org/version/1",
+    "title": "Happy Lager",
+    "home_page_url": "http://domain.com/",
+    "feed_url": "http://domain.com/feed.json",
+    "description": "Craft demo site",
+    "items": [
+        {
+            "id": "24",
+            "url": "http://domain.com/news/the-future-of-augmented-reality",
+            "title": "The Future of Augmented Reality",
+            "content_html": "<p>Nam libero tempore, cum soluta nobis est eligendi ...</p>",
+            "date_published": "2016-05-07T00:00:00+00:00",
+            "date_modified": "2016-06-03T17:43:36+00:00",
+            "author": {
+                "name": "Liz Murphy"
+            },
+            "tags": [
+                "augmented reality",
+                "futurism"
+            ]
+        },
+        {
+            "id": "4",
+            "url": "http://domain.com/news/barrel-aged-digital-natives",
+            "title": "Barrel Aged Digital Natives",
+            "content_html": "<p>Nam libero tempore, cum soluta nobis est eligendi ...</p>",,
+            "date_published": "2016-05-06T00:00:00+00:00",
+            "date_modified": "2017-05-18T13:20:27+00:00",
+            "author": {
+                "name": "Liz Murphy"
+            },
+            "tags": [
+                "barrel-aged"
+            ]
+        },
+        // ...
     ]
 }
 ```

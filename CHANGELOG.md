@@ -30,6 +30,17 @@ Changelog
 ### Deprecated
 - Deprecated the `first` endpoint config setting. Use `one` instead.
 
+## 1.4.0 - 2017-05-18
+
+### Added
+- Added a [JSON Feed V1](https://jsonfeed.org/version/1) serializer.
+- Added the `meta` endpoint config setting.
+- Added the `serializer` endpoint config setting.
+- Added the `jsonOptions` endpoint config setting.
+
+### Changed
+- Updated Fractal to 0.16.
+
 ## 1.3.0 - 2017-05-16
 
 ### Added
