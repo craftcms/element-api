@@ -275,6 +275,7 @@ Here are a few endpoint examples, and what their response would look like.
             'jsonUrl' => UrlHelper::getUrl("ingredients/{$entry->slug}.json"),
         ];
     },
+    'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
 ],
 ```
 
@@ -283,13 +284,13 @@ Here are a few endpoint examples, and what their response would look like.
     "data": [
         {
             "title": "Gin",
-            "url": "\/ingredients\/gin",
-            "jsonUrl": "\/ingredients\/gin.json"
+            "url": "/ingredients/gin",
+            "jsonUrl": "/ingredients/gin.json"
         },
         {
             "title": "Tonic Water",
-            "url": "\/ingredients\/tonic-water",
-            "jsonUrl": "\/ingredients\/tonic-water.json"
+            "url": "/ingredients/tonic-water",
+            "jsonUrl": "/ingredients/tonic-water.json"
         },
         // ...
     ],
@@ -301,7 +302,7 @@ Here are a few endpoint examples, and what their response would look like.
             "current_page": 1,
             "total_pages": 7,
             "links": {
-                "next": "\/ingredients.json?p=2"
+                "next": "/ingredients.json?p=2"
             }
         }
     }
@@ -332,6 +333,7 @@ Here are a few endpoint examples, and what their response would look like.
                 'photos' => $photos
             ];
         },
+        'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
     ];
 },
 ```
@@ -339,10 +341,10 @@ Here are a few endpoint examples, and what their response would look like.
 ```json5
 {
     "title": "Gin",
-    "url": "\/ingredients\/gin",
-    "description": "<p>Gin is a spirit which derives its predominant flavour from juniper berries.<\/p>",
+    "url": "/ingredients/gin",
+    "description": "<p>Gin is a spirit which derives its predominant flavour from juniper berries.</p>",
     "photos": [
-        "\/images\/drinks\/GinAndTonic1.jpg"
+        "/images/drinks/GinAndTonic1.jpg"
     ]
 }
 ```
