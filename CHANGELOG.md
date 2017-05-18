@@ -4,6 +4,7 @@ Changelog
 ## Unreleased
 
 ### Added
+- Added the `meta` endpoint config setting.
 - Added the `serializer` endpoint config setting.
 
 ### Changed

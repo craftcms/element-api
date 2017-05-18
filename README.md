@@ -171,6 +171,16 @@ The query string param name that should be used to identify which page is being 
 
 Note that it cannot be set to `'p'` because that’s the parameter Craft uses to check the requested path.
 
+#### `meta`
+
+Any custom meta values that should be included in the response data.
+
+```php
+'meta' => [
+    'description' => 'Recent news from Happy Lager',
+],
+```
+
 #### `serializer`
 
 The [serializer](http://fractal.thephpleague.com/serializers/) that should be used to format the returned data.

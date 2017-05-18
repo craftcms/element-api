@@ -139,6 +139,12 @@ class ElementApiController extends BaseController
 			$resource = new Collection($criteria, $transformer, $resourceKey);
 		}
 
+		// Set any custom meta values
+		if (isset($config['meta']))
+		{
+		    $resource->setMeta($config['meta']);
+        }
+
         JsonHelper::sendJsonHeaders();
 
 		$data = $fractal->createData($resource);
