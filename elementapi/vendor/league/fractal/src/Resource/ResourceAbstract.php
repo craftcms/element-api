@@ -11,6 +11,8 @@
 
 namespace League\Fractal\Resource;
 
+use League\Fractal\TransformerAbstract;
+
 abstract class ResourceAbstract implements ResourceInterface
 {
     /**
@@ -25,7 +27,7 @@ abstract class ResourceAbstract implements ResourceInterface
      *
      * @var array
      */
-    protected $meta = array();
+    protected $meta = [];
 
     /**
      * The resource key.
@@ -37,20 +39,18 @@ abstract class ResourceAbstract implements ResourceInterface
     /**
      * A callable to process the data attached to this resource.
      *
-     * @var callable|string
+     * @var callable|TransformerAbstract|null
      */
     protected $transformer;
 
     /**
      * Create a new resource instance.
      *
-     * @param mixed           $data
-     * @param callable|string $transformer
-     * @param string          $resourceKey
-     *
-     * @return void
+     * @param mixed                             $data
+     * @param callable|TransformerAbstract|null $transformer
+     * @param string                            $resourceKey
      */
-    public function __construct($data, $transformer, $resourceKey = null)
+    public function __construct($data = null, $transformer = null, $resourceKey = null)
     {
         $this->data = $data;
         $this->transformer = $transformer;
@@ -60,11 +60,25 @@ abstract class ResourceAbstract implements ResourceInterface
     /**
      * Get the data.
      *
-     * @return array|ArrayIterator
+     * @return mixed
      */
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * Set the data.
+     *
+     * @param mixed $data
+     *
+     * @return $this
+     */
+    public function setData($data)
+    {
+         $this->data = $data;
+
+         return $this;
     }
 
     /**
@@ -102,7 +116,7 @@ abstract class ResourceAbstract implements ResourceInterface
     /**
      * Get the transformer.
      *
-     * @return callable|string
+     * @return callable|TransformerAbstract
      */
     public function getTransformer()
     {
@@ -110,7 +124,35 @@ abstract class ResourceAbstract implements ResourceInterface
     }
 
     /**
-     * Set the meta data
+     * Set the transformer.
+     *
+     * @param callable|TransformerAbstract $transformer
+     *
+     * @return $this
+     */
+    public function setTransformer($transformer)
+    {
+        $this->transformer = $transformer;
+
+        return $this;
+    }
+
+    /**
+     * Set the meta data.
+     *
+     * @param array $meta
+     *
+     * @return $this
+     */
+    public function setMeta(array $meta)
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
+    /**
+     * Set the meta data.
      *
      * @param string $metaKey
      * @param mixed  $metaValue
@@ -129,7 +171,7 @@ abstract class ResourceAbstract implements ResourceInterface
      *
      * @param string $resourceKey
      *
-     * @return \League\Fractal\Resource\ResourceAbstract
+     * @return $this
      */
     public function setResourceKey($resourceKey)
     {

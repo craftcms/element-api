@@ -38,6 +38,13 @@ abstract class SerializerAbstract
     abstract public function item($resourceKey, array $data);
 
     /**
+     * Serialize null resource.
+     *
+     * @return array
+     */
+    abstract public function null();
+
+    /**
      * Serialize the included data.
      *
      * @param ResourceInterface $resource
@@ -74,6 +81,17 @@ abstract class SerializerAbstract
      */
     abstract public function cursor(CursorInterface $cursor);
 
+    public function mergeIncludes($transformedData, $includedData)
+    {
+        // If the serializer does not want the includes to be side-loaded then
+        // the included data must be merged with the transformed data.
+        if (! $this->sideloadIncludes()) {
+            return array_merge($transformedData, $includedData);
+        }
+
+        return $transformedData;
+    }
+
     /**
      * Indicates if includes should be side-loaded.
      *
@@ -82,5 +100,41 @@ abstract class SerializerAbstract
     public function sideloadIncludes()
     {
         return false;
+    }
+
+    /**
+     * Hook for the serializer to inject custom data based on the relationships of the resource.
+     *
+     * @param array $data
+     * @param array $rawIncludedData
+     *
+     * @return array
+     */
+    public function injectData($data, $rawIncludedData)
+    {
+        return $data;
+    }
+
+    /**
+     * Hook for the serializer to modify the final list of includes.
+     *
+     * @param array             $includedData
+     * @param array             $data
+     *
+     * @return array
+     */
+    public function filterIncludes($includedData, $data)
+    {
+        return $includedData;
+    }
+
+    /**
+     * Get the mandatory fields for the serializer
+     *
+     * @return array
+     */
+    public function getMandatoryFields()
+    {
+        return [];
     }
 }

@@ -13,7 +13,6 @@
         "vendor-dir": "elementapi/vendor"
     },
     "require": {
-        "composer/installers": "~1.0",
-        "league/fractal": "^0.12.0"
+        "league/fractal": "^0.16"
     }
 }

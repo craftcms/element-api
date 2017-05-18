@@ -31,7 +31,7 @@ class Collection extends ResourceAbstract
     protected $data;
 
     /**
-     * A the paginator instance.
+     * The paginator instance.
      *
      * @var PaginatorInterface
      */
@@ -43,13 +43,6 @@ class Collection extends ResourceAbstract
      * @var CursorInterface
      */
     protected $cursor;
-
-    /**
-     * A callable to process the data attached to this resource.
-     *
-     * @var callable|string
-     */
-    protected $transformer;
 
     /**
      * Get the paginator instance.
