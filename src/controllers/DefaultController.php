@@ -12,10 +12,15 @@ namespace craft\elementapi\controllers;
 
 use Craft;
 use craft\elementapi\DataEvent;
+use craft\elementapi\JsonFeedV1Serializer;
 use craft\elementapi\Plugin;
+use craft\helpers\ArrayHelper;
 use craft\web\Controller;
 use League\Fractal\Manager;
 use League\Fractal\Serializer\ArraySerializer;
+use League\Fractal\Serializer\DataArraySerializer;
+use League\Fractal\Serializer\JsonApiSerializer;
+use League\Fractal\Serializer\SerializerAbstract;
 use ReflectionFunction;
 use yii\base\InvalidConfigException;
 use yii\base\Response;
@@ -67,6 +72,9 @@ class DefaultController extends Controller
             $config = $this->_callWithParams($config, $params);
         }
 
+        // Does the config specify the serializer?
+        $serializer = is_array($config) ? ArrayHelper::remove($config, 'serializer') : null;
+
         // Get the data resource
         try {
             $resource = $plugin->createResource($config);
@@ -74,9 +82,27 @@ class DefaultController extends Controller
             throw new NotFoundHttpException(null, 0, $e);
         }
 
-        // Load Fractal and serialize the data
+        // Load Fractal
         $fractal = new Manager();
-        $fractal->setSerializer(new ArraySerializer());
+
+        // Serialize the data
+        if (!$serializer instanceof SerializerAbstract) {
+            switch ($serializer) {
+                case 'dataArray':
+                    $serializer = new DataArraySerializer();
+                    break;
+                case 'jsonApi':
+                    $serializer = new JsonApiSerializer();
+                    break;
+                case 'jsonFeed':
+                    $serializer = new JsonFeedV1Serializer();
+                    break;
+                default:
+                    $serializer = new ArraySerializer();
+            }
+        }
+
+        $fractal->setSerializer($serializer);
         $data = $fractal->createData($resource);
 
         // Fire a 'beforeSendData' event
