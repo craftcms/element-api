@@ -4,6 +4,7 @@ Changelog
 ## Unreleased
 
 ### Added
+- Added a [JSON Feed V1](https://jsonfeed.org/version/1) serializer.
 - Added the `meta` endpoint config setting.
 - Added the `serializer` endpoint config setting.
 - Added the `jsonOptions` endpoint config setting.

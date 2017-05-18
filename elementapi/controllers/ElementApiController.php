@@ -89,6 +89,10 @@ class ElementApiController extends BaseController
                 case 'jsonApi':
                     $serializer = new JsonApiSerializer();
                     break;
+                case 'jsonFeed':
+                    Craft::import('plugins.elementapi.ElementApi_JsonFeedV1Serializer');
+                    $serializer = new ElementApi_JsonFeedV1Serializer();
+                    break;
                 default:
                     $serializer = new ArraySerializer();
             }
