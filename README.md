@@ -205,10 +205,18 @@ Possible values are:
 
 #### `jsonOptions`
 
-The value of the `$options` argument that will be passed to [`json_encode()`](http://php.net/manual/en/function.json-encode.php) when preparing the response. By default no options will be passed.
+The value of the `$options` argument that will be passed to [`json_encode()`](http://php.net/manual/en/function.json-encode.php) when preparing the response. By default `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` will be passed.
 
 ```php
-'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
+'jsonOptions' => JSON_UNESCAPED_UNICODE,
+```
+
+#### `pretty`
+
+Shortcut for adding `JSON_PRETTY_PRINT` to `jsonOptions`.
+
+```php
+'pretty' => true,
 ```
 
 ### Dynamic URL Patterns and Endpoint Configurations
@@ -280,7 +288,7 @@ Here are a few endpoint examples, and what their response would look like.
             'jsonUrl' => UrlHelper::url("ingredients/{$entry->slug}.json"),
         ];
     },
-    'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
+    'pretty' => true,
 ],
 ```
 
@@ -338,7 +346,7 @@ Here are a few endpoint examples, and what their response would look like.
                 'photos' => $photos
             ];
         },
-        'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
+        'pretty' => true,
     ];
 },
 ```
@@ -384,7 +392,7 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
     'meta' => [
         'description' => 'Recent news from Happy Lager',
     ],
-    'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
+    'pretty' => true,
 ]
 ```
 

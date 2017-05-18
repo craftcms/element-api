@@ -24,7 +24,9 @@ use League\Fractal\Serializer\SerializerAbstract;
 use ReflectionFunction;
 use yii\base\InvalidConfigException;
 use yii\base\Response;
+use yii\web\JsonResponseFormatter;
 use yii\web\NotFoundHttpException;
+use yii\web\Response as WebResponse;
 
 /**
  * Element API controller.
@@ -75,6 +77,10 @@ class DefaultController extends Controller
         // Does the config specify the serializer?
         $serializer = is_array($config) ? ArrayHelper::remove($config, 'serializer') : null;
 
+        // Does the config specify custom JSON options?
+        $jsonOptions = (is_array($config) ? ArrayHelper::remove($config, 'jsonOptions') : null) ?? JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+        $pretty = (is_array($config) ? ArrayHelper::remove($config, 'pretty') : null) ?? false;
+
         // Get the data resource
         try {
             $resource = $plugin->createResource($config);
@@ -109,6 +115,13 @@ class DefaultController extends Controller
         $this->trigger(self::EVENT_BEFORE_SEND_DATA, new DataEvent([
             'data' => $data,
         ]));
+
+        // Override the JSON response formatter options
+        Craft::$app->getResponse()->formatters[WebResponse::FORMAT_JSON] = [
+            'class' => JsonResponseFormatter::class,
+            'encodeOptions' => $jsonOptions,
+            'prettyPrint' => $pretty,
+        ];
 
         return $this->asJson($data->toArray());
     }
