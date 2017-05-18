@@ -154,7 +154,8 @@ class ElementApiController extends BaseController
 			'data' => $data,
 		]));
 
-		echo $data->toJson();
+		$jsonOptions = isset($config['jsonOptions']) ? $config['jsonOptions'] : 0;
+		echo json_encode($data->toArray(), $jsonOptions);
 
 		// End the request
 		craft()->end();

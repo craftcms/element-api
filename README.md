@@ -200,6 +200,14 @@ Possible values are:
 - `'jsonApi'` – formats data using the [JsonApiSerializer](http://fractal.thephpleague.com/serializers/#jsonapiserializer).
 - A custom serializer instance.
 
+#### `jsonOptions`
+
+The value of the `$options` argument that will be passed to [`json_encode()`](http://php.net/manual/en/function.json-encode.php) when preparing the response. By default no options will be passed.
+
+```php
+'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
+```
+
 ### Dynamic URL Patterns and Endpoint Configurations
 
 URL patterns can contain dynamic subpatterns in the format of `<subpatternName:regex>`, where `subpatternName` is the name of the subpattern, and `regex` is a valid regular expression. For example, the URL pattern “`news/<entryId:\d+>.json`” will match URLs like `news/100.json`. You can also use the tokens `{handle}` and `{slug}` within your regular expression, which will be replaced with the appropriate regex patterns for matching handles and  element slugs.

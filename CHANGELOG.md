@@ -6,6 +6,7 @@ Changelog
 ### Added
 - Added the `meta` endpoint config setting.
 - Added the `serializer` endpoint config setting.
+- Added the `jsonOptions` endpoint config setting.
 
 ### Changed
 - Updated Fractal to 0.16.
