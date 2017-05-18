@@ -38,5 +38,17 @@
     "notes": [
       "[Added] Added support for a `resourceKey` endpoint config setting (default is `'data'`)."
     ]
+  },
+  {
+    "version": "1.4.0",
+    "downloadUrl": "https://github.com/craftcms/element-api/archive/1.4.0.zip",
+    "date": "2017-05-18T09:00:00-08:00",
+    "notes": [
+      "[Added] Added a [JSON Feed V1](https://jsonfeed.org/version/1) serializer.",
+      "[Added] Added the `meta` endpoint config setting.",
+      "[Added] Added the `serializer` endpoint config setting.",
+      "[Added] Added the `jsonOptions` endpoint config setting.",
+      "[Improved] Updated Fractal to 0.16."
+    ]
   }
 ]

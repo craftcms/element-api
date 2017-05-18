@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## Unreleased
+## 1.4.0 - 2017-05-18
 
 ### Added
 - Added a [JSON Feed V1](https://jsonfeed.org/version/1) serializer.
