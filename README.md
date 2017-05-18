@@ -362,8 +362,8 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
     'elementType' => 'Entry',
     'criteria' => ['section' => 'news'],
     'transformer' => function(EntryModel $entry) {
-		$image = $entry->photos->first();
-		$author = $entry->getAuthor();
+        $image = $entry->photos->first();
+        $author = $entry->getAuthor();
 
         return [
             'id' => (string) $entry->id,
@@ -372,15 +372,15 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
             'content_html' => (string) $entry->body,
             'summary' => $entry->summary,
             'image' => $image ? $image->url : null,
-			'date_published' => $entry->postDate->format(\DateTime::ATOM),
-			'date_modified' => $entry->dateUpdated->format(\DateTime::ATOM),
+            'date_published' => $entry->postDate->format(\DateTime::ATOM),
+            'date_modified' => $entry->dateUpdated->format(\DateTime::ATOM),
             'author' => ['name' => $author->name],
             'tags' => array_map('strval', $entry->tags->find()),
         ];
     },
-	'meta' => [
-		'description' => 'Recent news from Happy Lager',
-	],
+    'meta' => [
+        'description' => 'Recent news from Happy Lager',
+    ],
     'jsonOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
 ]
 ```
