@@ -109,15 +109,11 @@ class Plugin extends \craft\base\Plugin
             $config['class'] = ElementResourceAdapter::class;
         }
 
-        $resourceKey = ArrayHelper::remove($config, 'resourceKey');
+        /** @var ResourceInterface|ResourceAdapterInterface $resource */
         $resource = Craft::createObject($config);
 
         if ($resource instanceof ResourceAdapterInterface) {
             $resource = $resource->getResource();
-        }
-
-        if ($resource instanceof ResourceAbstract && $resourceKey !== null) {
-            $resource->setResourceKey($resourceKey);
         }
 
         return $resource;

@@ -62,6 +62,11 @@ class ElementResourceAdapter extends Object implements ResourceAdapterInterface
      */
     public $pageParam = 'page';
 
+    /**
+     * @var string|null The resource key that should be set on the resource
+     */
+    public $resourceKey;
+
     // Public Methods
     // =========================================================================
 
@@ -142,7 +147,7 @@ class ElementResourceAdapter extends Object implements ResourceAdapterInterface
                 throw new Exception('No element exists that matches the endpoint criteria');
             }
 
-            return new Item($element, $transformer);
+            return new Item($element, $transformer, $this->resourceKey);
         }
 
         if ($this->paginate) {
@@ -155,12 +160,12 @@ class ElementResourceAdapter extends Object implements ResourceAdapterInterface
             $elements = $query->all();
             $paginator->setCount(count($elements));
 
-            $resource = new Collection($elements, $transformer);
+            $resource = new Collection($elements, $transformer, $this->resourceKey);
             $resource->setPaginator($paginator);
 
             return $resource;
         }
 
-        return new Collection($query, $transformer);
+        return new Collection($query, $transformer, $this->resourceKey);
     }
 }
