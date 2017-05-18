@@ -10,7 +10,8 @@
         }
     ],
     "config": {
-        "vendor-dir": "elementapi/vendor"
+        "vendor-dir": "elementapi/vendor",
+        "optimize-autoloader": true
     },
     "require": {
         "league/fractal": "^0.16"

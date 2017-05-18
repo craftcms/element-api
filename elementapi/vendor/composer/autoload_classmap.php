@@ -6,4 +6,25 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname(dirname($vendorDir));
 
 return array(
+    'League\\Fractal\\Manager' => $vendorDir . '/league/fractal/src/Manager.php',
+    'League\\Fractal\\Pagination\\Cursor' => $vendorDir . '/league/fractal/src/Pagination/Cursor.php',
+    'League\\Fractal\\Pagination\\CursorInterface' => $vendorDir . '/league/fractal/src/Pagination/CursorInterface.php',
+    'League\\Fractal\\Pagination\\DoctrinePaginatorAdapter' => $vendorDir . '/league/fractal/src/Pagination/DoctrinePaginatorAdapter.php',
+    'League\\Fractal\\Pagination\\IlluminatePaginatorAdapter' => $vendorDir . '/league/fractal/src/Pagination/IlluminatePaginatorAdapter.php',
+    'League\\Fractal\\Pagination\\PagerfantaPaginatorAdapter' => $vendorDir . '/league/fractal/src/Pagination/PagerfantaPaginatorAdapter.php',
+    'League\\Fractal\\Pagination\\PaginatorInterface' => $vendorDir . '/league/fractal/src/Pagination/PaginatorInterface.php',
+    'League\\Fractal\\Pagination\\PhalconFrameworkPaginatorAdapter' => $vendorDir . '/league/fractal/src/Pagination/PhalconFrameworkPaginatorAdapter.php',
+    'League\\Fractal\\Pagination\\ZendFrameworkPaginatorAdapter' => $vendorDir . '/league/fractal/src/Pagination/ZendFrameworkPaginatorAdapter.php',
+    'League\\Fractal\\ParamBag' => $vendorDir . '/league/fractal/src/ParamBag.php',
+    'League\\Fractal\\Resource\\Collection' => $vendorDir . '/league/fractal/src/Resource/Collection.php',
+    'League\\Fractal\\Resource\\Item' => $vendorDir . '/league/fractal/src/Resource/Item.php',
+    'League\\Fractal\\Resource\\NullResource' => $vendorDir . '/league/fractal/src/Resource/NullResource.php',
+    'League\\Fractal\\Resource\\ResourceAbstract' => $vendorDir . '/league/fractal/src/Resource/ResourceAbstract.php',
+    'League\\Fractal\\Resource\\ResourceInterface' => $vendorDir . '/league/fractal/src/Resource/ResourceInterface.php',
+    'League\\Fractal\\Scope' => $vendorDir . '/league/fractal/src/Scope.php',
+    'League\\Fractal\\Serializer\\ArraySerializer' => $vendorDir . '/league/fractal/src/Serializer/ArraySerializer.php',
+    'League\\Fractal\\Serializer\\DataArraySerializer' => $vendorDir . '/league/fractal/src/Serializer/DataArraySerializer.php',
+    'League\\Fractal\\Serializer\\JsonApiSerializer' => $vendorDir . '/league/fractal/src/Serializer/JsonApiSerializer.php',
+    'League\\Fractal\\Serializer\\SerializerAbstract' => $vendorDir . '/league/fractal/src/Serializer/SerializerAbstract.php',
+    'League\\Fractal\\TransformerAbstract' => $vendorDir . '/league/fractal/src/TransformerAbstract.php',
 );
