@@ -1,7 +1,17 @@
 Changelog
 =========
 
-## Unreleased
+## 2.2.0 - 2017-05-18
+
+### Added
+- Added a [JSON Feed V1](https://jsonfeed.org/version/1) serializer.
+- Added the `meta` endpoint config setting.
+- Added the `serializer` endpoint config setting.
+- Added the `jsonOptions` endpoint config setting.
+- Added the `pretty` endpoint config setting.
+
+### Changed
+- Updated Fractal to 0.16.
 
 ### Fixed
 - Fixed a bug where pagination URLs contained an extra `pattern` query param.
