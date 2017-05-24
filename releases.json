@@ -50,5 +50,14 @@
       "[Added] Added the `jsonOptions` endpoint config setting.",
       "[Improved] Updated Fractal to 0.16."
     ]
+  },
+  {
+    "version": "1.5.0",
+    "downloadUrl": "https://github.com/craftcms/element-api/archive/1.5.0.zip",
+    "date": "2017-05-24T14:00:00-08:00",
+    "notes": [
+      "[Added] Added the `cache` endpoint config setting.",
+      "[Fixed] Fixed a bug where endpoint were sending JSON headers even if an exception occurred and the HTML error view was returned."
+    ]
   }
 ]
