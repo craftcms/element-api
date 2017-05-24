@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## Unreleased
+## 2.3.0 - 2017-05-24
 
 ### Added
 - Added the `cache` endpoint config setting.
