@@ -47,11 +47,25 @@ class ElementApiController extends BaseController
 				'first' => false,
 				'transformer' => [
 					'class' => 'Craft\ElementApi_ElementTransformer',
-				]
+				],
+				'cache' => false,
 			],
 			craft()->config->get('defaults', 'elementapi'),
 			$config
 		);
+
+		// Before anything else, check the cache
+		if ($config['cache']) {
+			$cacheKey = 'elementapi:'.craft()->request->getPath().':'.craft()->request->getQueryStringWithoutPath();
+			$cache = craft()->cache->get($cacheKey);
+
+			if ($cache !== false)
+			{
+				JsonHelper::sendJsonHeaders();
+				echo $cache;
+				craft()->end();
+			}
+		}
 
 		if ($config['pageParam'] === 'p')
 		{
@@ -157,13 +171,33 @@ class ElementApiController extends BaseController
 			'data' => $data,
 		]));
 
-		// Serialize the data and output it
+		// Serialize and JSON-encode the data
 		$data = $data->toArray();
 		JsonHelper::sendJsonHeaders();
 		$jsonOptions = isset($config['jsonOptions']) ? $config['jsonOptions'] : 0;
-		echo json_encode($data, $jsonOptions);
+		$output = json_encode($data, $jsonOptions);
 
-		// End the request
+		// Cache it?
+		if ($config['cache'])
+		{
+			if (is_int($config['cache']))
+			{
+				$expire = $config['cache'];
+			}
+			else if (is_string($config['cache']))
+			{
+				$expire = DateTimeHelper::timeFormatToSeconds($config['cache']);
+			}
+			else
+			{
+				$expire = null;
+			}
+
+			craft()->cache->set($cacheKey, $output, $expire);
+		}
+
+		// Output and the request
+		echo $output;
 		craft()->end();
 	}
 

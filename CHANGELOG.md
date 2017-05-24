@@ -3,6 +3,9 @@ Changelog
 
 ## Unreleased
 
+### Added
+- Added the `cache` endpoint config setting.
+
 ### Fixed
 - Fixed a bug where endpoint were sending JSON headers even if an exception occurred and the HTML error view was returned. ([#39](https://github.com/craftcms/element-api/issues/39))
 
