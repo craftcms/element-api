@@ -149,8 +149,6 @@ class ElementApiController extends BaseController
 		    $resource->setMeta($config['meta']);
         }
 
-        JsonHelper::sendJsonHeaders();
-
 		$data = $fractal->createData($resource);
 
 		// Fire an 'onBeforeSendData' event
@@ -158,8 +156,11 @@ class ElementApiController extends BaseController
 			'data' => $data,
 		]));
 
+		// Serialize the data and output it
+		$data = $data->toArray();
+		JsonHelper::sendJsonHeaders();
 		$jsonOptions = isset($config['jsonOptions']) ? $config['jsonOptions'] : 0;
-		echo json_encode($data->toArray(), $jsonOptions);
+		echo json_encode($data, $jsonOptions);
 
 		// End the request
 		craft()->end();
