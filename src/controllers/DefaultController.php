@@ -15,6 +15,7 @@ use craft\elementapi\DataEvent;
 use craft\elementapi\JsonFeedV1Serializer;
 use craft\elementapi\Plugin;
 use craft\helpers\ArrayHelper;
+use craft\helpers\ConfigHelper;
 use craft\web\Controller;
 use League\Fractal\Manager;
 use League\Fractal\Serializer\ArraySerializer;
@@ -23,10 +24,9 @@ use League\Fractal\Serializer\JsonApiSerializer;
 use League\Fractal\Serializer\SerializerAbstract;
 use ReflectionFunction;
 use yii\base\InvalidConfigException;
-use yii\base\Response;
 use yii\web\JsonResponseFormatter;
 use yii\web\NotFoundHttpException;
-use yii\web\Response as WebResponse;
+use yii\web\Response;
 
 /**
  * Element API controller.
@@ -68,10 +68,30 @@ class DefaultController extends Controller
     {
         $plugin = Plugin::getInstance();
         $config = $plugin->getEndpoint($pattern);
+        $request = Craft::$app->getRequest();
+        $response = Craft::$app->getResponse();
 
         if (is_callable($config)) {
             $params = Craft::$app->getUrlManager()->getRouteParams();
             $config = $this->_callWithParams($config, $params);
+        }
+
+        // Before anything else, check the cache
+        $cache = ArrayHelper::remove($config, 'cache', false);
+
+        if ($cache) {
+            $cacheKey = 'elementapi:'.$request->getPathInfo().':'.$request->getQueryStringWithoutPath();
+            $cacheService = Craft::$app->getCache();
+
+            if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
+                // Set the JSON headers
+                (new JsonResponseFormatter())->format($response);
+
+                // Set the cached JSON on the response and return
+                $response->format = Response::FORMAT_RAW;
+                $response->content = $cachedContent;
+                return $response;
+            }
         }
 
         // Does the config specify the serializer?
@@ -116,14 +136,32 @@ class DefaultController extends Controller
             'data' => $data,
         ]));
 
-        // Override the JSON response formatter options
-        Craft::$app->getResponse()->formatters[WebResponse::FORMAT_JSON] = [
-            'class' => JsonResponseFormatter::class,
+        // Create a JSON response formatter with custom options
+        $formatter = new JsonResponseFormatter([
             'encodeOptions' => $jsonOptions,
             'prettyPrint' => $pretty,
-        ];
+        ]);
 
-        return $this->asJson($data->toArray());
+        // Manually format the response ahead of time, so we can access and cache the JSON
+        $response->data = $data->toArray();
+        $formatter->format($response);
+        $response->data = null;
+        $response->format = Response::FORMAT_RAW;
+
+        // Cache it?
+        if ($cache) {
+            if ($cache !== true) {
+                $expire = ConfigHelper::durationInSeconds($cache);
+            } else {
+                $expire = null;
+            }
+            /** @noinspection PhpUndefinedVariableInspection */
+            $cacheService->set($cacheKey, $response->content, $expire);
+        }
+
+        // Don't double-encode the data
+        $response->format = Response::FORMAT_RAW;
+        return $response;
     }
 
     // Private Methods
