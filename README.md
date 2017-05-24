@@ -29,7 +29,7 @@ namespace Craft;
 return [
     'endpoints' => [
         'news.json' => [
-            'elementType' => 'Entry',
+            'elementType' => ElementType::Entry,
             'criteria' => ['section' => 'news'],
             'transformer' => function(EntryModel $entry) {
                 return [
@@ -42,7 +42,7 @@ return [
         ],
         'news/<entryId:\d+>.json' => function($entryId) {
             return [
-                'elementType' => 'Entry',
+                'elementType' => ElementType::Entry,
                 'criteria' => ['id' => $entryId],
                 'first' => true,
                 'transformer' => function(EntryModel $entry) {
@@ -68,7 +68,7 @@ Endpoint configuration arrays can contain the following settings:
 The element type class name that the API should be associated with. Possible values are `Asset`, `Category`, `Entry`, `GlobalSet`, `MatrixBlock`, `Tag`, and `User`, as well as any plugin-based element type class names like `SproutForms_Entry`.
 
 ```php
-'elementType' => 'Entry',
+'elementType' => ElementType::Entry,
 ````
 
 #### `criteria`
@@ -110,7 +110,7 @@ Note that if you return a Transformer class configuration or instance, you will 
     require craft()->path->getConfigPath().'MyTransformerClassName.php';
 
     return [
-        'elementType' => 'Entry',
+        'elementType' => ElementType::Entry,
         'transformer' => 'MyTransformerClassName',
     ];
 }
@@ -218,7 +218,7 @@ Endpoint configurations can also be dynamic, by using a function instead of an a
 ```php
 'news/<entryId:\d+>.json' => function($entryId) {
     return [
-        'elementType' => 'Entry',
+        'elementType' => ElementType::Entry,
         'criteria' => ['id' => $entryId],
         'first' => true,
     ];
@@ -233,7 +233,7 @@ You can specify default values for your endpoint configuration settings by addin
 ```php
 return [
     'defaults' => [
-        'elementType' => 'Entry',
+        'elementType' => ElementType::Entry,
         'elementsPerPage' => 10,
         'pageParam' => 'pg',
         'transformer' => function(EntryModel $entry) {
@@ -359,7 +359,7 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
 ```php
 'feed.json' => [
     'serializer' => 'jsonFeed',
-    'elementType' => 'Entry',
+    'elementType' => ElementType::Entry,
     'criteria' => ['section' => 'news'],
     'transformer' => function(EntryModel $entry) {
         $image = $entry->photos->first();
