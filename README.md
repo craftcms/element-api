@@ -219,6 +219,23 @@ Shortcut for adding `JSON_PRETTY_PRINT` to `jsonOptions`.
 'pretty' => true,
 ```
 
+#### `cache`
+
+Whether the output should be cached, and for how long.
+
+Possible values are:
+
+- `false` _(default)_ – results are never cached
+- `true` – results are cached for the duration specified by the `cacheDuration` Craft config setting
+- an integer – results are cached for the given number of seconds
+- a [interval spec](http://www.php.net/manual/en/dateinterval.construct.php) string – results are cached for the duration specified
+
+Note that the `onBeforeSendData` event does not get triggered when the cache is warm.
+
+```php
+'cache' => 'PT1M', // one minute
+```
+
 ### Dynamic URL Patterns and Endpoint Configurations
 
 URL patterns can contain dynamic subpatterns in the format of `<subpatternName:regex>`, where `subpatternName` is the name of the subpattern, and `regex` is a valid regular expression. For example, the URL pattern “`news/<entryId:\d+>.json`” will match URLs like `news/100.json`. You can also use the tokens `{handle}` and `{slug}` within your regular expression, which will be replaced with the appropriate regex patterns for matching handles and  element slugs.

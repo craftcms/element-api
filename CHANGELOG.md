@@ -45,6 +45,14 @@ Changelog
 ### Deprecated
 - Deprecated the `first` endpoint config setting. Use `one` instead.
 
+## 1.5.0 - 2017-05-24
+
+### Added
+- Added the `cache` endpoint config setting.
+
+### Fixed
+- Fixed a bug where endpoint were sending JSON headers even if an exception occurred and the HTML error view was returned. ([#39](https://github.com/craftcms/element-api/issues/39))
+
 ## 1.4.0 - 2017-05-18
 
 ### Added
