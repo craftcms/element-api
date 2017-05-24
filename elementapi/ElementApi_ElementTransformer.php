@@ -5,7 +5,7 @@ use League\Fractal\TransformerAbstract;
 
 class ElementApi_ElementTransformer extends TransformerAbstract
 {
-	public function transform(BaseElementModel $element)
+    public function transform(BaseElementModel $element)
 	{
 		$values = array();
 
