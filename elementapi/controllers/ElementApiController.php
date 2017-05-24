@@ -79,25 +79,25 @@ class ElementApiController extends BaseController
 		$fractal = new Manager();
 
 		// Set the serializer
-        $serializer = isset($config['serializer']) ? $config['serializer'] : null;
-        if (!$serializer instanceof SerializerAbstract)
-        {
-            switch ($serializer)
-            {
-                case 'dataArray':
-                    $serializer = new DataArraySerializer();
-                    break;
-                case 'jsonApi':
-                    $serializer = new JsonApiSerializer();
-                    break;
-                case 'jsonFeed':
-                    Craft::import('plugins.elementapi.ElementApi_JsonFeedV1Serializer');
-                    $serializer = new ElementApi_JsonFeedV1Serializer();
-                    break;
-                default:
-                    $serializer = new ArraySerializer();
-            }
-        }
+		$serializer = isset($config['serializer']) ? $config['serializer'] : null;
+		if (!$serializer instanceof SerializerAbstract)
+		{
+			switch ($serializer)
+			{
+				case 'dataArray':
+					$serializer = new DataArraySerializer();
+					break;
+				case 'jsonApi':
+					$serializer = new JsonApiSerializer();
+					break;
+				case 'jsonFeed':
+					Craft::import('plugins.elementapi.ElementApi_JsonFeedV1Serializer');
+					$serializer = new ElementApi_JsonFeedV1Serializer();
+					break;
+				default:
+					$serializer = new ArraySerializer();
+			}
+		}
 		$fractal->setSerializer($serializer);
 
 		// Define the transformer
@@ -147,8 +147,8 @@ class ElementApiController extends BaseController
 		// Set any custom meta values
 		if (isset($config['meta']))
 		{
-		    $resource->setMeta($config['meta']);
-        }
+			$resource->setMeta($config['meta']);
+		}
 
 		$data = $fractal->createData($resource);
 
