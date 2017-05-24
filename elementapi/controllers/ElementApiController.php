@@ -16,8 +16,7 @@ use League\Fractal\TransformerAbstract;
 class ElementApiController extends BaseController
 {
 	/**
-	 * @var Allows anonymous access to this controller's actions.
-	 * @access protected
+	 * @var bool Allows anonymous access to this controller's actions.
 	 */
 	protected $allowAnonymous = true;
 
@@ -46,13 +45,15 @@ class ElementApiController extends BaseController
 				'pageParam' => 'page',
 				'elementsPerPage' => 100,
 				'first' => false,
-				'transformer' => 'Craft\ElementApi_ElementTransformer',
+				'transformer' => [
+					'class' => 'Craft\ElementApi_ElementTransformer',
+				]
 			],
 			craft()->config->get('defaults', 'elementapi'),
 			$config
 		);
 
-		if ($config['pageParam'] == 'p')
+		if ($config['pageParam'] === 'p')
 		{
 			throw new Exception('The pageParam setting cannot be set to "p" because that’s the parameter Craft uses to check the requested path.');
 		}
@@ -169,8 +170,8 @@ class ElementApiController extends BaseController
 	/**
 	 * Calls a given function. If any params are given, they will be mapped to the function's arguments.
 	 *
-	 * @param $func The function to call
-	 * @param $params Any params that should be mapped to function arguments
+	 * @param callable $func   The function to call
+	 * @param array    $params Any params that should be mapped to function arguments
 	 *
 	 * @return mixed The result of the function
 	 */
