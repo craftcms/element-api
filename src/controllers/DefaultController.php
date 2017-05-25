@@ -129,6 +129,13 @@ class DefaultController extends Controller
         }
 
         $fractal->setSerializer($serializer);
+
+        // Set the includes
+        $fractal->parseIncludes($config['includes'] ?? []);
+
+        // Set the excludes
+        $fractal->parseExcludes($config['excludes'] ?? []);
+
         $data = $fractal->createData($resource);
 
         // Fire a 'beforeSendData' event

@@ -173,7 +173,7 @@ The query string param name that should be used to identify which page is being 
 
 Note that it cannot be set to `'p'` because that’s the parameter Craft uses to check the requested path.
 
-### `resourceKey`
+#### `resourceKey`
 
 The key that the elements should be nested under in the response data. By default this will be `'data'`.
 
@@ -202,6 +202,88 @@ Possible values are:
 - `'jsonApi'` – formats data using the [JsonApiSerializer](http://fractal.thephpleague.com/serializers/#jsonapiserializer).
 - `'jsonFeed'` – formats data based on [JSON Feed V1](https://jsonfeed.org/version/1) (see the [JSON Feed](#json-feed) example below).
 - A custom serializer instance.
+
+#### `includes`
+
+The [transformers](http://fractal.thephpleague.com/transformers/) that should be included to transform nested entities in the returned data.
+Includes need to be defined on the Transformer and will otherwise be ignore. The default Element API Transformer has no includes defined, this option will have to be used in tandem with your own Transformer-classes.
+
+Add it to the config of the endpoint.
+
+```php
+'includes' => [
+    'images',
+]
+```
+
+And create your own Transformer.
+
+```php
+final class SomeTransformer extends TransformerAbstract
+{
+    /**
+     * @var array
+     */
+    protected $availableIncludes = [
+        'images',
+    ];
+    
+    /**
+     * @param EntryModel $entry
+     *
+     * @return array
+     */
+    public function transform(EntryModel $entry)
+    {
+        ...
+    }
+    
+    /**
+     * @param EntryModel $entry
+     *
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeImages(EntryModel $entry)
+    {
+        $images = $entry->entry_images_field->find();
+        
+        return $this->collection(
+            $images,
+            new ImageTransformer()
+        );
+    }
+}
+    
+```
+
+#### `excludes`
+
+Similar to including nested Transformers also allow to exclude nested data. This is mainly convenient when a default include is defined in a Transformer and for a specific endpoint you don not want that include. Have a look at the [documentation](http://fractal.thephpleague.com/transformers/) for more details.
+
+Assuming a Transformer with a default include.
+
+```php
+final class SomeTransformer extends TransformerAbstract
+{
+    /**
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'images',
+    ];
+    
+    ...
+}
+    
+```
+
+Add the exclude to the config of the endpoint.
+
+```php
+'excludes' => [
+    'images',
+]
+```
 
 #### `jsonOptions`
 
