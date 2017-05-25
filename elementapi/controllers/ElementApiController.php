@@ -114,6 +114,14 @@ class ElementApiController extends BaseController
 		}
 		$fractal->setSerializer($serializer);
 
+		// Set the includes
+		$includes = isset($config['includes']) ? $config['includes'] : [];
+		$fractal->parseIncludes($includes);
+
+		// Set the excludes
+		$excludes = isset($config['excludes']) ? $config['excludes'] : [];
+		$fractal->parseExcludes($excludes);
+
 		// Define the transformer
 		if (is_callable($config['transformer']) || $config['transformer'] instanceof TransformerAbstract)
 		{
