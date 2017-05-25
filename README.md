@@ -173,7 +173,7 @@ The query string param name that should be used to identify which page is being 
 
 Note that it cannot be set to `'p'` because that’s the parameter Craft uses to check the requested path.
 
-### `resourceKey`
+#### `resourceKey`
 
 The key that the elements should be nested under in the response data. By default this will be `'data'`.
 
@@ -202,6 +202,45 @@ Possible values are:
 - `'jsonApi'` – formats data using the [JsonApiSerializer](http://fractal.thephpleague.com/serializers/#jsonapiserializer).
 - `'jsonFeed'` – formats data based on [JSON Feed V1](https://jsonfeed.org/version/1) (see the [JSON Feed](#json-feed) example below).
 - A custom serializer instance.
+
+#### `includes`
+
+The [include names](http://fractal.thephpleague.com/transformers/#including-data) that should be included for the current request, if any.
+
+```php
+'includes' => craft()->request->getQuery('include'),
+```
+
+Note that this setting requires a custom transformer class that’s prepped to handle includes:
+
+```php
+class MyTransformerClassName extends TransformerAbstract
+{
+    protected $availableIncludes = ['author'];
+
+    public function includeAuthor(EntryModel $entry)
+    {
+        return $this->item($entry->author, function(UserModel $author) {
+            return [
+                'id' => $author->id,
+                'name' => $author->name,
+            ];
+        });
+    }
+
+    // ...
+}
+```
+
+#### `excludes`
+
+The [include names](http://fractal.thephpleague.com/transformers/#including-data) that should be excluded for the current request, which would otherwise have been included (e.g. if they were listed as a default include), if any.
+
+```php
+'excludes' => 'author',
+```
+
+Like [`includes`](#includes), this setting requires a custom transformer class.
 
 #### `jsonOptions`
 
