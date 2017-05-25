@@ -205,85 +205,42 @@ Possible values are:
 
 #### `includes`
 
-The [transformers](http://fractal.thephpleague.com/transformers/) that should be included to transform nested entities in the returned data.
-Includes need to be defined on the Transformer and will otherwise be ignore. The default Element API Transformer has no includes defined, this option will have to be used in tandem with your own Transformer-classes.
-
-Add it to the config of the endpoint.
+The [include names](http://fractal.thephpleague.com/transformers/#including-data) that should be included for the current request, if any.
 
 ```php
-'includes' => [
-    'images',
-]
+'includes' => Craft::$app->request->getQueryParam('include'),
 ```
 
-And create your own Transformer.
+Note that this setting requires a custom transformer class that’s prepped to handle includes:
 
 ```php
-final class SomeTransformer extends TransformerAbstract
+class MyTransformerClassName extends TransformerAbstract
 {
-    /**
-     * @var array
-     */
-    protected $availableIncludes = [
-        'images',
-    ];
-    
-    /**
-     * @param EntryModel $entry
-     *
-     * @return array
-     */
-    public function transform(EntryModel $entry)
+    protected $availableIncludes = ['author'];
+
+    public function includeAuthor(Entry $entry)
     {
-        ...
+        return $this->item($entry->author, function(User $author) {
+            return [
+                'id' => $author->id,
+                'name' => $author->name,
+            ];
+        });
     }
-    
-    /**
-     * @param EntryModel $entry
-     *
-     * @return \League\Fractal\Resource\Collection
-     */
-    public function includeImages(EntryModel $entry)
-    {
-        $images = $entry->entry_images_field->find();
-        
-        return $this->collection(
-            $images,
-            new ImageTransformer()
-        );
-    }
+
+    // ...
 }
-    
 ```
 
 #### `excludes`
 
-Similar to including nested Transformers also allow to exclude nested data. This is mainly convenient when a default include is defined in a Transformer and for a specific endpoint you don not want that include. Have a look at the [documentation](http://fractal.thephpleague.com/transformers/) for more details.
-
-Assuming a Transformer with a default include.
+The [include names](http://fractal.thephpleague.com/transformers/#including-data) that should be excluded for the current request, which would otherwise have been included (e.g. if they were listed as a default include), if any.
 
 ```php
-final class SomeTransformer extends TransformerAbstract
-{
-    /**
-     * @var array
-     */
-    protected $defaultIncludes = [
-        'images',
-    ];
-    
-    ...
-}
-    
+'excludes' => 'author',
 ```
 
-Add the exclude to the config of the endpoint.
-
-```php
-'excludes' => [
-    'images',
-]
-```
+Like [`includes`](#includes), this setting requires a custom transformer class.
 
 #### `jsonOptions`
 
