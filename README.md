@@ -225,13 +225,12 @@ class MyTransformerClassName extends TransformerAbstract
             ];
         });
     }
-    
+
     // ...
 }
 ```
 
 #### `excludes`
-
 
 The [include names](http://fractal.thephpleague.com/transformers/#including-data) that should be excluded for the current request, which would otherwise have been included (e.g. if they were listed as a default include), if any.
 
