@@ -171,7 +171,7 @@ The query string param name that should be used to identify which page is being 
 
 Note that it cannot be set to `'p'` because that’s the parameter Craft uses to check the requested path.
 
-### `resourceKey`
+#### `resourceKey`
 
 The key that the elements should be nested under in the response data. By default this will be `'data'`.
 
