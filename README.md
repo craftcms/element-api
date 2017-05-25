@@ -208,7 +208,7 @@ Possible values are:
 The [include names](http://fractal.thephpleague.com/transformers/#including-data) that should be included for the current request, if any.
 
 ```php
-'includes' => craft()->request->getQuery('include'),
+'includes' => Craft::$app->request->getQueryParam('include'),
 ```
 
 Note that this setting requires a custom transformer class that’s prepped to handle includes:
@@ -218,9 +218,9 @@ class MyTransformerClassName extends TransformerAbstract
 {
     protected $availableIncludes = ['author'];
 
-    public function includeAuthor(EntryModel $entry)
+    public function includeAuthor(Entry $entry)
     {
-        return $this->item($entry->author, function(UserModel $author) {
+        return $this->item($entry->author, function(User $author) {
             return [
                 'id' => $author->id,
                 'name' => $author->name,
