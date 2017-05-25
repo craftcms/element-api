@@ -97,9 +97,11 @@ class DefaultController extends Controller
         // Does the config specify the serializer?
         $serializer = is_array($config) ? ArrayHelper::remove($config, 'serializer') : null;
 
-        // Does the config specify custom JSON options?
+        // Extract config settings that aren't meant for createResource()
         $jsonOptions = (is_array($config) ? ArrayHelper::remove($config, 'jsonOptions') : null) ?? JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
         $pretty = (is_array($config) ? ArrayHelper::remove($config, 'pretty') : null) ?? false;
+        $includes = (is_array($config) ? ArrayHelper::remove($config, 'includes') : null) ?? [];
+        $excludes = (is_array($config) ? ArrayHelper::remove($config, 'excludes') : null) ?? [];
 
         // Get the data resource
         try {
@@ -130,11 +132,9 @@ class DefaultController extends Controller
 
         $fractal->setSerializer($serializer);
 
-        // Set the includes
-        $fractal->parseIncludes($config['includes'] ?? []);
-
-        // Set the excludes
-        $fractal->parseExcludes($config['excludes'] ?? []);
+        // Parse includes/excludes
+        $fractal->parseIncludes($includes);
+        $fractal->parseExcludes($excludes);
 
         $data = $fractal->createData($resource);
 
