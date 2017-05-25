@@ -218,7 +218,7 @@ class MyTransformerClassName extends TransformerAbstract
 
     public function includeAuthor(EntryModel $entry)
     {
-        return $this->item($entry->author, function(UserModel($author) {
+        return $this->item($entry->author, function(UserModel $author) {
             return [
                 'id' => $author->id,
                 'name' => $author->name,
