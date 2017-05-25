@@ -1,6 +1,11 @@
 Changelog
 =========
 
+## 1.6.0 - 2017-05-25
+
+### Added
+- Added the `include` and `exclude` endpoint config settings. ([#41](https://github.com/craftcms/element-api/pull/41))
+
 ## 1.5.0 - 2017-05-24
 
 ### Added

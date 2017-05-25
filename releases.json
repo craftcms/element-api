@@ -59,5 +59,13 @@
       "[Added] Added the `cache` endpoint config setting.",
       "[Fixed] Fixed a bug where endpoint were sending JSON headers even if an exception occurred and the HTML error view was returned."
     ]
+  },
+  {
+    "version": "1.6.0",
+    "downloadUrl": "https://github.com/craftcms/element-api/archive/1.6.0.zip",
+    "date": "2017-05-25T06:00:00-08:00",
+    "notes": [
+      "Added the `include` and `exclude` endpoint config settings."
+    ]
   }
 ]
