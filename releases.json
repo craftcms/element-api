@@ -65,7 +65,7 @@
     "downloadUrl": "https://github.com/craftcms/element-api/archive/1.6.0.zip",
     "date": "2017-05-25T06:00:00-08:00",
     "notes": [
-      "Added the `include` and `exclude` endpoint config settings."
+      "[Added] Added the `include` and `exclude` endpoint config settings."
     ]
   }
 ]
