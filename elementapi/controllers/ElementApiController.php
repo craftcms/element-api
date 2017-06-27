@@ -77,10 +77,23 @@ class ElementApiController extends BaseController
 			throw new Exception('Element API configs must specify the elementType.');
 		}
 
-		/** @var ElementCriteriaModel $criteria */
-		$criteria = craft()->elements->getCriteria($config['elementType'], [
-			'limit' => null
-		]);
+		switch($config['resource']) {
+            case "element":
+                /** @var ElementCriteriaModel $criteria */
+                $criteria = craft()->elements->getCriteria($config['resourceType'], [
+                    'limit' => null
+                ]);
+
+                break;
+
+            case "section":
+                /** @var SectionModel $criteria */
+                $criteria = craft()->sections->getSectionsByType($config['resourceType'], [
+                    'limit' => null
+                ]);
+
+                break;
+        }
 
 		if (!empty($config['criteria']))
 		{
