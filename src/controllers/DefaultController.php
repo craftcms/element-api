@@ -106,7 +106,7 @@ class DefaultController extends Controller
         // Get the data resource
         try {
             $resource = $plugin->createResource($config);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new NotFoundHttpException(null, 0, $e);
         }
 
