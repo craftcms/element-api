@@ -3,6 +3,8 @@ Changelog
 
 ## 2.4.1 - 2017-07-07
 
+> {note} You will need to rename your Element API config file to `element-api.php` when updating to Craft 3 Beta 20+ and Element API 2.4.1+.
+
 ### Changed
 - Craft 3 Beta 20 compatibility.
 
