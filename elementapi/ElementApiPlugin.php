@@ -56,7 +56,7 @@ class ElementApiPlugin extends BasePlugin
 	 */
 	public function getDocumentationUrl()
 	{
-		return $this->getPluginUrl().'/blob/v1/README.md';
+		return $this->getPluginUrl().'/README.md';
 	}
 
 	/**
