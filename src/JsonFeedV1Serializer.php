@@ -19,7 +19,8 @@ class JsonFeedV1Serializer extends ArraySerializer
      */
     public function collection($resourceKey, array $data)
     {
-        return ['items' => $data];
+        $resourceKey = $resourceKey ? $resourceKey : 'items';
+        return [$resourceKey => $data];
     }
 
     /**
