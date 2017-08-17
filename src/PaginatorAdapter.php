@@ -128,7 +128,6 @@ class PaginatorAdapter implements PaginatorInterface
      */
     public function getUrl($page)
     {
-        $request = Craft::$app->getRequest();
         $params = $this->_getQueryParamsWithoutPath();
         unset($params['pattern']);
         $params[$this->pageParam] = $page;
@@ -143,7 +142,7 @@ class PaginatorAdapter implements PaginatorInterface
      */
     private function _getQueryParamsWithoutPath(): array
     {
-        $queryParams = $this->getQueryParams();
+        $queryParams = Craft::$app->getRequest()->getQueryParams();
         $pathParam = Craft::$app->getConfig()->getGeneral()->pathParam;
 
         unset($queryParams[$pathParam]);
@@ -162,7 +161,7 @@ class PaginatorAdapter implements PaginatorInterface
 
         if (is_numeric($currentPage) && $currentPage > $this->totalPages) {
             $currentPage = $this->totalPages > 0 ? $this->totalPages : 1;
-        } else if (!is_numeric($currentPage) || $currentPage < 0) {
+        } elseif (!is_numeric($currentPage) || $currentPage < 0) {
             $currentPage = 1;
         }
 
