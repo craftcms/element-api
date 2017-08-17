@@ -1,7 +1,7 @@
 {
   "name": "craftcms/element-api",
   "description": "Create a JSON API for your elements in Craft",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "type": "craft-plugin",
   "keywords": [
     "api",
