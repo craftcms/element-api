@@ -139,9 +139,11 @@ class DefaultController extends Controller
         $data = $fractal->createData($resource);
 
         // Fire a 'beforeSendData' event
-        $this->trigger(self::EVENT_BEFORE_SEND_DATA, new DataEvent([
-            'data' => $data,
-        ]));
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_DATA)) {
+            $this->trigger(self::EVENT_BEFORE_SEND_DATA, new DataEvent([
+                'data' => $data,
+            ]));
+        }
 
         // Create a JSON response formatter with custom options
         $formatter = new JsonResponseFormatter([
