@@ -4,9 +4,7 @@ namespace craft\elementapi;
 
 use Craft;
 use craft\events\RegisterUrlRulesEvent;
-use craft\helpers\ArrayHelper;
 use craft\web\UrlManager;
-use League\Fractal\Resource\ResourceAbstract;
 use League\Fractal\Resource\ResourceInterface;
 use yii\base\Event;
 

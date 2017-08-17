@@ -64,7 +64,7 @@ class DefaultController extends Controller
      * @throws InvalidConfigException
      * @throws NotFoundHttpException
      */
-    public function actionIndex(string $pattern)
+    public function actionIndex(string $pattern): Response
     {
         $plugin = Plugin::getInstance();
         $config = $plugin->getEndpoint($pattern);
