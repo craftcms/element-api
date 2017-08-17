@@ -129,11 +129,26 @@ class PaginatorAdapter implements PaginatorInterface
     public function getUrl($page)
     {
         $request = Craft::$app->getRequest();
-        $params = $request->getQueryParamsWithoutPath();
+        $params = $this->_getQueryParamsWithoutPath();
         unset($params['pattern']);
         $params[$this->pageParam] = $page;
 
         return UrlHelper::url($request->getPathInfo(), $params);
+    }
+
+    /**
+     * Returns the request’s query string params, without the path parameter.
+     *
+     * @return string[] The query string, without the path parameter
+     */
+    private function _getQueryParamsWithoutPath(): array
+    {
+        $queryParams = $this->getQueryParams();
+        $pathParam = Craft::$app->getConfig()->getGeneral()->pathParam;
+
+        unset($queryParams[$pathParam]);
+
+        return $queryParams;
     }
 
     /**
