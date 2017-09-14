@@ -1,6 +1,11 @@
 Changelog
 =========
 
+## Unreleased
+
+### Fixed
+- Fixed a deprecation error that occurred on Craft 3 Beta 25 and later. ([craftcms/cms#1983](https://github.com/craftcms/cms/issues/1983))
+
 ## 2.4.2 - 2017-08-17
 
 ### Changed

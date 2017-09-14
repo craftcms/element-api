@@ -166,7 +166,7 @@ class ElementResourceAdapter extends Object implements ResourceAdapterInterface
             $resource = new Collection($elements, $transformer, $this->resourceKey);
             $resource->setPaginator($paginator);
         } else {
-            $resource = new Collection($query, $transformer, $this->resourceKey);
+            $resource = new Collection($query->all(), $transformer, $this->resourceKey);
         }
 
         if ($this->meta !== null) {
