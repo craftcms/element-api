@@ -427,9 +427,9 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
 ```php
 'feed.json' => [
     'serializer' => 'jsonFeed',
-    'elementType' => 'Entry',
+    'elementType' => craft\elements\Entry::class,
     'criteria' => ['section' => 'news'],
-    'transformer' => function(EntryModel $entry) {
+    'transformer' => function(craft\elements\Entry $entry) {
         $image = $entry->photos->first();
 
         return [
