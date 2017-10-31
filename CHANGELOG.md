@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## 2.5.0 (WIP)
+## 2.5.0 - 2017-10-31
 
 ### Added
 - Added support for fetching entry drafts & versions.
