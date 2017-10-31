@@ -3,6 +3,10 @@ Changelog
 
 ## 2.5.0 (WIP)
 
+### Added
+- Added support for fetching entry drafts & versions.
+- Added `craft\elementapi\resources\EntryResource`.
+
 ### Changed
 - Exceptions are now represented as JSON responses, with `error.code` and `error.message` properties.
 - Renamed `craft\elementapi\ElementResourceAdapter` to `craft\elementapi\resources\ElementResource`.
