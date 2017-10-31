@@ -72,6 +72,10 @@ return [
 
 Endpoint configuration arrays can contain the following settings:
 
+#### `class`
+
+The class name of the Fractal resource that should be used to serve the request. If this isn’t set, it will default to `craft\elementapi\resources\ElementResource`. (All of the following configuration settings are specific to that default class.)
+
 #### `elementType` _(Required)_
 
 The class name of the element type that the API should be associated with. Craft’s built-in element type classes are:
