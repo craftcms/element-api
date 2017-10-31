@@ -24,6 +24,7 @@ use League\Fractal\Serializer\JsonApiSerializer;
 use League\Fractal\Serializer\SerializerAbstract;
 use ReflectionFunction;
 use yii\base\InvalidConfigException;
+use yii\web\HttpException;
 use yii\web\JsonResponseFormatter;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -66,83 +67,103 @@ class DefaultController extends Controller
      */
     public function actionIndex(string $pattern): Response
     {
-        $plugin = Plugin::getInstance();
-        $config = $plugin->getEndpoint($pattern);
-        $request = Craft::$app->getRequest();
+        /** @var Response $response */
         $response = Craft::$app->getResponse();
+        $jsonOptions = null;
+        $pretty = false;
+        $cache = false;
+        $statusCode = 200;
+        $statusText = null;
 
-        if (is_callable($config)) {
-            $params = Craft::$app->getUrlManager()->getRouteParams();
-            $config = $this->_callWithParams($config, $params);
-        }
-
-        // Before anything else, check the cache
-        $cache = ArrayHelper::remove($config, 'cache', false);
-
-        if ($cache) {
-            $cacheKey = 'elementapi:'.$request->getPathInfo().':'.$request->getQueryStringWithoutPath();
-            $cacheService = Craft::$app->getCache();
-
-            if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
-                // Set the JSON headers
-                (new JsonResponseFormatter())->format($response);
-
-                // Set the cached JSON on the response and return
-                $response->format = Response::FORMAT_RAW;
-                $response->content = $cachedContent;
-                return $response;
-            }
-        }
-
-        // Does the config specify the serializer?
-        $serializer = is_array($config) ? ArrayHelper::remove($config, 'serializer') : null;
-
-        // Extract config settings that aren't meant for createResource()
-        $jsonOptions = (is_array($config) ? ArrayHelper::remove($config, 'jsonOptions') : null) ?? JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
-        $pretty = (is_array($config) ? ArrayHelper::remove($config, 'pretty') : null) ?? false;
-        $includes = (is_array($config) ? ArrayHelper::remove($config, 'includes') : null) ?? [];
-        $excludes = (is_array($config) ? ArrayHelper::remove($config, 'excludes') : null) ?? [];
-
-        // Get the data resource
         try {
-            $resource = $plugin->createResource($config);
-        } catch (\Throwable $e) {
-            throw new NotFoundHttpException(null, 0, $e);
-        }
+            $plugin = Plugin::getInstance();
+            $config = $plugin->getEndpoint($pattern);
+            $request = Craft::$app->getRequest();
 
-        // Load Fractal
-        $fractal = new Manager();
-
-        // Serialize the data
-        if (!$serializer instanceof SerializerAbstract) {
-            switch ($serializer) {
-                case 'dataArray':
-                    $serializer = new DataArraySerializer();
-                    break;
-                case 'jsonApi':
-                    $serializer = new JsonApiSerializer();
-                    break;
-                case 'jsonFeed':
-                    $serializer = new JsonFeedV1Serializer();
-                    break;
-                default:
-                    $serializer = new ArraySerializer();
+            if (is_callable($config)) {
+                $params = Craft::$app->getUrlManager()->getRouteParams();
+                $config = $this->_callWithParams($config, $params);
             }
-        }
 
-        $fractal->setSerializer($serializer);
+            // Before anything else, check the cache
+            $cache = ArrayHelper::remove($config, 'cache', false);
 
-        // Parse includes/excludes
-        $fractal->parseIncludes($includes);
-        $fractal->parseExcludes($excludes);
+            if ($cache) {
+                $cacheKey = 'elementapi:'.$request->getPathInfo().':'.$request->getQueryStringWithoutPath();
+                $cacheService = Craft::$app->getCache();
 
-        $data = $fractal->createData($resource);
+                if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
+                    // Set the JSON headers
+                    (new JsonResponseFormatter())->format($response);
 
-        // Fire a 'beforeSendData' event
-        if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_DATA)) {
-            $this->trigger(self::EVENT_BEFORE_SEND_DATA, new DataEvent([
-                'data' => $data,
-            ]));
+                    // Set the cached JSON on the response and return
+                    $response->format = Response::FORMAT_RAW;
+                    $response->content = $cachedContent;
+                    return $response;
+                }
+            }
+
+            // Does the config specify the serializer?
+            $serializer = is_array($config) ? ArrayHelper::remove($config, 'serializer') : null;
+
+            // Extract config settings that aren't meant for createResource()
+            $jsonOptions = (is_array($config) ? ArrayHelper::remove($config, 'jsonOptions') : null) ?? JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+            $pretty = (is_array($config) ? ArrayHelper::remove($config, 'pretty') : null) ?? false;
+            $includes = (is_array($config) ? ArrayHelper::remove($config, 'includes') : null) ?? [];
+            $excludes = (is_array($config) ? ArrayHelper::remove($config, 'excludes') : null) ?? [];
+
+            // Get the data resource
+            try {
+                $resource = $plugin->createResource($config);
+            } catch (\Throwable $e) {
+                throw new NotFoundHttpException($e->getMessage() ?: Craft::t('element-api', 'Resource not found'), 0, $e);
+            }
+
+            // Load Fractal
+            $fractal = new Manager();
+
+            // Serialize the data
+            if (!$serializer instanceof SerializerAbstract) {
+                switch ($serializer) {
+                    case 'dataArray':
+                        $serializer = new DataArraySerializer();
+                        break;
+                    case 'jsonApi':
+                        $serializer = new JsonApiSerializer();
+                        break;
+                    case 'jsonFeed':
+                        $serializer = new JsonFeedV1Serializer();
+                        break;
+                    default:
+                        $serializer = new ArraySerializer();
+                }
+            }
+
+            $fractal->setSerializer($serializer);
+
+            // Parse includes/excludes
+            $fractal->parseIncludes($includes);
+            $fractal->parseExcludes($excludes);
+
+            $data = $fractal->createData($resource);
+
+            // Fire a 'beforeSendData' event
+            if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_DATA)) {
+                $this->trigger(self::EVENT_BEFORE_SEND_DATA, new DataEvent([
+                    'data' => $data,
+                ]));
+            }
+
+            $data = $data->toArray();
+        } catch (\Throwable $e) {
+            $data = [
+                'error' => [
+                    'code' => $e instanceof HttpException ? $e->statusCode : $e->getCode(),
+                    'message' => $e->getMessage(),
+                ]
+            ];
+            $statusCode = $e instanceof HttpException ? $e->statusCode : 500;
+            $statusText = $e->getMessage();
         }
 
         // Create a JSON response formatter with custom options
@@ -152,7 +173,7 @@ class DefaultController extends Controller
         ]);
 
         // Manually format the response ahead of time, so we can access and cache the JSON
-        $response->data = $data->toArray();
+        $response->data = $data;
         $formatter->format($response);
         $response->data = null;
         $response->format = Response::FORMAT_RAW;
@@ -170,6 +191,7 @@ class DefaultController extends Controller
 
         // Don't double-encode the data
         $response->format = Response::FORMAT_RAW;
+        $response->setStatusCode($statusCode, $statusText);
         return $response;
     }
 

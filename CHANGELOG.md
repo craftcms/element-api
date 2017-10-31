@@ -4,6 +4,7 @@ Changelog
 ## 2.5.0 (WIP)
 
 ### Changed
+- Exceptions are now represented as JSON responses, with `error.code` and `error.message` properties.
 - Renamed `craft\elementapi\ElementResourceAdapter` to `craft\elementapi\resources\ElementResource`.
 - `craft\elementapi\resources\ElementResource::getElementQuery()` and `getTransformer()` are now protected methods.
 
