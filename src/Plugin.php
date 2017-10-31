@@ -3,6 +3,7 @@
 namespace craft\elementapi;
 
 use Craft;
+use craft\elementapi\resources\ElementResource;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
 use League\Fractal\Resource\ResourceInterface;
@@ -104,7 +105,7 @@ class Plugin extends \craft\base\Plugin
 
         if (!isset($config['class'])) {
             // Default to ElementResourceAdapter
-            $config['class'] = ElementResourceAdapter::class;
+            $config['class'] = ElementResource::class;
         }
 
         /** @var ResourceInterface|ResourceAdapterInterface $resource */

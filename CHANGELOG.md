@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## 2.5.0 (WIP)
+
+### Changed
+- Renamed `craft\elementapi\ElementResourceAdapter` to `craft\elementapi\resources\ElementResource`.
+- `craft\elementapi\resources\ElementResource::getElementQuery()` and `getTransformer()` are now protected methods.
+
 ## 2.4.3 - 2017-09-14
 
 ### Fixed
