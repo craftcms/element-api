@@ -117,7 +117,7 @@ class Plugin extends \craft\base\Plugin
         return $resource;
     }
 
-    // Public Methods
+    // Protected Methods
     // =========================================================================
 
     protected function createSettingsModel()
