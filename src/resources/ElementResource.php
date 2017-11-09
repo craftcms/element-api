@@ -13,9 +13,9 @@ use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\ResourceInterface;
 use League\Fractal\TransformerAbstract;
+use yii\base\BaseObject;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
-use yii\base\Object;
 
 /**
  * Element resource adapter class.
@@ -23,7 +23,7 @@ use yii\base\Object;
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since  2.0
  */
-class ElementResource extends Object implements ResourceAdapterInterface
+class ElementResource extends BaseObject implements ResourceAdapterInterface
 {
     // Properties
     // =========================================================================

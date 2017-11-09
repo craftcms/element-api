@@ -1,5 +1,9 @@
-Changelog
-=========
+# Changelog
+
+## 2.5.1 - 2017-11-09
+
+### Changed
+- PHP 7.2 compatibility. 
 
 ## 2.5.0 - 2017-10-31
 
