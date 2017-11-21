@@ -33,12 +33,6 @@
       "craft\\elementapi\\": "src/"
     }
   },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://asset-packagist.org"
-    }
-  ],
   "extra": {
     "name": "Element API",
     "handle": "element-api",
