@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.5.2- 2017-12-13
+
+### Changed
+- Loosened the Craft CMS version requirement to allow any 3.x version.
+
 ## 2.5.1 - 2017-11-09
 
 ### Changed
