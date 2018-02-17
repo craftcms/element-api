@@ -21,7 +21,7 @@ use yii\base\InvalidConfigException;
  * Element resource adapter class.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since  2.0
+ * @since 2.0
  */
 class ElementResource extends BaseObject implements ResourceAdapterInterface
 {

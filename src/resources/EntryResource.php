@@ -19,7 +19,7 @@ use yii\base\Exception;
  * draft or version.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since  2.0
+ * @since 2.0
  */
 class EntryResource extends ElementResource
 {

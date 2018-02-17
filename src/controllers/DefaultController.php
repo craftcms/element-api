@@ -1,10 +1,9 @@
 <?php
 /**
  * Element API plugin for Craft CMS 3.x
- *
  * Create a JSON API for your elements in Craft.
  *
- * @link      https://pixelandtonic.com/
+ * @link https://pixelandtonic.com/
  * @copyright Copyright (c) 2017 Pixel &amp; Tonic
  */
 
@@ -33,7 +32,7 @@ use yii\web\Response;
  * Element API controller.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since  2.0
+ * @since 2.0
  */
 class DefaultController extends Controller
 {
@@ -60,7 +59,6 @@ class DefaultController extends Controller
      * Returns the requested elements as JSON.
      *
      * @param string $pattern The endpoint URL pattern that was matched
-     *
      * @return Response
      * @throws InvalidConfigException
      * @throws NotFoundHttpException
@@ -201,9 +199,8 @@ class DefaultController extends Controller
     /**
      * Calls a given function. If any params are given, they will be mapped to the function's arguments.
      *
-     * @param callable $func   The function to call
-     * @param array    $params Any params that should be mapped to function arguments
-     *
+     * @param callable $func The function to call
+     * @param array $params Any params that should be mapped to function arguments
      * @return mixed The result of the function
      */
     private function _callWithParams($func, $params)

@@ -1,4 +1,5 @@
 <?php
+
 namespace craft\elementapi;
 
 use Craft;
@@ -9,7 +10,7 @@ use League\Fractal\Pagination\PaginatorInterface;
  * Fractal paginator adapter class.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since  2.0
+ * @since 2.0
  */
 class PaginatorAdapter implements PaginatorInterface
 {
@@ -48,7 +49,7 @@ class PaginatorAdapter implements PaginatorInterface
      *
      * @param integer $elementsPerPage
      * @param integer $totalElements
-     * @param string  $pageParam
+     * @param string $pageParam
      */
     public function __construct($elementsPerPage, $totalElements, $pageParam)
     {
@@ -123,7 +124,6 @@ class PaginatorAdapter implements PaginatorInterface
      * Get the url for the given page.
      *
      * @param int $page
-     *
      * @return string
      */
     public function getUrl($page)

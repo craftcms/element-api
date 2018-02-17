@@ -10,7 +10,7 @@ use League\Fractal\TransformerAbstract;
  * Element transformer class.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
- * @since  2.0
+ * @since 2.0
  */
 class ElementTransformer extends TransformerAbstract
 {
