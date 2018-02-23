@@ -94,7 +94,7 @@ The class name of the element type that the API should be associated with. Craft
 
 #### `criteria`
 
-An array of parameters that should be set on the [Element Query](https://github.com/craftcms/docs/blob/master/en/element-queries.md) that will be fetching the elements.
+An array of parameters that should be set on the [Element Query](https://github.com/craftcms/docs/blob/v3/en/element-queries.md) that will be fetching the elements.
 
 ```php
 'criteria' => [
