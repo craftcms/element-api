@@ -422,7 +422,7 @@ Here are a few endpoint examples, and what their response would look like.
         'transformer' => function(craft\elements\Entry $entry) {
             // Create an array of all the photo URLs
             $photos = [];
-            foreach ($entry->photos as $photo) {
+            foreach ($entry->photos->all() as $photo) {
                 $photos[] = $photo->url;
             }
 
