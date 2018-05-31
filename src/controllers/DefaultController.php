@@ -76,7 +76,7 @@ class DefaultController extends Controller
             $plugin = Plugin::getInstance();
             $config = $plugin->getEndpoint($pattern);
             $request = Craft::$app->getRequest();
-            $site = Craft::$app->getSites()->getCurrentSite()->id;
+            $siteId = Craft::$app->getSites()->getCurrentSite()->id;
 
             if (is_callable($config)) {
                 $params = Craft::$app->getUrlManager()->getRouteParams();
@@ -87,7 +87,7 @@ class DefaultController extends Controller
             $cache = ArrayHelper::remove($config, 'cache', false);
 
             if ($cache) {
-                $cacheKey = 'elementapi:'.$request->getPathInfo().':'.$request->getQueryStringWithoutPath().':'.$site;
+                $cacheKey = 'elementapi:'.$siteId.':'.$request->getPathInfo().':'.$request->getQueryStringWithoutPath();
                 $cacheService = Craft::$app->getCache();
 
                 if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
