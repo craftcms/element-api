@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added the site id to the cache key. ([#76](https://github.com/craftcms/element-api/issues/76))
+
 ## 2.5.2- 2017-12-13
 
 ### Changed
