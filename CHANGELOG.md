@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.5.3 - 2018-06-20
+
 ### Changed
 - The cache key now takes into account the current site id. ([#76](https://github.com/craftcms/element-api/issues/76))
 
