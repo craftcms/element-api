@@ -7,7 +7,7 @@ It’s powered by Phil Sturgeon’s excellent [Fractal](http://fractal.thephplea
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0-RC11 or later.
+This plugin requires Craft CMS 3.0.0-RC16 or later.
 
 
 ## Installation
