@@ -1,5 +1,4 @@
-Element API for Craft CMS
-=========================
+# Element API for Craft CMS
 
 This plugin makes it easy to create a JSON API for your entries (and other element types) in [Craft CMS](http://buildwithcraft.com).
 
