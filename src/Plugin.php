@@ -97,9 +97,6 @@ class Plugin extends \craft\base\Plugin
             return $config->getResource();
         }
 
-        // Merge in the defaults
-        $config = array_merge($this->getDefaultResourceAdapterConfig(), $config);
-
         if (!isset($config['class'])) {
             // Default to ElementResourceAdapter
             $config['class'] = ElementResource::class;

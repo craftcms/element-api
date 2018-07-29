@@ -83,6 +83,11 @@ class DefaultController extends Controller
                 $config = $this->_callWithParams($config, $params);
             }
 
+            if (is_array($config)) {
+                // Merge in the defaults
+                $config = array_merge($plugin->getDefaultResourceAdapterConfig(), $config);
+            }
+
             // Before anything else, check the cache
             $cache = ArrayHelper::remove($config, 'cache', false);
 

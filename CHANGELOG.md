@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- It’s now possible to set `cache`, `serializer`, `jsonOptions`, `pretty`, `includes`, and `excludes` endpoint config options in the `defaults` array.
+
 ## 2.5.3 - 2018-06-20
 
 ### Changed
