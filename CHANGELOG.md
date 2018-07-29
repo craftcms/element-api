@@ -1,6 +1,6 @@
 # Release Notes for Element API
 
-## Unreleased
+## 2.5.4 - 2018-07-29
 
 ### Changed
 - The `generateTransformsBeforePageLoad` Craft config setting is now automatically disabled for all Element API endpoints. ([#81](https://github.com/craftcms/element-api/issues/81))
