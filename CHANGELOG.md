@@ -1,5 +1,4 @@
-Changelog
-=========
+# Release Notes for Element API
 
 ## 1.6.0 - 2017-05-25
 

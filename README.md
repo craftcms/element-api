@@ -1,6 +1,6 @@
-# Element API plugin for Craft
+# Element API for Craft CMS
 
-This plugin makes it easy to create a JSON API for your entries (and other element types) in [Craft](http://buildwithcraft.com).
+This plugin makes it easy to create a JSON API for your entries (and other element types) in [Craft CMS](https://craftcms.com).
 
 It’s powered by Phil Sturgeon’s excellent [Fractal](http://fractal.thephpleague.com/) package.
 
