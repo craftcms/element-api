@@ -75,6 +75,11 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
      */
     public $meta;
 
+    /**
+     * @var bool|int|string Whether the output should be cached, and for how long.
+     */
+    public $cache = false;
+
     // Public Methods
     // =========================================================================
 
