@@ -101,14 +101,12 @@ class DefaultController extends Controller
                 }
             }
 
-            // Does the config specify the serializer?
-            $serializer = is_array($config) ? ArrayHelper::remove($config, 'serializer') : null;
-
             // Extract config settings that aren't meant for createResource()
-            $jsonOptions = (is_array($config) ? ArrayHelper::remove($config, 'jsonOptions') : null) ?? JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
-            $pretty = (is_array($config) ? ArrayHelper::remove($config, 'pretty') : null) ?? false;
-            $includes = (is_array($config) ? ArrayHelper::remove($config, 'includes') : null) ?? [];
-            $excludes = (is_array($config) ? ArrayHelper::remove($config, 'excludes') : null) ?? [];
+            $serializer = ArrayHelper::remove($config, 'serializer');
+            $jsonOptions = ArrayHelper::remove($config, 'jsonOptions', JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $pretty = ArrayHelper::remove($config, 'pretty', false);
+            $includes = ArrayHelper::remove($config, 'includes', []);
+            $excludes = ArrayHelper::remove($config, 'excludes', []);
 
             // Get the data resource
             try {
