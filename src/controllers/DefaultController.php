@@ -46,6 +46,7 @@ class DefaultController extends Controller
 
     // Properties
     // =========================================================================
+
     /**
      * @inheritdoc
      */

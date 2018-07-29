@@ -35,7 +35,7 @@ composer require craftcms/element-api
 
 ## Setup
 
-To define your API endpoints, create a new `element-api.php` file within your config folder. This file should return an array with an `endpoints` key, which defines your site’s API endpoints. Within the `endpoints` array, keys are URL patterns, and values are endpoint configurations.
+To define your API endpoints, create a new `element-api.php` file within your `config/` folder. This file should return an array with an `endpoints` key, which defines your site’s API endpoints. Within the `endpoints` array, keys are URL patterns, and values are endpoint configurations.
 
 ```php
 <?php
