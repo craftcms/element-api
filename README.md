@@ -430,7 +430,7 @@ Here are a few endpoint examples, and what their response would look like.
         'transformer' => function(craft\elements\Entry $entry) {
             // Create an array of all the photo URLs
             $photos = [];
-            foreach ($entry->photos as $photo) {
+            foreach ($entry->photos->all() as $photo) {
                 $photos[] = $photo->url;
             }
 
@@ -469,7 +469,7 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
     'elementType' => craft\elements\Entry::class,
     'criteria' => ['section' => 'news'],
     'transformer' => function(craft\elements\Entry $entry) {
-        $image = $entry->photos->first();
+        $image = $entry->photos->one();
 
         return [
             'id' => (string) $entry->id,
