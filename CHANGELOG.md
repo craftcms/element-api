@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- The `generateTransformsBeforePageLoad` Craft config setting is now automatically disabled for all Element API endpoints. ([#81](https://github.com/craftcms/element-api/issues/81))
+
 ### Fixed
 - Fixed a bug where it wasn’t possible to set `cache`, `serializer`, `jsonOptions`, `pretty`, `includes`, and `excludes` endpoint config options in the `defaults` array. ([#69](https://github.com/craftcms/element-api/pull/69))
 

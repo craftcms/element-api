@@ -114,6 +114,9 @@ class DefaultController extends Controller
             $includes = ArrayHelper::remove($config, 'includes', []);
             $excludes = ArrayHelper::remove($config, 'excludes', []);
 
+            // Generate all transforms immediately
+            Craft::$app->getConfig()->getGeneral()->generateTransformsBeforePageLoad = true;
+
             // Get the data resource
             try {
                 $resource = $plugin->createResource($config);
