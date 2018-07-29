@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-### Changed
-- It’s now possible to set `cache`, `serializer`, `jsonOptions`, `pretty`, `includes`, and `excludes` endpoint config options in the `defaults` array.
+### Fixed
+- Fixed a bug where it wasn’t possible to set `cache`, `serializer`, `jsonOptions`, `pretty`, `includes`, and `excludes` endpoint config options in the `defaults` array. ([#69](https://github.com/craftcms/element-api/pull/69))
 
 ## 2.5.3 - 2018-06-20
 
