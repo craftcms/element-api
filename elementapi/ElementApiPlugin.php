@@ -56,7 +56,7 @@ class ElementApiPlugin extends BasePlugin
 	 */
 	public function getDocumentationUrl()
 	{
-		return $this->getPluginUrl().'/README.md';
+		return 'https://github.com/craftcms/element-api/blob/v1/README.md';
 	}
 
 	/**
