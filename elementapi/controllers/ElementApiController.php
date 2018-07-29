@@ -206,6 +206,12 @@ class ElementApiController extends BaseController
 
 		// Output and the request
 		echo $output;
+
+		// Fire an 'onAfterSendData' event
+		craft()->elementApi->onAfterSendData(new Event($this, [
+			'data' => $data,
+		]));
+
 		craft()->end();
 	}
 
