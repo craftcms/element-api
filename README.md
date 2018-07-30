@@ -52,8 +52,8 @@ return [
                 'elementType' => Entry::class,
                 'criteria' => ['section' => 'news'],
                 'transformer' => function(Entry $entry) {
-                return [
-                    'title' => $entry->title,
+                    return [
+                        'title' => $entry->title,
                         'url' => $entry->url,
                         'jsonUrl' => UrlHelper::url("news/{$entry->id}.json"),
                         'summary' => $entry->summary,
