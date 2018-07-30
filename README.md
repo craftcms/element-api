@@ -35,7 +35,9 @@ composer require craftcms/element-api
 
 ## Setup
 
-To define your API endpoints, create a new `element-api.php` file within your `config/` folder. This file should return an array with an `endpoints` key, which defines your site’s API endpoints. Within the `endpoints` array, keys are URL patterns, and values are endpoint configurations.
+To define your API endpoints, create a new `element-api.php` file within your `config/` folder. This file should return an array with an `endpoints` key, which defines your site’s API endpoints.
+
+Within the `endpoints` array, keys are URL patterns, and values are functions that define the endpoint configurations.
 
 ```php
 <?php
@@ -45,18 +47,20 @@ use craft\helpers\UrlHelper;
 
 return [
     'endpoints' => [
-        'news.json' => [
-            'elementType' => Entry::class,
-            'criteria' => ['section' => 'news'],
-            'transformer' => function(Entry $entry) {
+        'news.json' => function() {
+            return [
+                'elementType' => Entry::class,
+                'criteria' => ['section' => 'news'],
+                'transformer' => function(Entry $entry) {
                 return [
                     'title' => $entry->title,
-                    'url' => $entry->url,
-                    'jsonUrl' => UrlHelper::url("news/{$entry->id}.json"),
-                    'summary' => $entry->summary,
-                ];
-            },
-        ],
+                        'url' => $entry->url,
+                        'jsonUrl' => UrlHelper::url("news/{$entry->id}.json"),
+                        'summary' => $entry->summary,
+                    ];
+                },
+            ];
+        },
         'news/<entryId:\d+>.json' => function($entryId) {
             return [
                 'elementType' => Entry::class,
@@ -287,11 +291,11 @@ Note that the `onBeforeSendData` event does not get triggered when the cache is 
 'cache' => 'PT1M', // one minute
 ```
 
-### Dynamic URL Patterns and Endpoint Configurations
+### Dynamic URL Patterns
 
 URL patterns can contain dynamic subpatterns in the format of `<subpatternName:regex>`, where `subpatternName` is the name of the subpattern, and `regex` is a valid regular expression. For example, the URL pattern “`news/<entryId:\d+>.json`” will match URLs like `news/100.json`. You can also use the tokens `{handle}` and `{slug}` within your regular expression, which will be replaced with the appropriate regex patterns for matching handles and  element slugs.
 
-Endpoint configurations can also be dynamic, by using a function instead of an array. If you do this, the function should return an array of configuration settings. Any subpattern matches in the URL pattern will be mapped to the function’s arguments. For example, if a URL pattern contains an `entryId` subpattern, and the endpoint configuration is a function with an `$entryId` argument, then whatever matches the URL subpattern will be passed to that function argument. This makes it easy to modify the resulting endpoint configuration based on the URL subpattern matches.
+Any subpattern matches in the URL pattern will be mapped to the endpoint config function’s arguments. For example, if a URL pattern contains an `entryId` subpattern, then you can add an `$entryId` argument to your endpoint config function, and whatever matches the URL subpattern will be passed to `$entryId`.
 
 ```php
 'news/<entryId:\d+>.json' => function($entryId) {
@@ -302,7 +306,6 @@ Endpoint configurations can also be dynamic, by using a function instead of an a
     ];
 },
 ```
-
 
 ### Setting Default Configuration Settings
 
@@ -326,9 +329,11 @@ return [
     ],
 
     'endpoints' => [
-        'news.json' => [
-            'criteria' => ['section' => 'news'],
-        ],
+        'news.json' => function() {
+            return [
+                'criteria' => ['section' => 'news'],
+            ]
+        },
         'news/<entryId:\d+>.json' => function($entryId) {
             return [
                 'criteria' => ['id' => $entryId],
@@ -373,18 +378,20 @@ Here are a few endpoint examples, and what their response would look like.
 ### Paginated Entry Index Endpoint
 
 ```php
-'ingredients.json' => [
-    'criteria' => ['section' => 'ingredients'],
-    'elementsPerPage' => 10,
-    'transformer' => function(craft\elements\Entry $entry) {
-        return [
-            'title' => $entry->title,
-            'url' => $entry->url,
-            'jsonUrl' => UrlHelper::url("ingredients/{$entry->slug}.json"),
-        ];
-    },
-    'pretty' => true,
-],
+'ingredients.json' => function() {
+    return [
+        'criteria' => ['section' => 'ingredients'],
+        'elementsPerPage' => 10,
+        'transformer' => function(craft\elements\Entry $entry) {
+            return [
+                'title' => $entry->title,
+                'url' => $entry->url,
+                'jsonUrl' => UrlHelper::url("ingredients/{$entry->slug}.json"),
+            ];
+        },
+        'pretty' => true,
+    ];
+},
 ```
 
 ```json5
@@ -464,31 +471,33 @@ Here’s how to set up a [JSON Feed](https://jsonfeed.org/) ([Version 1](https:/
 Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
 
 ```php
-'feed.json' => [
-    'serializer' => 'jsonFeed',
-    'elementType' => craft\elements\Entry::class,
-    'criteria' => ['section' => 'news'],
-    'transformer' => function(craft\elements\Entry $entry) {
-        $image = $entry->photos->one();
-
-        return [
-            'id' => (string) $entry->id,
-            'url' => $entry->url,
-            'title' => $entry->title,
-            'content_html' => (string) $entry->body,
-            'summary' => $entry->summary,
-            'image' => $image ? $image->url : null,
-            'date_published' => $entry->postDate->format(\DateTime::ATOM),
-            'date_modified' => $entry->dateUpdated->format(\DateTime::ATOM),
-            'author' => ['name' => $entry->author->name],
-            'tags' => array_map('strval', $entry->tags->find()),
-        ];
-    },
-    'meta' => [
-        'description' => 'Recent news from Happy Lager',
-    ],
-    'pretty' => true,
-]
+'feed.json' => function() {
+    return [
+        'serializer' => 'jsonFeed',
+        'elementType' => craft\elements\Entry::class,
+        'criteria' => ['section' => 'news'],
+        'transformer' => function(craft\elements\Entry $entry) {
+            $image = $entry->photos->one();
+    
+            return [
+                'id' => (string) $entry->id,
+                'url' => $entry->url,
+                'title' => $entry->title,
+                'content_html' => (string) $entry->body,
+                'summary' => $entry->summary,
+                'image' => $image ? $image->url : null,
+                'date_published' => $entry->postDate->format(\DateTime::ATOM),
+                'date_modified' => $entry->dateUpdated->format(\DateTime::ATOM),
+                'author' => ['name' => $entry->author->name],
+                'tags' => array_map('strval', $entry->tags->find()),
+            ];
+        },
+        'meta' => [
+            'description' => 'Recent news from Happy Lager',
+        ],
+        'pretty' => true,
+    ];
+},
 ```
 
 ```json5
