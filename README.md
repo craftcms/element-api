@@ -38,7 +38,7 @@ composer require craftcms/element-api
 If you’re in the process of upgrading a Craft 2 project to Craft 3, follow these instructions to get Element API back up and running:
 
 1. [Install Element API 2.x](#installation).
-2. Move your old `craft/config/elementapi.php` file to `config/element-api.php`.
+2. Move your old `craft/config/elementapi.php` file to `config/`, and rename it to `element-api.php`.
 3. Update your `elementType` endpoint settings to the new element type class names:
 
    | Old                                           | New                            |
