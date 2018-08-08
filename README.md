@@ -33,6 +33,27 @@ composer require craftcms/element-api
 ./craft install/plugin element-api
 ```
 
+## Upgrading from Craft 2
+
+If you’re in the process of upgrading a Craft 2 project to Craft 3, follow these instructions to get Element API back up and running:
+
+1. [Install Element API 2.x](#installation).
+2. Move your old `craft/config/elementapi.php` file to `config/element-api.php`.
+3. Update your `elementType` endpoint settings to the new element type class names:
+
+   | Old                                           | New                            |
+   | --------------------------------------------- | ------------------------------ |
+   | `ElementType::Asset` or `'Asset'`             | `'craft\elements\Asset'`       |
+   | `ElementType::Category` or `'Category'`       | `'craft\elements\Category'`    |
+   | `ElementType::Entry` or `'Entry'`             | `'craft\elements\Entry'`       |
+   | `ElementType::GlobalSet` or `'GlobalSet'`     | `'craft\elements\GlobalSet'`   |
+   | `ElementType::MatrixBlock` or `'MatrixBlock'` | `'craft\elements\MatrixBlock'` |
+   | `ElementType::Tag` or `'Tag'`                 | `'craft\elements\Tag'`         |
+   | `ElementType::User` or `'User'`               | `'craft\elements\User'`        |
+
+4. Replace any `'first' => true` endpoint settings to `'one' => true`.
+
+
 ## Setup
 
 To define your API endpoints, create a new `element-api.php` file within your `config/` folder. This file should return an array with an `endpoints` key, which defines your site’s API endpoints.
