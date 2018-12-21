@@ -395,7 +395,7 @@ It’s probably a good idea to add some level of authentication to your endpoint
 ## Examples
 
 Here are a few endpoint examples, and what their response would look like.
-  
+
 ### Paginated Entry Index Endpoint
 
 ```php
@@ -445,20 +445,23 @@ Here are a few endpoint examples, and what their response would look like.
 }
 ```
 
-### Single Entry Endpoint
+### Single Entry Endpoint with Eager-Loading
 
 ```php
 'ingredients/<slug:{slug}>.json' => function($slug) {
     return [
         'criteria' => [
             'section' => 'ingredients',
-            'slug' => $slug
+            'slug' => $slug,
+            'with' => [
+               'photos'
+            ]
         ],
         'one' => true,
         'transformer' => function(craft\elements\Entry $entry) {
             // Create an array of all the photo URLs
             $photos = [];
-            foreach ($entry->photos->all() as $photo) {
+            foreach ($entry->photos as $photo) {
                 $photos[] = $photo->url;
             }
 
