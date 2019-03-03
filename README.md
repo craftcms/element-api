@@ -465,7 +465,7 @@ Here are a few endpoint examples, and what their response would look like.
             return [
                 'title' => $entry->title,
                 'url' => $entry->url,
-                'description' => (string) $entry->description,
+                'description' => (string)$entry->description,
                 'photos' => $photos
             ];
         },
@@ -501,16 +501,16 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
             $image = $entry->photos->one();
     
             return [
-                'id' => (string) $entry->id,
+                'id' => (string)$entry->id,
                 'url' => $entry->url,
                 'title' => $entry->title,
-                'content_html' => (string) $entry->body,
+                'content_html' => (string)$entry->body,
                 'summary' => $entry->summary,
                 'image' => $image ? $image->url : null,
                 'date_published' => $entry->postDate->format(\DateTime::ATOM),
                 'date_modified' => $entry->dateUpdated->format(\DateTime::ATOM),
                 'author' => ['name' => $entry->author->name],
-                'tags' => array_map('strval', $entry->tags->find()),
+                'tags' => array_map('strval', $entry->tags->all()),
             ];
         },
         'meta' => [
