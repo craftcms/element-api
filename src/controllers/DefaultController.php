@@ -11,6 +11,7 @@ namespace craft\elementapi\controllers;
 
 use Craft;
 use craft\elementapi\DataEvent;
+use craft\elementapi\JsonEvent;
 use craft\elementapi\JsonFeedV1Serializer;
 use craft\elementapi\Plugin;
 use craft\helpers\ArrayHelper;
@@ -43,6 +44,11 @@ class DefaultController extends Controller
      * @event DataEvent The event that is triggered before sending the response data
      */
     const EVENT_BEFORE_SEND_DATA = 'beforeSendData';
+
+    /**
+     * @event JsonEvent The event that is triggered before sending the formatted JSON
+     */
+    const EVENT_BEFORE_SEND_JSON = 'beforeSendJson';
 
     // Properties
     // =========================================================================
@@ -197,6 +203,13 @@ class DefaultController extends Controller
         // Don't double-encode the data
         $response->format = Response::FORMAT_RAW;
         $response->setStatusCode($statusCode, $statusText);
+
+        // Fire a 'beforeSendJson' event
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_JSON)) {
+            $this->trigger(self::EVENT_BEFORE_SEND_JSON, new JsonEvent([
+                'json' => $response->content,
+            ]));
+        }
         return $response;
     }
 
