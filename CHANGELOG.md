@@ -6,6 +6,7 @@
 - Added the `callback` endpoint config setting, which enables JSONP output. ([#96](https://github.com/craftcms/element-api/issues/96))
 
 ### Changed
+- The `defaults` setting can now be set to a callable. ([#98](https://github.com/craftcms/element-api/pull/98))
 - Updated Fractal to 0.18. ([#109](https://github.com/craftcms/element-api/issues/109))
 
 ### Fixed

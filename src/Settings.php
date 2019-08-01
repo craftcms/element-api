@@ -32,6 +32,7 @@ class Settings extends Model
      * Returns the default endpoint configuration.
      *
      * @return array The default endpoint configuration.
+     * @since 2.6.0
      */
     public function getDefaults()
     {
