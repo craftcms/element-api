@@ -1,6 +1,6 @@
 # Release Notes for Element API
 
-## Unreleased
+## 2.6.0 - 2019-08-01
 
 ### Added
 - Added the `callback` endpoint config setting, which enables JSONP output. ([#96](https://github.com/craftcms/element-api/issues/96))
