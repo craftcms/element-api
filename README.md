@@ -245,7 +245,7 @@ Possible values are:
 The [include names](http://fractal.thephpleague.com/transformers/#including-data) that should be included for the current request, if any.
 
 ```php
-'includes' => Craft::$app->request->getQueryParam('include'),
+'includes' => (array)Craft::$app->request->getQueryParam('include'),
 ```
 
 Note that this setting requires a custom transformer class that’s prepped to handle includes:
