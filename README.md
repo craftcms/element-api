@@ -292,7 +292,7 @@ For example, if you set this to:
 Then the response will look like:
 
 ```javascript
-foo({ /* ... */});
+foo({ /* ... */ });
 ```
 
 Note that if you set this, the `jsonOptions` and `pretty` settings will be ignored. 
