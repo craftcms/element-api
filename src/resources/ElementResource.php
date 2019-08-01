@@ -7,6 +7,7 @@ use craft\base\ElementInterface;
 use craft\elementapi\ElementTransformer;
 use craft\elementapi\PaginatorAdapter;
 use craft\elementapi\ResourceAdapterInterface;
+use craft\elements\db\ElementQuery;
 use craft\elements\db\ElementQueryInterface;
 use craft\helpers\ArrayHelper;
 use League\Fractal\Resource\Collection;
@@ -116,6 +117,7 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
      */
     public function getResource(): ResourceInterface
     {
+        /** @var ElementQuery $query */
         $query = $this->getElementQuery();
         $transformer = $this->getTransformer();
 
@@ -132,7 +134,7 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
             $paginator = new PaginatorAdapter($this->elementsPerPage, $query->count(), $this->pageParam);
 
             // Fetch this page's elements
-            $query->offset($this->elementsPerPage * ($paginator->getCurrentPage() - 1));
+            $query->offset(($query->offset ?: 0) + $this->elementsPerPage * ($paginator->getCurrentPage() - 1));
             $query->limit($this->elementsPerPage);
             $elements = $query->all();
             $paginator->setCount(count($elements));

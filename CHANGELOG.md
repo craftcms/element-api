@@ -7,6 +7,7 @@
 
 ### Changed
 - The `defaults` setting can now be set to a callable. ([#98](https://github.com/craftcms/element-api/pull/98))
+- `criteria` endpoint settings can now specify an `offset`. ([#99](https://github.com/craftcms/element-api/issues/99)) 
 - Updated Fractal to 0.18. ([#109](https://github.com/craftcms/element-api/issues/109))
 
 ### Deprecated
