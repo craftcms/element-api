@@ -279,6 +279,24 @@ The [include names](http://fractal.thephpleague.com/transformers/#including-data
 
 Like [`includes`](#includes), this setting requires a custom transformer class.
 
+#### `callback`
+
+If this is set, a JSONP response will be returned with an `application/javascript` content type, using this setting value as the callback function.
+
+For example, if you set this to:
+
+```php
+'callback' => 'foo',
+```
+
+Then the response will look like:
+
+```javascript
+foo({ /* ... */});
+```
+
+Note that if you set this, the `jsonOptions` and `pretty` settings will be ignored. 
+
 #### `jsonOptions`
 
 The value of the `$options` argument that will be passed to [`json_encode()`](http://php.net/manual/en/function.json-encode.php) when preparing the response. By default `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` will be passed.

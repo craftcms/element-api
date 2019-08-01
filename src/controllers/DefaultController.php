@@ -67,6 +67,7 @@ class DefaultController extends Controller
     {
         /** @var Response $response */
         $response = Craft::$app->getResponse();
+        $callback = null;
         $jsonOptions = null;
         $pretty = false;
         $cache = false;
@@ -109,6 +110,7 @@ class DefaultController extends Controller
 
             // Extract config settings that aren't meant for createResource()
             $serializer = ArrayHelper::remove($config, 'serializer');
+            $callback = ArrayHelper::remove($config, 'callback');
             $jsonOptions = ArrayHelper::remove($config, 'jsonOptions', JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
             $pretty = ArrayHelper::remove($config, 'pretty', false);
             $includes = ArrayHelper::remove($config, 'includes', []);
@@ -173,12 +175,21 @@ class DefaultController extends Controller
 
         // Create a JSON response formatter with custom options
         $formatter = new JsonResponseFormatter([
+            'useJsonp' => $callback !== null,
             'encodeOptions' => $jsonOptions,
             'prettyPrint' => $pretty,
         ]);
 
         // Manually format the response ahead of time, so we can access and cache the JSON
-        $response->data = $data;
+        if ($callback !== null) {
+            $response->data = [
+                'data' => $data,
+                'callback' => $callback,
+            ];
+        } else {
+            $response->data = $data;
+        }
+
         $formatter->format($response);
         $response->data = null;
         $response->format = Response::FORMAT_RAW;
