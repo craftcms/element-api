@@ -63,7 +63,7 @@ class Plugin extends \craft\base\Plugin
             return $this->_defaultResourceAdapterConfig;
         }
 
-        return $this->_defaultResourceAdapterConfig = $this->getSettings()->defaults;
+        return $this->_defaultResourceAdapterConfig = $this->getSettings()->getDefaults();
     }
 
     /**
