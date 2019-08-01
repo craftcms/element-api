@@ -9,6 +9,9 @@
 - The `defaults` setting can now be set to a callable. ([#98](https://github.com/craftcms/element-api/pull/98))
 - Updated Fractal to 0.18. ([#109](https://github.com/craftcms/element-api/issues/109))
 
+### Deprecated
+- Deprecated `craft\elementapi\resources\EntryResource`. ([#108](https://github.com/craftcms/element-api/issues/108))
+
 ### Fixed
 - Fixed a bug where field types that return objects were getting converted to arrays by the default element transformer. Now their [serialized value](https://docs.craftcms.com/api/v3/craft-base-fieldinterface.html#method-serializevalue) is used instead. ([#75](https://github.com/craftcms/element-api/issues/75))
 

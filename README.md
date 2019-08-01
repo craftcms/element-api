@@ -383,33 +383,6 @@ return [
 ];
 ```
 
-### Entry Drafts and Versions
-
-Element API provides an entry-specific Fractal resource that adds `draftId` and `versionId` configuration settings. To use it, set the [`class`](#class) configuration setting to `'craft\elementapi\resources\EntryResource'`.
-
-If `draftId` and `versionId` are not set, it will behave identically to the default Fractal resource. If either of them are set, the `criteria` setting will be ignored, and only the requested entry draft/version will be returned.
-
-It’s probably a good idea to add some level of authentication to your endpoint before setting `draftId` or `versionId`.
-
-```php
-'news/<entryId:\d+>.json' => function($entryId) {
-    if ($draftId = Craft::$app->request->getQueryParam('draftId')) {
-        // Make sure they have permission to view drafts
-        $user = Craft::$app->user->getIdentity();
-        if (!$user || (!$user->admin && !$user->isInGroup('authors'))) {
-            throw new \yii\web\ForbiddenHttpException('You must be an author to access drafts!');
-        }
-    }
-
-    return [
-        'class' => craft\elementapi\resources\EntryResource::class,
-        'criteria' => ['id' => $entryId],
-        'draftId' => $draftId,
-        'one' => true,
-    ];
-},
-```
-
 ## Examples
 
 Here are a few endpoint examples, and what their response would look like.
