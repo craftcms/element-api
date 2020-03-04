@@ -23,6 +23,7 @@ use League\Fractal\Serializer\JsonApiSerializer;
 use League\Fractal\Serializer\SerializerAbstract;
 use ReflectionFunction;
 use yii\base\InvalidConfigException;
+use yii\caching\TagDependency;
 use yii\web\HttpException;
 use yii\web\JsonResponseFormatter;
 use yii\web\NotFoundHttpException;
@@ -38,6 +39,8 @@ class DefaultController extends Controller
 {
     // Constants
     // =========================================================================
+
+    const CACHE_TAG = 'elementapi';
 
     /**
      * @event DataEvent The event that is triggered before sending the response data
@@ -202,7 +205,7 @@ class DefaultController extends Controller
                 $expire = null;
             }
             /** @noinspection PhpUndefinedVariableInspection */
-            $cacheService->set($cacheKey, $response->content, $expire);
+            $cacheService->set($cacheKey, $response->content, $expire, new TagDependency(['tags' => self::CACHE_TAG]));
         }
 
         // Don't double-encode the data
