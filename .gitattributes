@@ -7,7 +7,7 @@
 CHANGELOG.md export-ignore
 codeception.yml export-ignore
 composer.lock export-ignore
-gruntflie.js export-ignore
+gruntfile.js export-ignore
 gulpfile.js export-ignore
 package.json export-ignore
 package-lock.json export-ignore
