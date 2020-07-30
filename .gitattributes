@@ -1,0 +1,17 @@
+# Do not export those files in the Composer archive (lighter dependency)
+.gitattributes export-ignore
+.github/ export-ignore
+.gitignore export-ignore
+.travis.yml export-ignore
+CHANGELOG.md export-ignore
+codeception.yml export-ignore
+composer.lock export-ignore
+gruntflie.js export-ignore
+gulpfile.js export-ignore
+package.json
+package-lock.json
+README.md
+tests/ export-ignore
+
+# Auto detect text files and perform LF normalization
+* text=auto
