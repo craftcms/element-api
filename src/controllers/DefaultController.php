@@ -171,6 +171,12 @@ class DefaultController extends Controller
             ];
             $statusCode = $e instanceof HttpException ? $e->statusCode : 500;
             $statusText = $e->getMessage();
+
+            // log error
+            Craft::error($e->getMessage(), __METHOD__);
+            /** @var \yii\base\ErrorHandler $errorHandler */
+            $errorHandler = $this->getErrorHandler();
+            $errorHandler->logException($e);
         }
 
         // Create a JSON response formatter with custom options
