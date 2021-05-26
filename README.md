@@ -319,10 +319,10 @@ Whether the output should be cached, and for how long.
 
 Possible values are:
 
-- `false` _(default)_ – results are never cached
-- `true` – results are cached for the duration specified by the `cacheDuration` Craft config setting
-- an integer – results are cached for the given number of seconds
-- a [interval spec](http://www.php.net/manual/en/dateinterval.construct.php) string – results are cached for the duration specified
+- `true` _(default)_ – results are cached for the duration specified by the `cacheDuration` Craft config setting, or until a relevant element is saved or deleted.
+- `false` – results are never cached.
+- an integer – results are cached for the given number of seconds.
+- a [interval spec](http://www.php.net/manual/en/dateinterval.construct.php) string – results are cached for the duration specified.
 
 Note that the `onBeforeSendData` event does not get triggered when the cache is warm.
 
