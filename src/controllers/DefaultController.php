@@ -100,7 +100,6 @@ class DefaultController extends Controller
                 $cacheService = Craft::$app->getCache();
 
                 if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
-                    Craft::dd($cachedContent);
                     // Set the JSON headers
                     (new JsonResponseFormatter())->format($response);
 
