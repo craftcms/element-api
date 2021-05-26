@@ -195,7 +195,7 @@ class DefaultController extends Controller
         $response->format = Response::FORMAT_RAW;
 
         // Cache it?
-        if ($cache) {
+        if ($cache && $statusCode===200) {
             if ($cache !== true) {
                 $expire = ConfigHelper::durationInSeconds($cache);
             } else {
