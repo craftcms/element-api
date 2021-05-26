@@ -9,6 +9,7 @@
 ### Changed
 - Element API now requires Craft CMS 3.5 or later.
 - Endpoint responses are now cached by default, and are invalidated automatically when relevant elements are saved or deleted.
+- Exceptions thrown while resolving endpoints are now logged. ([#117](https://github.com/craftcms/element-api/issues/117))
 
 ### Fixed
 - Fixed a bug where non-200 responses were getting cached. ([#130](https://github.com/craftcms/element-api/issues/130))
