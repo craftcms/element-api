@@ -1,5 +1,15 @@
 # Release Notes for Element API
 
+## 2.7.0 - 2021-05-26
+## Unreleased
+
+### Added
+- It’s now possible to invalidate Element API caches via the Caches utility and the `invalidate-tags/element-api` command. ([#136](https://github.com/craftcms/element-api/issues/136))
+
+### Changed
+- Element API now requires Craft CMS 3.5 or later.
+- Endpoint responses are now cached by default, and are invalidated automatically when relevant elements are saved or deleted.
+
 ## 2.6.0 - 2019-08-01
 
 ### Added

@@ -15,6 +15,7 @@ use craft\elementapi\JsonFeedV1Serializer;
 use craft\elementapi\Plugin;
 use craft\helpers\ArrayHelper;
 use craft\helpers\ConfigHelper;
+use craft\helpers\StringHelper;
 use craft\web\Controller;
 use League\Fractal\Manager;
 use League\Fractal\Serializer\ArraySerializer;
@@ -22,6 +23,7 @@ use League\Fractal\Serializer\DataArraySerializer;
 use League\Fractal\Serializer\JsonApiSerializer;
 use League\Fractal\Serializer\SerializerAbstract;
 use ReflectionFunction;
+use yii\base\BaseObject;
 use yii\base\InvalidConfigException;
 use yii\web\HttpException;
 use yii\web\JsonResponseFormatter;
@@ -70,7 +72,7 @@ class DefaultController extends Controller
         $callback = null;
         $jsonOptions = null;
         $pretty = false;
-        $cache = false;
+        $cache = true;
         $statusCode = 200;
         $statusText = null;
 
@@ -91,13 +93,14 @@ class DefaultController extends Controller
             }
 
             // Before anything else, check the cache
-            $cache = ArrayHelper::remove($config, 'cache', false);
+            $cache = ArrayHelper::remove($config, 'cache', true);
 
             if ($cache) {
                 $cacheKey = 'elementapi:'.$siteId.':'.$request->getPathInfo().':'.$request->getQueryStringWithoutPath();
                 $cacheService = Craft::$app->getCache();
 
                 if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
+                    Craft::dd($cachedContent);
                     // Set the JSON headers
                     (new JsonResponseFormatter())->format($response);
 
@@ -106,6 +109,9 @@ class DefaultController extends Controller
                     $response->content = $cachedContent;
                     return $response;
                 }
+
+                $elementsService = Craft::$app->getElements();
+                $elementsService->startCollectingCacheTags();
             }
 
             // Extract config settings that aren't meant for createResource()
@@ -201,8 +207,10 @@ class DefaultController extends Controller
             } else {
                 $expire = null;
             }
-            /** @noinspection PhpUndefinedVariableInspection */
-            $cacheService->set($cacheKey, $response->content, $expire);
+
+            $dep = $elementsService->stopCollectingCacheTags();
+            $dep->tags[] = 'element-api';
+            $cacheService->set($cacheKey, $response->content, $expire, $dep);
         }
 
         // Don't double-encode the data

@@ -4,7 +4,9 @@ namespace craft\elementapi;
 
 use Craft;
 use craft\elementapi\resources\ElementResource;
+use craft\events\RegisterCacheOptionsEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\utilities\ClearCaches;
 use craft\web\UrlManager;
 use League\Fractal\Resource\ResourceInterface;
 use yii\base\Event;
@@ -39,6 +41,12 @@ class Plugin extends \craft\base\Plugin
         parent::init();
 
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_SITE_URL_RULES, [$this, 'registerUrlRules']);
+        Event::on(ClearCaches::class, ClearCaches::EVENT_REGISTER_TAG_OPTIONS, function(RegisterCacheOptionsEvent $event) {
+            $event->options[] = [
+                'tag' => 'element-api',
+                'label' => Craft::t('element-api', 'Element API responses'),
+            ];
+        });
     }
 
     /**

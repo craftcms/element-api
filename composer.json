@@ -25,7 +25,7 @@
     "rss": "https://github.com/craftcms/element-api/commits/v2.atom"
   },
   "require": {
-    "craftcms/cms": "^3.0.0-RC16",
+    "craftcms/cms": "^3.5.0",
     "league/fractal": "^0.18.0"
   },
   "autoload": {
