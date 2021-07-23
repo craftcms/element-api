@@ -38,24 +38,15 @@ use yii\web\Response;
  */
 class DefaultController extends Controller
 {
-    // Constants
-    // =========================================================================
-
     /**
      * @event DataEvent The event that is triggered before sending the response data
      */
     const EVENT_BEFORE_SEND_DATA = 'beforeSendData';
 
-    // Properties
-    // =========================================================================
-
     /**
      * @inheritdoc
      */
     protected $allowAnonymous = true;
-
-    // Public Methods
-    // =========================================================================
 
     /**
      * Returns the requested elements as JSON.
@@ -221,9 +212,6 @@ class DefaultController extends Controller
         $response->setStatusCode($statusCode, $statusText);
         return $response;
     }
-
-    // Private Methods
-    // =========================================================================
 
     /**
      * Calls a given function. If any params are given, they will be mapped to the function's arguments.

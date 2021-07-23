@@ -26,9 +26,6 @@ use yii\base\InvalidConfigException;
  */
 class ElementResource extends BaseObject implements ResourceAdapterInterface
 {
-    // Properties
-    // =========================================================================
-
     /**
      * @var string The element type class name
      */
@@ -75,9 +72,6 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
      * @var array|null Custom meta values
      */
     public $meta;
-
-    // Public Methods
-    // =========================================================================
 
     /**
      * @inheritdoc
@@ -151,9 +145,6 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
 
         return $resource;
     }
-
-    // Protected Methods
-    // =========================================================================
 
     /**
      * Returns the element query based on [[elementType]] and [[criteria]]

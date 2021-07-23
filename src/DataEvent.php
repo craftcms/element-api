@@ -13,9 +13,6 @@ use yii\base\Event;
  */
 class DataEvent extends Event
 {
-    // Properties
-    // =========================================================================
-
     /**
      * @var Scope The Fractal data associated with the event
      */

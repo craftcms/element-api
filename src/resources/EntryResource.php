@@ -25,9 +25,6 @@ use yii\base\Exception;
  */
 class EntryResource extends ElementResource
 {
-    // Properties
-    // =========================================================================
-
     /**
      * @var int|null The entry draft ID to return
      */
@@ -37,9 +34,6 @@ class EntryResource extends ElementResource
      * @var int|null The entry version ID to return
      */
     public $versionId;
-
-    // Public Methods
-    // =========================================================================
 
     /**
      * @inheritdoc

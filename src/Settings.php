@@ -12,9 +12,6 @@ use craft\base\Model;
  */
 class Settings extends Model
 {
-    // Properties
-    // =========================================================================
-
     /**
      * @var callable|array The default endpoint configuration.
      */
@@ -24,9 +21,6 @@ class Settings extends Model
      * @var array The endpoint configurations.
      */
     public $endpoints = [];
-
-    // Public Methods
-    // =========================================================================
 
     /**
      * Returns the default endpoint configuration.
