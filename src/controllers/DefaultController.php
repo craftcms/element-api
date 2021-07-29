@@ -85,9 +85,10 @@ class DefaultController extends Controller
 
             // Before anything else, check the cache
             $cache = ArrayHelper::remove($config, 'cache', true);
+            $cacheKey = ArrayHelper::remove($config, 'cacheKey', null);
 
             if ($cache) {
-                $cacheKey = 'elementapi:'.$siteId.':'.$request->getPathInfo().':'.$request->getQueryStringWithoutPath();
+                $cacheKey = $cacheKey ?? 'elementapi:'.$siteId.':'.$request->getPathInfo().':'.$request->getQueryStringWithoutPath();
                 $cacheService = Craft::$app->getCache();
 
                 if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
