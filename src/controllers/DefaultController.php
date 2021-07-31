@@ -13,6 +13,7 @@ use Craft;
 use craft\elementapi\DataEvent;
 use craft\elementapi\JsonFeedV1Serializer;
 use craft\elementapi\Plugin;
+use craft\elementapi\Settings;
 use craft\helpers\ArrayHelper;
 use craft\helpers\ConfigHelper;
 use craft\helpers\StringHelper;
@@ -70,8 +71,6 @@ class DefaultController extends Controller
         try {
             $plugin = Plugin::getInstance();
             $config = $plugin->getEndpoint($pattern);
-            $request = Craft::$app->getRequest();
-            $siteId = Craft::$app->getSites()->getCurrentSite()->id;
 
             if (is_callable($config)) {
                 $params = Craft::$app->getUrlManager()->getRouteParams();
@@ -88,7 +87,7 @@ class DefaultController extends Controller
             $cacheKey = ArrayHelper::remove($config, 'cacheKey', null);
 
             if ($cache) {
-                $cacheKey = $cacheKey ?? 'elementapi:'.$siteId.':'.$request->getPathInfo().':'.$request->getQueryStringWithoutPath();
+                $cacheKey = $cacheKey ?? Settings::cacheKey();
                 $cacheService = Craft::$app->getCache();
 
                 if (($cachedContent = $cacheService->get($cacheKey)) !== false) {

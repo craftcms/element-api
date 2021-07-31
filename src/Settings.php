@@ -2,6 +2,7 @@
 
 namespace craft\elementapi;
 
+use Craft;
 use craft\base\Model;
 
 /**
@@ -31,5 +32,22 @@ class Settings extends Model
     public function getDefaults()
     {
         return is_callable($this->defaults) ? call_user_func($this->defaults) : $this->defaults;
+    }
+
+    /**
+     * Returns the default data cache key that should be used for endpoint responses.
+     *
+     * @return string The default data cache key.
+     */
+    public static function cacheKey(): string
+    {
+        $request = Craft::$app->getRequest();
+
+        return implode(':', [
+            'elementapi',
+            Craft::$app->getSites()->getCurrentSite()->id,
+            $request->getPathInfo(),
+            $request->getQueryStringWithoutPath(),
+        ]);
     }
 }
