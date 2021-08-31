@@ -84,7 +84,7 @@ class DefaultController extends Controller
             }
 
             // Before anything else, check the cache
-            $cache = ArrayHelper::remove($config, 'cache', true);
+            $cache = ArrayHelper::remove($config, 'cache', true) && !$this->request->getHadToken();
 
             if ($cache) {
                 $cacheKey = 'elementapi:'.$siteId.':'.$request->getPathInfo().':'.$request->getQueryStringWithoutPath();

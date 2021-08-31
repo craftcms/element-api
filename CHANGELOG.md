@@ -1,5 +1,11 @@
 # Release Notes for Element API
 
+### Changed
+- Element API now requires Craft 3.6 or later.
+
+### Fixed
+- Fixed a bug where API endpoints were returning cached responses when a token was sent.
+
 ## 2.7.0 - 2021-05-26
 
 ### Added
