@@ -28,10 +28,16 @@
     "craftcms/cms": "^3.6.0",
     "league/fractal": "^0.18.0"
   },
+  "require-dev": {
+    "phpstan/phpstan": "^0.12.96"
+  },
   "autoload": {
     "psr-4": {
       "craft\\elementapi\\": "src/"
     }
+  },
+  "scripts": {
+    "phpstan": "phpstan --memory-limit=1G"
   },
   "extra": {
     "name": "Element API",

@@ -56,11 +56,10 @@ class DefaultController extends Controller
      */
     public function actionIndex(string $pattern): Response
     {
-        /** @var Response $response */
-        $response = Craft::$app->getResponse();
         $callback = null;
         $jsonOptions = null;
         $pretty = false;
+        /** @var mixed $cache */
         $cache = true;
         $statusCode = 200;
         $statusText = null;
@@ -71,6 +70,7 @@ class DefaultController extends Controller
             $siteId = Craft::$app->getSites()->getCurrentSite()->id;
 
             if (is_callable($config)) {
+                /** @phpstan-ignore-next-line */
                 $params = Craft::$app->getUrlManager()->getRouteParams();
                 $config = $this->_callWithParams($config, $params);
             }
@@ -89,12 +89,12 @@ class DefaultController extends Controller
 
                 if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
                     // Set the JSON headers
-                    (new JsonResponseFormatter())->format($response);
+                    (new JsonResponseFormatter())->format($this->response);
 
                     // Set the cached JSON on the response and return
-                    $response->format = Response::FORMAT_RAW;
-                    $response->content = $cachedContent;
-                    return $response;
+                    $this->response->format = Response::FORMAT_RAW;
+                    $this->response->content = $cachedContent;
+                    return $this->response;
                 }
 
                 $elementsService = Craft::$app->getElements();
@@ -179,35 +179,40 @@ class DefaultController extends Controller
 
         // Manually format the response ahead of time, so we can access and cache the JSON
         if ($callback !== null) {
-            $response->data = [
+            $this->response->data = [
                 'data' => $data,
                 'callback' => $callback,
             ];
         } else {
-            $response->data = $data;
+            $this->response->data = $data;
         }
 
-        $formatter->format($response);
-        $response->data = null;
-        $response->format = Response::FORMAT_RAW;
+        $formatter->format($this->response);
+        $this->response->data = null;
+        $this->response->format = Response::FORMAT_RAW;
 
         // Cache it?
-        if ($cache && $statusCode === 200) {
+        if ($statusCode !== 200) {
+            $cache = false;
+        }
+        if ($cache) {
             if ($cache !== true) {
                 $expire = ConfigHelper::durationInSeconds($cache);
             } else {
                 $expire = null;
             }
 
+            /** @phpstan-ignore-next-line */
             $dep = $elementsService->stopCollectingCacheTags();
             $dep->tags[] = 'element-api';
-            $cacheService->set($cacheKey, $response->content, $expire, $dep);
+            /** @phpstan-ignore-next-line */
+            $cacheService->set($cacheKey, $this->response->content, $expire, $dep);
         }
 
         // Don't double-encode the data
-        $response->format = Response::FORMAT_RAW;
-        $response->setStatusCode($statusCode, $statusText);
-        return $response;
+        $this->response->format = Response::FORMAT_RAW;
+        $this->response->setStatusCode($statusCode, $statusText);
+        return $this->response;
     }
 
     /**

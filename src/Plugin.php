@@ -95,7 +95,7 @@ class Plugin extends \craft\base\Plugin
     /**
      * Creates a Fractal resource based on the given config.
      *
-     * @param array|ResourceInterface|ResourceAdapterInterface
+     * @param array|ResourceInterface|ResourceAdapterInterface $config
      * @return ResourceInterface
      */
     public function createResource($config): ResourceInterface
