@@ -43,8 +43,7 @@ class Plugin extends \craft\base\Plugin
         Event::on(
             ClearCaches::class,
             ClearCaches::EVENT_REGISTER_TAG_OPTIONS,
-            function(RegisterCacheOptionsEvent $event) 
-            {
+            function(RegisterCacheOptionsEvent $event) {
                 $event->options[] = [
                     'tag' => 'element-api',
                     'label' => Craft::t('element-api', 'Element API responses'),

@@ -45,7 +45,7 @@ class JsonFeedV1Serializer extends ArraySerializer
 
         if ($currentPage < $lastPage) {
             return [
-                'next_url' => $paginator->getUrl($currentPage + 1)
+                'next_url' => $paginator->getUrl($currentPage + 1),
             ];
         }
 

@@ -15,7 +15,6 @@ use craft\elementapi\JsonFeedV1Serializer;
 use craft\elementapi\Plugin;
 use craft\helpers\ArrayHelper;
 use craft\helpers\ConfigHelper;
-use craft\helpers\StringHelper;
 use craft\web\Controller;
 use League\Fractal\Manager;
 use League\Fractal\Serializer\ArraySerializer;
@@ -23,7 +22,6 @@ use League\Fractal\Serializer\DataArraySerializer;
 use League\Fractal\Serializer\JsonApiSerializer;
 use League\Fractal\Serializer\SerializerAbstract;
 use ReflectionFunction;
-use yii\base\BaseObject;
 use yii\base\InvalidConfigException;
 use yii\web\HttpException;
 use yii\web\JsonResponseFormatter;
@@ -86,7 +84,7 @@ class DefaultController extends Controller
             $cache = ArrayHelper::remove($config, 'cache', true) && !$this->request->getHadToken();
 
             if ($cache) {
-                $cacheKey = 'elementapi:'.$siteId.':'.$this->request->getPathInfo().':'.$this->request->getQueryStringWithoutPath();
+                $cacheKey = 'elementapi:' . $siteId . ':' . $this->request->getPathInfo() . ':' . $this->request->getQueryStringWithoutPath();
                 $cacheService = Craft::$app->getCache();
 
                 if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
@@ -162,7 +160,7 @@ class DefaultController extends Controller
                 'error' => [
                     'code' => $e instanceof HttpException ? $e->statusCode : $e->getCode(),
                     'message' => $e->getMessage(),
-                ]
+                ],
             ];
             $statusCode = $e instanceof HttpException ? $e->statusCode : 500;
             $statusText = $e->getMessage();
