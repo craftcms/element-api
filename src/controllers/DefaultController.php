@@ -70,7 +70,6 @@ class DefaultController extends Controller
         try {
             $plugin = Plugin::getInstance();
             $config = $plugin->getEndpoint($pattern);
-            $request = Craft::$app->getRequest();
             $siteId = Craft::$app->getSites()->getCurrentSite()->id;
 
             if (is_callable($config)) {
@@ -87,7 +86,7 @@ class DefaultController extends Controller
             $cache = ArrayHelper::remove($config, 'cache', true) && !$this->request->getHadToken();
 
             if ($cache) {
-                $cacheKey = 'elementapi:'.$siteId.':'.$request->getPathInfo().':'.$request->getQueryStringWithoutPath();
+                $cacheKey = 'elementapi:'.$siteId.':'.$this->request->getPathInfo().':'.$this->request->getQueryStringWithoutPath();
                 $cacheService = Craft::$app->getCache();
 
                 if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
