@@ -80,6 +80,9 @@ class DefaultController extends Controller
                 $config = array_merge($plugin->getDefaultResourceAdapterConfig(), $config);
             }
 
+            // Prevent API endpoints from getting indexed
+            $this->response->getHeaders()->setDefault('X-Robots-Tag', 'none');
+
             // Before anything else, check the cache
             $cache = (
                 ArrayHelper::remove($config, 'cache', true) &&
