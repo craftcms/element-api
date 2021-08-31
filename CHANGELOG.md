@@ -4,7 +4,7 @@
 - Element API now requires Craft 3.6 or later.
 
 ### Fixed
-- Fixed a bug where API endpoints were returning cached responses when a token was sent.
+- Fixed a bug where API endpoints were returning cached responses for Live Preview requests. ([#143](https://github.com/craftcms/element-api/issues/143))
 
 ## 2.7.0 - 2021-05-26
 
