@@ -24,8 +24,8 @@ use League\Fractal\Serializer\DataArraySerializer;
 use League\Fractal\Serializer\JsonApiSerializer;
 use League\Fractal\Serializer\SerializerAbstract;
 use ReflectionFunction;
-use yii\base\BaseObject;
 use yii\base\InvalidConfigException;
+use yii\base\UserException;
 use yii\web\HttpException;
 use yii\web\JsonResponseFormatter;
 use yii\web\NotFoundHttpException;
@@ -59,11 +59,15 @@ class DefaultController extends Controller
      */
     public function actionIndex(string $pattern): Response
     {
-        /** @var Response $response */
-        $response = Craft::$app->getResponse();
+        if ($this->request->getIsOptions()) {
+            $this->response->format = Response::FORMAT_RAW;
+            return $this->response;
+        }
+
         $callback = null;
         $jsonOptions = null;
         $pretty = false;
+        /** @var mixed $cache */
         $cache = true;
         $statusCode = 200;
         $statusText = null;
@@ -73,8 +77,15 @@ class DefaultController extends Controller
             $config = $plugin->getEndpoint($pattern);
 
             if (is_callable($config)) {
+                /** @phpstan-ignore-next-line */
                 $params = Craft::$app->getUrlManager()->getRouteParams();
-                $config = $this->_callWithParams($config, $params);
+                try {
+                    $config = $this->_callWithParams($config, $params);
+                } catch (InvalidConfigException $e) {
+                    Craft::warning("Unable to resolve Element API route: {$e->getMessage()}", __METHOD__);
+                    Craft::$app->getErrorHandler()->logException($e);
+                    throw new NotFoundHttpException('Page not found', 0, $e);
+                }
             }
 
             if (is_array($config)) {
@@ -82,8 +93,14 @@ class DefaultController extends Controller
                 $config = array_merge($plugin->getDefaultResourceAdapterConfig(), $config);
             }
 
+            // Prevent API endpoints from getting indexed
+            $this->response->getHeaders()->setDefault('X-Robots-Tag', 'none');
+
             // Before anything else, check the cache
-            $cache = ArrayHelper::remove($config, 'cache', true);
+            $cache = (
+                ArrayHelper::remove($config, 'cache', true) &&
+                !($this->request->getIsPreview() || $this->request->getIsLivePreview())
+            );
             $cacheKey = ArrayHelper::remove($config, 'cacheKey', null);
 
             if ($cache) {
@@ -91,13 +108,19 @@ class DefaultController extends Controller
                 $cacheService = Craft::$app->getCache();
 
                 if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
+                    if (StringHelper::startsWith($cachedContent, 'data:')) {
+                        list($contentType, $cachedContent) = explode(',', substr($cachedContent, 5), 2);
+                    }
                     // Set the JSON headers
-                    (new JsonResponseFormatter())->format($response);
+                    $formatter = new JsonResponseFormatter([
+                        'contentType' => $contentType ?? null,
+                    ]);
+                    $formatter->format($this->response);
 
                     // Set the cached JSON on the response and return
-                    $response->format = Response::FORMAT_RAW;
-                    $response->content = $cachedContent;
-                    return $response;
+                    $this->response->format = Response::FORMAT_RAW;
+                    $this->response->content = $cachedContent;
+                    return $this->response;
                 }
 
                 $elementsService = Craft::$app->getElements();
@@ -111,6 +134,7 @@ class DefaultController extends Controller
             $pretty = ArrayHelper::remove($config, 'pretty', false);
             $includes = ArrayHelper::remove($config, 'includes', []);
             $excludes = ArrayHelper::remove($config, 'excludes', []);
+            $contentType = ArrayHelper::remove($config, 'contentType');
 
             // Generate all transforms immediately
             Craft::$app->getConfig()->getGeneral()->generateTransformsBeforePageLoad = true;
@@ -136,6 +160,9 @@ class DefaultController extends Controller
                         break;
                     case 'jsonFeed':
                         $serializer = new JsonFeedV1Serializer();
+                        if ($contentType === null) {
+                            $contentType = 'application/feed+json';
+                        }
                         break;
                     default:
                         $serializer = new ArraySerializer();
@@ -162,8 +189,8 @@ class DefaultController extends Controller
             $data = [
                 'error' => [
                     'code' => $e instanceof HttpException ? $e->statusCode : $e->getCode(),
-                    'message' => $e->getMessage(),
-                ]
+                    'message' => $e instanceof UserException ? $e->getMessage() : 'A server error occurred.',
+                ],
             ];
             $statusCode = $e instanceof HttpException ? $e->statusCode : 500;
             $statusText = $e->getMessage();
@@ -175,6 +202,7 @@ class DefaultController extends Controller
 
         // Create a JSON response formatter with custom options
         $formatter = new JsonResponseFormatter([
+            'contentType' => $contentType ?? null,
             'useJsonp' => $callback !== null,
             'encodeOptions' => $jsonOptions,
             'prettyPrint' => $pretty,
@@ -182,35 +210,45 @@ class DefaultController extends Controller
 
         // Manually format the response ahead of time, so we can access and cache the JSON
         if ($callback !== null) {
-            $response->data = [
+            $this->response->data = [
                 'data' => $data,
                 'callback' => $callback,
             ];
         } else {
-            $response->data = $data;
+            $this->response->data = $data;
         }
 
-        $formatter->format($response);
-        $response->data = null;
-        $response->format = Response::FORMAT_RAW;
+        $formatter->format($this->response);
+        $this->response->data = null;
+        $this->response->format = Response::FORMAT_RAW;
 
         // Cache it?
-        if ($cache && $statusCode === 200) {
+        if ($statusCode !== 200) {
+            $cache = false;
+        }
+        if ($cache) {
             if ($cache !== true) {
                 $expire = ConfigHelper::durationInSeconds($cache);
             } else {
                 $expire = null;
             }
 
+            /** @phpstan-ignore-next-line */
             $dep = $elementsService->stopCollectingCacheTags();
             $dep->tags[] = 'element-api';
-            $cacheService->set($cacheKey, $response->content, $expire, $dep);
+
+            $cachedContent = $this->response->content;
+            if (isset($contentType)) {
+                $cachedContent = "data:$contentType,$cachedContent";
+            }
+            /** @phpstan-ignore-next-line */
+            $cacheService->set($cacheKey, $cachedContent, $expire, $dep);
         }
 
         // Don't double-encode the data
-        $response->format = Response::FORMAT_RAW;
-        $response->setStatusCode($statusCode, $statusText);
-        return $response;
+        $this->response->format = Response::FORMAT_RAW;
+        $this->response->setStatusCode($statusCode, $statusText);
+        return $this->response;
     }
 
     /**
@@ -219,6 +257,7 @@ class DefaultController extends Controller
      * @param callable $func The function to call
      * @param array $params Any params that should be mapped to function arguments
      * @return mixed The result of the function
+     * @throws InvalidConfigException
      */
     private function _callWithParams($func, $params)
     {
@@ -238,12 +277,12 @@ class DefaultController extends Controller
                 } else if (!is_array($params[$name])) {
                     $args[] = $params[$name];
                 } else {
-                    return false;
+                    throw new InvalidConfigException("Unable to resolve $name param");
                 }
             } else if ($param->isDefaultValueAvailable()) {
                 $args[] = $param->getDefaultValue();
             } else {
-                return false;
+                throw new InvalidConfigException("Unable to resolve $name param");
             }
         }
 

@@ -1,5 +1,20 @@
 # Release Notes for Element API
 
+### Added
+- Added the `contentType` endpoint configuration setting.
+
+### Changed
+- Element API now requires Craft 3.6 or later.
+- API endpoints now send `X-Robots-Tag: none` headers. ([#124](https://github.com/craftcms/element-api/issues/124))
+- `OPTIONS` requests now return an empty response. ([#128](https://github.com/craftcms/element-api/issues/128))
+- JSON Feed endpoints now set the `version` to `https://jsonfeed.org/version/1.1`.
+- JSON Feed endpoints now use the `application/feed+json` content type by default.
+- Error responses no longer contain the exception message, unless the exception thrown was an instance of `yii\base\UserException`. ([#130](https://github.com/craftcms/element-api/issues/130))
+
+### Fixed
+- Fixed a bug where API endpoints were returning cached responses for Live Preview requests. ([#143](https://github.com/craftcms/element-api/issues/143))
+- Fixed a bug where endpoints whose route params didn’t align with the endpoint arguments would return a misleading 404 message. ([#137](https://github.com/craftcms/element-api/issues/137))
+
 ## 2.7.0 - 2021-05-26
 
 ### Added

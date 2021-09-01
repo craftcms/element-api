@@ -136,6 +136,20 @@ An array of parameters that should be set on the [Element Query](https://docs.cr
 ],
 ```
 
+#### `contentType`
+
+The content type the endpoint responses should have.
+
+```php
+'contentType' => 'application/foo+json',
+```
+
+By default, the content type will be:
+
+- `application/javascript` for endpoints that define a JSONP [callback](#callback)
+- `application/feed+json` for endpoints where the [serializer](#serializer) is set to `jsonFeed`
+- `application/json` for everything else 
+
 #### `transformer`
 
 The [transformer](http://fractal.thephpleague.com/transformers/) that should be used to define the data that should be returned for each element. If you don’t set this, the default transformer will be used, which includes all of the element’s direct attribute values, but no custom field values.
@@ -237,7 +251,7 @@ Possible values are:
 - `'array'` _(default)_ – formats data using the [ArraySerializer](http://fractal.thephpleague.com/serializers/#arrayserializer).
 - `'dataArray'` – formats data using the [DataArraySerializer](http://fractal.thephpleague.com/serializers/#dataarrayserializer).
 - `'jsonApi'` – formats data using the [JsonApiSerializer](http://fractal.thephpleague.com/serializers/#jsonapiserializer).
-- `'jsonFeed'` – formats data based on [JSON Feed V1](https://jsonfeed.org/version/1) (see the [JSON Feed](#json-feed) example below).
+- `'jsonFeed'` – formats data based on [JSON Feed V1.1](https://www.jsonfeed.org/version/1.1/) (see the [JSON Feed](#json-feed) example below).
 - A custom serializer instance.
 
 #### `includes`
@@ -478,7 +492,7 @@ Here are a few endpoint examples, and what their response would look like.
 
 ### JSON Feed
 
-Here’s how to set up a [JSON Feed](https://jsonfeed.org/) ([Version 1](https://jsonfeed.org/version/1)) for your site with Element API.
+Here’s how to set up a [JSON Feed](https://jsonfeed.org/) ([Version 1.1](https://www.jsonfeed.org/version/1.1/)) for your site with Element API.
 
 Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
 
@@ -500,7 +514,10 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
                 'image' => $image ? $image->url : null,
                 'date_published' => $entry->postDate->format(\DateTime::ATOM),
                 'date_modified' => $entry->dateUpdated->format(\DateTime::ATOM),
-                'author' => ['name' => $entry->author->name],
+                'authors' => [
+                    ['name' => $entry->author->name],
+                ],
+                'language' => $entry->getSite()->language,
                 'tags' => array_map('strval', $entry->tags->all()),
             ];
         },
