@@ -28,7 +28,7 @@ class JsonFeedV1Serializer extends ArraySerializer
     public function meta(array $meta)
     {
         return array_merge([
-            'version' => 'https://jsonfeed.org/version/1',
+            'version' => 'https://jsonfeed.org/version/1.1',
             'title' => \Craft::$app->getSites()->getCurrentSite()->name,
             'home_page_url' => UrlHelper::baseSiteUrl(),
             'feed_url' => UrlHelper::url(Craft::$app->getRequest()->getPathInfo()),

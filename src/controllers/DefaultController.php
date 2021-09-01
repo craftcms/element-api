@@ -15,6 +15,7 @@ use craft\elementapi\JsonFeedV1Serializer;
 use craft\elementapi\Plugin;
 use craft\helpers\ArrayHelper;
 use craft\helpers\ConfigHelper;
+use craft\helpers\StringHelper;
 use craft\web\Controller;
 use League\Fractal\Manager;
 use League\Fractal\Serializer\ArraySerializer;
@@ -105,8 +106,14 @@ class DefaultController extends Controller
                 $cacheService = Craft::$app->getCache();
 
                 if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
+                    if (StringHelper::startsWith($cachedContent, 'data:')) {
+                        list($contentType, $cachedContent) = explode(',', substr($cachedContent, 5), 2);
+                    }
                     // Set the JSON headers
-                    (new JsonResponseFormatter())->format($this->response);
+                    $formatter = new JsonResponseFormatter([
+                        'contentType' => $contentType ?? null,
+                    ]);
+                    $formatter->format($this->response);
 
                     // Set the cached JSON on the response and return
                     $this->response->format = Response::FORMAT_RAW;
@@ -125,6 +132,7 @@ class DefaultController extends Controller
             $pretty = ArrayHelper::remove($config, 'pretty', false);
             $includes = ArrayHelper::remove($config, 'includes', []);
             $excludes = ArrayHelper::remove($config, 'excludes', []);
+            $contentType = ArrayHelper::remove($config, 'contentType');
 
             // Generate all transforms immediately
             Craft::$app->getConfig()->getGeneral()->generateTransformsBeforePageLoad = true;
@@ -150,6 +158,9 @@ class DefaultController extends Controller
                         break;
                     case 'jsonFeed':
                         $serializer = new JsonFeedV1Serializer();
+                        if ($contentType === null) {
+                            $contentType = 'application/feed+json';
+                        }
                         break;
                     default:
                         $serializer = new ArraySerializer();
@@ -189,6 +200,7 @@ class DefaultController extends Controller
 
         // Create a JSON response formatter with custom options
         $formatter = new JsonResponseFormatter([
+            'contentType' => $contentType ?? null,
             'useJsonp' => $callback !== null,
             'encodeOptions' => $jsonOptions,
             'prettyPrint' => $pretty,
@@ -222,8 +234,13 @@ class DefaultController extends Controller
             /** @phpstan-ignore-next-line */
             $dep = $elementsService->stopCollectingCacheTags();
             $dep->tags[] = 'element-api';
+
+            $cachedContent = $this->response->content;
+            if (isset($contentType)) {
+                $cachedContent = "data:$contentType,$cachedContent";
+            }
             /** @phpstan-ignore-next-line */
-            $cacheService->set($cacheKey, $this->response->content, $expire, $dep);
+            $cacheService->set($cacheKey, $cachedContent, $expire, $dep);
         }
 
         // Don't double-encode the data
