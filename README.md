@@ -7,7 +7,7 @@ It’s powered by Phil Sturgeon’s excellent [Fractal](http://fractal.thephplea
 
 ## Requirements
 
-This plugin requires Craft CMS 3.5 or later.
+This plugin requires Craft CMS 3.6 or later.
 
 
 ## Installation
@@ -343,6 +343,10 @@ Note that the `onBeforeSendData` event does not get triggered when the cache is 
 ```php
 'cache' => 'PT1M', // one minute
 ```
+
+#### `cacheKey`
+
+The key that responses should be cached with, if something custom is needed.
 
 ### Dynamic URL Patterns
 
