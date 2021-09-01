@@ -3,6 +3,7 @@
 ### Changed
 - Element API now requires Craft 3.6 or later.
 - API endpoints now send `X-Robots-Tag: none` headers. ([#124](https://github.com/craftcms/element-api/issues/124))
+- `OPTIONS` requests now return an empty response. ([#128](https://github.com/craftcms/element-api/issues/128))
 
 ### Fixed
 - Fixed a bug where API endpoints were returning cached responses for Live Preview requests. ([#143](https://github.com/craftcms/element-api/issues/143))

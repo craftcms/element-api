@@ -56,6 +56,11 @@ class DefaultController extends Controller
      */
     public function actionIndex(string $pattern): Response
     {
+        if ($this->request->getIsOptions()) {
+            $this->response->format = Response::FORMAT_RAW;
+            return $this->response;
+        }
+
         $callback = null;
         $jsonOptions = null;
         $pretty = false;
