@@ -100,15 +100,16 @@ class DefaultController extends Controller
                 ArrayHelper::remove($config, 'cache', true) &&
                 !($this->request->getIsPreview() || $this->request->getIsLivePreview())
             );
+            
+            $cacheKey = ArrayHelper::remove($config, 'cacheKey')
+                ?? implode(':', [
+                    'elementapi',
+                    Craft::$app->getSites()->getCurrentSite()->id,
+                    $this->request->getPathInfo(),
+                    $this->request->getQueryStringWithoutPath(),
+                ]);
 
             if ($cache) {
-                $cacheKey = ArrayHelper::remove($config, 'cacheKey')
-                    ?? implode(':', [
-                        'elementapi',
-                        Craft::$app->getSites()->getCurrentSite()->id,
-                        $this->request->getPathInfo(),
-                        $this->request->getQueryStringWithoutPath(),
-                    ]);
                 $cacheService = Craft::$app->getCache();
 
                 if (($cachedContent = $cacheService->get($cacheKey)) !== false) {
