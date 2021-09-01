@@ -72,7 +72,13 @@ class DefaultController extends Controller
             if (is_callable($config)) {
                 /** @phpstan-ignore-next-line */
                 $params = Craft::$app->getUrlManager()->getRouteParams();
-                $config = $this->_callWithParams($config, $params);
+                try {
+                    $config = $this->_callWithParams($config, $params);
+                } catch (InvalidConfigException $e) {
+                    Craft::warning("Unable to resolve Element API route: {$e->getMessage()}", __METHOD__);
+                    Craft::$app->getErrorHandler()->logException($e);
+                    throw new NotFoundHttpException('Page not found', 0, $e);
+                }
             }
 
             if (is_array($config)) {
@@ -227,6 +233,7 @@ class DefaultController extends Controller
      * @param callable $func The function to call
      * @param array $params Any params that should be mapped to function arguments
      * @return mixed The result of the function
+     * @throws InvalidConfigException
      */
     private function _callWithParams($func, $params)
     {
@@ -246,12 +253,12 @@ class DefaultController extends Controller
                 } else if (!is_array($params[$name])) {
                     $args[] = $params[$name];
                 } else {
-                    return false;
+                    throw new InvalidConfigException("Unable to resolve $name param");
                 }
             } else if ($param->isDefaultValueAvailable()) {
                 $args[] = $param->getDefaultValue();
             } else {
-                return false;
+                throw new InvalidConfigException("Unable to resolve $name param");
             }
         }
 
