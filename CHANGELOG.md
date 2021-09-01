@@ -1,5 +1,7 @@
 # Release Notes for Element API
 
+## 2.8.0 - 2021-08-31
+
 ### Added
 - Added the `cacheKey` endpoint configuration setting. ([#145](https://github.com/craftcms/element-api/pull/145))
 - Added the `contentType` endpoint configuration setting.
