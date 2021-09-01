@@ -9,6 +9,7 @@
 - `OPTIONS` requests now return an empty response. ([#128](https://github.com/craftcms/element-api/issues/128))
 - JSON Feed endpoints now set the `version` to `https://jsonfeed.org/version/1.1`.
 - JSON Feed endpoints now use the `application/feed+json` content type by default.
+- Error responses no longer contain the exception message, unless the exception thrown was an instance of `yii\base\UserException`. ([#130](https://github.com/craftcms/element-api/issues/130))
 
 ### Fixed
 - Fixed a bug where API endpoints were returning cached responses for Live Preview requests. ([#143](https://github.com/craftcms/element-api/issues/143))

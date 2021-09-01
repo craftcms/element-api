@@ -24,6 +24,7 @@ use League\Fractal\Serializer\JsonApiSerializer;
 use League\Fractal\Serializer\SerializerAbstract;
 use ReflectionFunction;
 use yii\base\InvalidConfigException;
+use yii\base\UserException;
 use yii\web\HttpException;
 use yii\web\JsonResponseFormatter;
 use yii\web\NotFoundHttpException;
@@ -187,7 +188,7 @@ class DefaultController extends Controller
             $data = [
                 'error' => [
                     'code' => $e instanceof HttpException ? $e->statusCode : $e->getCode(),
-                    'message' => $e->getMessage(),
+                    'message' => $e instanceof UserException ? $e->getMessage() : 'A server error occurred.',
                 ],
             ];
             $statusCode = $e instanceof HttpException ? $e->statusCode : 500;
