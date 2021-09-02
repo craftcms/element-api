@@ -5,6 +5,7 @@
 ### Fixed
 - Fixed an “Header may not contain more than a single header” error that could occur if a different exception had occurred. ([#115](https://github.com/craftcms/element-api/issues/115))
 - Fixed a bug where most exceptions were resulting in 404 responses rather than 500s.
+- Fixed a bug where the `cacheKey` setting would cause an error on non-cached endpoints. ([#152](https://github.com/craftcms/element-api/pull/152))
 
 ## 2.8.0 - 2021-08-31
 
