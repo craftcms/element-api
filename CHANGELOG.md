@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed an “Header may not contain more than a single header” error that could occur if a different exception had occurred. ([#115](https://github.com/craftcms/element-api/issues/115))
+- Fixed a bug where most exceptions were resulting in 404 responses rather than 500s.
 
 ## 2.8.0 - 2021-08-31
 

@@ -27,7 +27,6 @@ use yii\base\InvalidConfigException;
 use yii\base\UserException;
 use yii\web\HttpException;
 use yii\web\JsonResponseFormatter;
-use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -54,7 +53,6 @@ class DefaultController extends Controller
      * @param string $pattern The endpoint URL pattern that was matched
      * @return Response
      * @throws InvalidConfigException
-     * @throws NotFoundHttpException
      */
     public function actionIndex(string $pattern): Response
     {
@@ -78,13 +76,7 @@ class DefaultController extends Controller
             if (is_callable($config)) {
                 /** @phpstan-ignore-next-line */
                 $params = Craft::$app->getUrlManager()->getRouteParams();
-                try {
-                    $config = $this->_callWithParams($config, $params);
-                } catch (InvalidConfigException $e) {
-                    Craft::warning("Unable to resolve Element API route: {$e->getMessage()}", __METHOD__);
-                    Craft::$app->getErrorHandler()->logException($e);
-                    throw new NotFoundHttpException('Page not found', 0, $e);
-                }
+                $config = $this->_callWithParams($config, $params);
             }
 
             if (is_array($config)) {
@@ -100,7 +92,7 @@ class DefaultController extends Controller
                 ArrayHelper::remove($config, 'cache', true) &&
                 !($this->request->getIsPreview() || $this->request->getIsLivePreview())
             );
-            
+
             $cacheKey = ArrayHelper::remove($config, 'cacheKey')
                 ?? implode(':', [
                     'elementapi',
@@ -145,11 +137,7 @@ class DefaultController extends Controller
             Craft::$app->getConfig()->getGeneral()->generateTransformsBeforePageLoad = true;
 
             // Get the data resource
-            try {
-                $resource = $plugin->createResource($config);
-            } catch (\Throwable $e) {
-                throw new NotFoundHttpException($e->getMessage() ?: Craft::t('element-api', 'Resource not found'), 0, $e);
-            }
+            $resource = $plugin->createResource($config);
 
             // Load Fractal
             $fractal = new Manager();
