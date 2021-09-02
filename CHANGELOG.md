@@ -1,5 +1,10 @@
 # Release Notes for Element API
 
+## Unreleased
+
+### Fixed
+- Fixed an “Header may not contain more than a single header” error that could occur if a different exception had occurred. ([#115](https://github.com/craftcms/element-api/issues/115))
+
 ## 2.8.0 - 2021-08-31
 
 ### Added

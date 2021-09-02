@@ -198,7 +198,11 @@ class DefaultController extends Controller
                 ],
             ];
             $statusCode = $e instanceof HttpException ? $e->statusCode : 500;
-            $statusText = $e->getMessage();
+            if ($e instanceof UserException && ($message = $e->getMessage())) {
+                $statusText = preg_split('/[\r\n]/', $message, 2)[0];
+            } else {
+                $statusText = 'Server error';
+            }
 
             // Log the exception
             Craft::error('Error resolving Element API endpoint: ' . $e->getMessage(), __METHOD__);
