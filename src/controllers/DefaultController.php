@@ -88,10 +88,11 @@ class DefaultController extends Controller
             $this->response->getHeaders()->setDefault('X-Robots-Tag', 'none');
 
             // Before anything else, check the cache
-            $cache = (
-                ArrayHelper::remove($config, 'cache', true) &&
-                !($this->request->getIsPreview() || $this->request->getIsLivePreview())
-            );
+            if (!($this->request->getIsPreview() || $this->request->getIsLivePreview())) {
+                $cache = ArrayHelper::remove($config, 'cache', true);
+            } else {
+                $cache = false;
+            }
 
             $cacheKey = ArrayHelper::remove($config, 'cacheKey')
                 ?? implode(':', [

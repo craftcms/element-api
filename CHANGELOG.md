@@ -1,5 +1,10 @@
 # Release Notes for Element API
 
+## 2.8.2 - 2021-09-03
+
+### Fixed
+- Fixed a bug where custom `cache` durations were getting ignored. ([#153](https://github.com/craftcms/element-api/issues/153))
+
 ## 2.8.1 - 2021-09-01
 
 ### Fixed
