@@ -30,7 +30,7 @@ cd /path/to/my-project.test
 composer require craftcms/element-api
 
 # tell Craft to install the plugin
-./craft install/plugin element-api
+./craft plugin/install element-api
 ```
 
 ## Upgrading from Craft 2
