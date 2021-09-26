@@ -1,5 +1,10 @@
 # Release Notes for Element API
 
+## 2.8.3 - 2021-09-25
+
+### Fixed
+- Fixed a bug where endpoint callables weren’t getting called for `OPTIONS` requests. ([#156](https://github.com/craftcms/element-api/issues/156))
+
 ## 2.8.2 - 2021-09-03
 
 ### Fixed
