@@ -1,5 +1,10 @@
 # Release Notes for Element API
 
+## Unreleased
+
+### Fixed
+- Fixed a bug where an invalid response code would be returned if the `one` endpoint config setting was used and Craft could not find a matching element. ([#157](https://github.com/craftcms/element-api/issues/157)) 
+
 ## 2.8.3 - 2021-09-25
 
 ### Fixed

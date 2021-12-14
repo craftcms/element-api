@@ -118,10 +118,6 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
         if ($this->one) {
             $element = $query->one();
 
-            if (!$element) {
-                throw new Exception('No element exists that matches the endpoint criteria');
-            }
-
             $resource = new Item($element, $transformer, $this->resourceKey);
         } else if ($this->paginate) {
             // Create the paginator
