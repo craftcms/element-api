@@ -17,6 +17,7 @@ use League\Fractal\TransformerAbstract;
 use yii\base\BaseObject;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
+use yii\web\NotFoundHttpException;
 
 /**
  * Element resource adapter class.
@@ -117,6 +118,10 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
 
         if ($this->one) {
             $element = $query->one();
+
+            if (!$element) {
+                throw new NotFoundHttpException('No element exists that matches the endpoint criteria');
+            }
 
             $resource = new Item($element, $transformer, $this->resourceKey);
         } else if ($this->paginate) {
