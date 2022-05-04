@@ -151,7 +151,7 @@ class PaginatorAdapter implements PaginatorInterface
 
         if (is_numeric($currentPage) && $currentPage > $this->totalPages) {
             $currentPage = $this->totalPages > 0 ? $this->totalPages : 1;
-        } else if (!is_numeric($currentPage) || $currentPage < 0) {
+        } elseif (!is_numeric($currentPage) || $currentPage < 0) {
             $currentPage = 1;
         }
 

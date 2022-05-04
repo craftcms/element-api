@@ -273,12 +273,12 @@ class DefaultController extends Controller
             if (isset($params[$name])) {
                 if ($param->isArray()) {
                     $args[] = is_array($params[$name]) ? $params[$name] : [$params[$name]];
-                } else if (!is_array($params[$name])) {
+                } elseif (!is_array($params[$name])) {
                     $args[] = $params[$name];
                 } else {
                     throw new InvalidConfigException("Unable to resolve $name param");
                 }
-            } else if ($param->isDefaultValueAvailable()) {
+            } elseif ($param->isDefaultValueAvailable()) {
                 $args[] = $param->getDefaultValue();
             } else {
                 throw new InvalidConfigException("Unable to resolve $name param");

@@ -9,10 +9,12 @@ README.md export-ignore
 SECURITY.md export-ignore
 codeception.yml export-ignore
 composer.lock export-ignore
+ecs.php export-ignore
 gruntfile.js export-ignore
 gulpfile.js export-ignore
 package-lock.json export-ignore
 package.json export-ignore
+phpstan.neon export-ignore
 tests/ export-ignore
 
 # Auto detect text files and perform LF normalization

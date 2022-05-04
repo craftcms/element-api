@@ -124,7 +124,7 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
             }
 
             $resource = new Item($element, $transformer, $this->resourceKey);
-        } else if ($this->paginate) {
+        } elseif ($this->paginate) {
             // Create the paginator
             $paginator = new PaginatorAdapter($this->elementsPerPage, $query->count(), $this->pageParam);
 

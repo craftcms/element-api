@@ -24,12 +24,15 @@
     "docs": "https://github.com/craftcms/element-api/blob/v2/README.md",
     "rss": "https://github.com/craftcms/element-api/commits/v2.atom"
   },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "craftcms/cms": "^3.6.0",
     "league/fractal": "^0.18.0"
   },
   "require-dev": {
-    "phpstan/phpstan": "^0.12.96"
+    "craftcms/ecs": "dev-main",
+    "craftcms/phpstan": "dev-main"
   },
   "autoload": {
     "psr-4": {
@@ -37,11 +40,22 @@
     }
   },
   "scripts": {
+    "check-cs": "ecs check --ansi",
+    "fix-cs": "ecs check --ansi --fix",
     "phpstan": "phpstan --memory-limit=1G"
   },
   "extra": {
     "name": "Element API",
     "handle": "element-api",
     "documentationUrl": "https://github.com/craftcms/element-api/blob/v2/README.md"
+  },
+  "config": {
+    "platform": {
+      "php": "7.2.5"
+    },
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    }
   }
 }
