@@ -1,5 +1,10 @@
 # Release Notes for Element API
 
+## Unreleased
+
+### Fixed
+- Fixed an error that occurred on Live Preview requests, for endpoints with a `cache` key defined. ([#158](https://github.com/craftcms/element-api/issues/158))
+
 ## 2.8.4 - 2021-12-15
 
 ### Fixed
