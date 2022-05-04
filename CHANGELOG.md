@@ -1,5 +1,13 @@
 # Release Notes for Element API
 
+## 3.0.0 - 2022-05-03
+
+### Added
+- Added Craft 4 compatibility.
+
+### Removed
+- Removed `craft\elementapi\resources\EntryResource`. ([#108](https://github.com/craftcms/element-api/issues/108))
+
 ## 2.8.5 - 2022-05-03
 
 ### Fixed
