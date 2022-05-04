@@ -89,12 +89,12 @@ class DefaultController extends Controller
             $this->response->getHeaders()->setDefault('X-Robots-Tag', 'none');
 
             // Before anything else, check the cache
-            if (!($this->request->getIsPreview() || $this->request->getIsLivePreview())) {
-                $cache = ArrayHelper::remove($config, 'cache', true);
-            } else {
+            $cache = ArrayHelper::remove($config, 'cache', true);
+            if ($this->request->getIsPreview() || $this->request->getIsLivePreview()) {
+                // Ignore config & disable cache for live preview
                 $cache = false;
             }
-
+            
             $cacheKey = ArrayHelper::remove($config, 'cacheKey')
                 ?? implode(':', [
                     'elementapi',
