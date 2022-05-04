@@ -94,7 +94,7 @@ class DefaultController extends Controller
                 // Ignore config & disable cache for live preview
                 $cache = false;
             }
-            
+
             $cacheKey = ArrayHelper::remove($config, 'cacheKey')
                 ?? implode(':', [
                     'elementapi',
