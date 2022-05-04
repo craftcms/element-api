@@ -40,12 +40,12 @@ class DefaultController extends Controller
     /**
      * @event DataEvent The event that is triggered before sending the response data
      */
-    const EVENT_BEFORE_SEND_DATA = 'beforeSendData';
+    public const EVENT_BEFORE_SEND_DATA = 'beforeSendData';
 
     /**
      * @inheritdoc
      */
-    protected $allowAnonymous = true;
+    protected array|int|bool $allowAnonymous = true;
 
     /**
      * Returns the requested elements as JSON.

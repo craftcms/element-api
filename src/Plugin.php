@@ -3,6 +3,7 @@
 namespace craft\elementapi;
 
 use Craft;
+use craft\base\Model;
 use craft\elementapi\resources\ElementResource;
 use craft\events\RegisterCacheOptionsEvent;
 use craft\events\RegisterUrlRulesEvent;
@@ -123,7 +124,7 @@ class Plugin extends \craft\base\Plugin
         return $resource;
     }
 
-    protected function createSettingsModel()
+    protected function createSettingsModel(): ?Model
     {
         return new Settings();
     }
