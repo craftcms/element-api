@@ -4,11 +4,9 @@ This plugin makes it easy to create a JSON API for your entries (and other eleme
 
 It’s powered by Phil Sturgeon’s excellent [Fractal](http://fractal.thephpleague.com/) package.
 
-
 ## Requirements
 
 This plugin requires Craft CMS 4.0 or later.
-
 
 ## Installation
 
@@ -32,27 +30,6 @@ composer require craftcms/element-api
 # tell Craft to install the plugin
 ./craft plugin/install element-api
 ```
-
-## Upgrading from Craft 2
-
-If you’re in the process of upgrading a Craft 2 project to Craft 3, follow these instructions to get Element API back up and running:
-
-1. [Install Element API 2.x](#installation).
-2. Move your old `craft/config/elementapi.php` file to `config/`, and rename it to `element-api.php`.
-3. Update your `elementType` endpoint settings to the new element type class names:
-
-   | Old                                           | New                            |
-   | --------------------------------------------- | ------------------------------ |
-   | `ElementType::Asset` or `'Asset'`             | `'craft\elements\Asset'`       |
-   | `ElementType::Category` or `'Category'`       | `'craft\elements\Category'`    |
-   | `ElementType::Entry` or `'Entry'`             | `'craft\elements\Entry'`       |
-   | `ElementType::GlobalSet` or `'GlobalSet'`     | `'craft\elements\GlobalSet'`   |
-   | `ElementType::MatrixBlock` or `'MatrixBlock'` | `'craft\elements\MatrixBlock'` |
-   | `ElementType::Tag` or `'Tag'`                 | `'craft\elements\Tag'`         |
-   | `ElementType::User` or `'User'`               | `'craft\elements\User'`        |
-
-4. Replace any `'first' => true` endpoint settings to `'one' => true`.
-
 
 ## Setup
 
