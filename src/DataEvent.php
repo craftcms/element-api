@@ -16,5 +16,5 @@ class DataEvent extends Event
     /**
      * @var Scope The Fractal data associated with the event
      */
-    public $data;
+    public Scope $payload;
 }
