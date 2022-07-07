@@ -1,5 +1,10 @@
 # Release Notes for Element API
 
+## 3.0.1.1 - 2022-07-07
+
+### Fixed
+- Fixed changelog.
+
 ## 3.0.1 - 2022-07-07
 
 ### Fixed
