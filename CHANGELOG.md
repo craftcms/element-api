@@ -1,5 +1,10 @@
 # Release Notes for Element API
 
+## Unreleased
+
+### Fixed
+- Fixed a PHP error that would occur when accessing an API endpoint. ([#170](https://github.com/craftcms/element-api/issues/170))
+
 ## 2.8.6 - 2022-07-07
 
 ### Fixed
