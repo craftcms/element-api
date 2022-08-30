@@ -6,6 +6,8 @@ on:
       - main
       - v2
   pull_request:
+permissions:
+  contents: read
 jobs:
   ecs:
     name: ECS
