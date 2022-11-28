@@ -3,3 +3,4 @@
 *.DS_Store
 *Thumbs.db
 /vendor
+node_modules

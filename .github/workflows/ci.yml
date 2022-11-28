@@ -4,29 +4,21 @@ on:
   push:
     branches:
       - main
-      - v2
   pull_request:
 permissions:
   contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  ecs:
-    name: ECS
-    uses: craftcms/.github/.github/workflows/ecs.yml@v1
+  ci:
+    name: ci
+    uses: craftcms/.github/.github/workflows/ci.yml@v3
     with:
-      php_version: '8.0'
-  phpstan:
-    name: PHPStan
-    uses: craftcms/.github/.github/workflows/phpstan.yml@v1
-    with:
-      php_version: '8.0'
-  notify-slack:
-    name: Notify Slack
-    needs: [ ecs, phpstan ]
-    if: ${{ always() }}
-    uses: craftcms/.github/.github/workflows/notify-slack.yml@v1
-    with:
-      success: ${{ needs.ecs.result == 'success' && needs.phpstan.result == 'success' }}
-      failure_text_prefix: <!subteam^SGFL9NKNZ>
+      craft_version: '4'
+      jobs: '["ecs", "phpstan", "prettier"]'
+      notify_slack: true
+      slack_subteam: <!subteam^SGFL9NKNZ>
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
       slack_webhook_url: ${{ secrets.SLACK_PLUGIN_WEBHOOK_URL }}
