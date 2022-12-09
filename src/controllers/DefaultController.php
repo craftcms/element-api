@@ -10,6 +10,7 @@
 namespace craft\elementapi\controllers;
 
 use Craft;
+use craft\config\GeneralConfig;
 use craft\elementapi\DataEvent;
 use craft\elementapi\JsonFeedV1Serializer;
 use craft\elementapi\Plugin;
@@ -225,7 +226,7 @@ class DefaultController extends Controller
         if ($statusCode !== 200) {
             $cache = false;
         }
-        if ($cache) {
+        if ($cache && !GeneralConfig::instance()->devMode()) {
             if ($cache !== true) {
                 $expire = ConfigHelper::durationInSeconds($cache);
             } else {
