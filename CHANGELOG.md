@@ -1,5 +1,15 @@
 # Release Notes for Element API
 
+## 3.0.1.1 - 2022-07-07
+
+### Fixed
+- Fixed changelog.
+
+## 3.0.1 - 2022-07-07
+
+### Fixed
+- Fixed an issue where `EVENT_BEFORE_SEND_DATA` wasn't returning data. ([#165](https://github.com/craftcms/element-api/issues/165))
+
 ## 3.0.0 - 2022-05-03
 
 ### Added

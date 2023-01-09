@@ -175,7 +175,7 @@ class DefaultController extends Controller
             // Fire a 'beforeSendData' event
             if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_DATA)) {
                 $this->trigger(self::EVENT_BEFORE_SEND_DATA, new DataEvent([
-                    'data' => $data,
+                    'payload' => $data,
                 ]));
             }
 
