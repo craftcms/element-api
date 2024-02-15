@@ -26,8 +26,8 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "craftcms/cms": "^4.0.0-RC3",
-    "league/fractal": "^0.18.0"
+    "craftcms/cms": "^5.0.0-beta.1",
+    "league/fractal": "^0.20.1"
   },
   "require-dev": {
     "craftcms/ecs": "dev-main",
@@ -51,7 +51,7 @@
   },
   "config": {
     "platform": {
-      "php": "8.0.2"
+      "php": "8.2"
     },
     "allow-plugins": {
       "yiisoft/yii2-composer": true,

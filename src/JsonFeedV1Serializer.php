@@ -17,7 +17,7 @@ class JsonFeedV1Serializer extends ArraySerializer
     /**
      * @inheritdoc
      */
-    public function collection($resourceKey, array $data)
+    public function collection($resourceKey, array $data): array
     {
         return ['items' => $data];
     }
@@ -25,7 +25,7 @@ class JsonFeedV1Serializer extends ArraySerializer
     /**
      * @inheritdoc
      */
-    public function meta(array $meta)
+    public function meta(array $meta): array
     {
         return array_merge([
             'version' => 'https://jsonfeed.org/version/1.1',
@@ -38,7 +38,7 @@ class JsonFeedV1Serializer extends ArraySerializer
     /**
      * @inheritdoc
      */
-    public function paginator(PaginatorInterface $paginator)
+    public function paginator(PaginatorInterface $paginator): array
     {
         $currentPage = (int)$paginator->getCurrentPage();
         $lastPage = (int)$paginator->getLastPage();

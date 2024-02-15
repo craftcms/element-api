@@ -17,32 +17,32 @@ class PaginatorAdapter implements PaginatorInterface
     /**
      * @var int
      */
-    protected $elementsPerPage;
+    protected int $elementsPerPage;
 
     /**
      * @var int
      */
-    protected $totalElements;
+    protected int $totalElements;
 
     /**
      * @var string
      */
-    protected $pageParam;
+    protected string $pageParam;
 
     /**
      * @var int
      */
-    protected $totalPages;
+    protected int $totalPages;
 
     /**
      * @var int
      */
-    protected $currentPage;
+    protected int $currentPage;
 
     /**
      * @var int
      */
-    protected $count;
+    protected int $count;
 
     /**
      * Constructor
@@ -51,7 +51,7 @@ class PaginatorAdapter implements PaginatorInterface
      * @param integer $totalElements
      * @param string $pageParam
      */
-    public function __construct($elementsPerPage, $totalElements, $pageParam)
+    public function __construct(int $elementsPerPage, int $totalElements, string $pageParam)
     {
         $this->elementsPerPage = $elementsPerPage;
         $this->totalElements = $totalElements;
@@ -65,7 +65,7 @@ class PaginatorAdapter implements PaginatorInterface
      *
      * @return int
      */
-    public function getCurrentPage()
+    public function getCurrentPage(): int
     {
         return $this->currentPage;
     }
@@ -75,7 +75,7 @@ class PaginatorAdapter implements PaginatorInterface
      *
      * @return int
      */
-    public function getLastPage()
+    public function getLastPage(): int
     {
         return $this->totalPages;
     }
@@ -85,7 +85,7 @@ class PaginatorAdapter implements PaginatorInterface
      *
      * @return int
      */
-    public function getTotal()
+    public function getTotal(): int
     {
         return $this->totalElements;
     }
@@ -95,7 +95,7 @@ class PaginatorAdapter implements PaginatorInterface
      *
      * @return int
      */
-    public function getCount()
+    public function getCount(): int
     {
         return $this->count;
     }
@@ -105,7 +105,7 @@ class PaginatorAdapter implements PaginatorInterface
      *
      * @param int $count
      */
-    public function setCount($count)
+    public function setCount(int $count): void
     {
         $this->count = $count;
     }
@@ -115,7 +115,7 @@ class PaginatorAdapter implements PaginatorInterface
      *
      * @return int
      */
-    public function getPerPage()
+    public function getPerPage(): int
     {
         return $this->elementsPerPage;
     }
@@ -126,7 +126,7 @@ class PaginatorAdapter implements PaginatorInterface
      * @param int $page
      * @return string
      */
-    public function getUrl($page)
+    public function getUrl(int $page): string
     {
         $request = Craft::$app->getRequest();
 
