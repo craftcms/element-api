@@ -26,12 +26,12 @@ class Plugin extends \craft\base\Plugin
      * @var array The default Fractal resource adapter configuration
      * @see getDefaultResourceAdapterConfig()
      */
-    private $_defaultResourceAdapterConfig;
+    private array $_defaultResourceAdapterConfig;
 
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -59,7 +59,7 @@ class Plugin extends \craft\base\Plugin
      * @param string $pattern
      * @return callable|array|ResourceAdapterInterface|null
      */
-    public function getEndpoint($pattern)
+    public function getEndpoint(string $pattern)
     {
         return $this->getSettings()->endpoints[$pattern] ?? null;
     }
@@ -83,7 +83,7 @@ class Plugin extends \craft\base\Plugin
      *
      * @param RegisterUrlRulesEvent $event
      */
-    public function registerUrlRules(RegisterUrlRulesEvent $event)
+    public function registerUrlRules(RegisterUrlRulesEvent $event): void
     {
         foreach ($this->getSettings()->endpoints as $pattern => $config) {
             $event->rules[$pattern] = [

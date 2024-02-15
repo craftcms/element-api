@@ -20,7 +20,7 @@ class Settings extends Model
     /**
      * @var array The endpoint configurations.
      */
-    public $endpoints = [];
+    public array $endpoints = [];
 
     /**
      * Returns the default endpoint configuration.
@@ -28,7 +28,7 @@ class Settings extends Model
      * @return array The default endpoint configuration.
      * @since 2.6.0
      */
-    public function getDefaults()
+    public function getDefaults(): array
     {
         return is_callable($this->defaults) ? call_user_func($this->defaults) : $this->defaults;
     }
