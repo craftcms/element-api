@@ -67,12 +67,12 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
     /**
      * @var string|null The resource key that should be set on the resource
      */
-    public ?string $resourceKey;
+    public ?string $resourceKey = 'data';
 
     /**
      * @var array|null Custom meta values
      */
-    public ?array $meta;
+    public ?array $meta = null;
 
     /**
      * @inheritdoc
