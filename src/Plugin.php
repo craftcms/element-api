@@ -26,7 +26,7 @@ class Plugin extends \craft\base\Plugin
      * @var array The default Fractal resource adapter configuration
      * @see getDefaultResourceAdapterConfig()
      */
-    private array $_defaultResourceAdapterConfig = null;
+    private ?array $_defaultResourceAdapterConfig = null;
 
     /**
      * @inheritdoc
