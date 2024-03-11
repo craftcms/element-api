@@ -1,5 +1,9 @@
 # Release Notes for Element API
 
+## Unreleased
+
+- Updated Fractal to 0.20. ([#183](https://github.com/craftcms/element-api/pull/183))
+
 ## 3.0.1.1 - 2022-07-07
 
 ### Fixed
