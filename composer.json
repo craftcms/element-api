@@ -27,7 +27,7 @@
   "prefer-stable": true,
   "require": {
     "craftcms/cms": "^4.0.0-RC3",
-    "league/fractal": "^0.18.0"
+    "league/fractal": "^0.20.1"
   },
   "require-dev": {
     "craftcms/ecs": "dev-main",
