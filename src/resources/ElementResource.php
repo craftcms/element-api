@@ -93,7 +93,7 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
      */
     public function init(): void
     {
-        if ($this->elementType === null || !is_subclass_of($this->elementType, ElementInterface::class)) {
+        if (!isset($this->elementType) || !is_subclass_of($this->elementType, ElementInterface::class)) {
             throw new InvalidConfigException('Endpoint has an invalid elementType');
         }
 
