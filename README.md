@@ -51,9 +51,10 @@ return [
                 'criteria' => ['section' => 'news'],
                 'transformer' => function(Entry $entry) {
                     return [
+                        'id' => $entry->id,
                         'title' => $entry->title,
                         'url' => $entry->url,
-                        'jsonUrl' => UrlHelper::url("news/{$entry->id}.json"),
+                        'jsonUrl' => UrlHelper::url("news/$entry->id.json"),
                         'summary' => $entry->summary,
                     ];
                 },
@@ -76,6 +77,7 @@ return [
         },
     ]
 ];
+
 ```
 
 ### Endpoint Configuration Settings
@@ -393,7 +395,7 @@ Here are a few endpoint examples, and what their response would look like.
             return [
                 'title' => $entry->title,
                 'url' => $entry->url,
-                'jsonUrl' => UrlHelper::url("ingredients/{$entry->slug}.json"),
+                'jsonUrl' => UrlHelper::url("ingredients/$entry->slug.json"),
             ];
         },
         'pretty' => true,
