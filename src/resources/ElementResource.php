@@ -30,12 +30,12 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
     /**
      * @var string The element type class name
      */
-    public $elementType;
+    public string $elementType;
 
     /**
      * @var array The element criteria params that should be used to filter the matching elements
      */
-    public $criteria = [];
+    public array $criteria = [];
 
     /**
      * @var callable|string|array|TransformerAbstract The transformer config, or an actual transformer object
@@ -45,34 +45,34 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
     /**
      * @var bool Whether to only return one result
      */
-    public $one = false;
+    public bool $one = false;
 
     /**
      * @var bool Whether to paginate the results
      */
-    public $paginate = true;
+    public bool $paginate = true;
 
     /**
      * @var int The number of elements to include per page
      * @see paginate
      */
-    public $elementsPerPage = 100;
+    public int $elementsPerPage = 100;
 
     /**
      * @var string The query string param name that should be used to specify the page number
      * @see paginate
      */
-    public $pageParam = 'page';
+    public string $pageParam = 'page';
 
     /**
      * @var string|null The resource key that should be set on the resource
      */
-    public $resourceKey;
+    public ?string $resourceKey = 'data';
 
     /**
      * @var array|null Custom meta values
      */
-    public $meta;
+    public ?array $meta = null;
 
     /**
      * @inheritdoc
@@ -91,9 +91,9 @@ class ElementResource extends BaseObject implements ResourceAdapterInterface
      * @inheritdoc
      * @throws InvalidConfigException
      */
-    public function init()
+    public function init(): void
     {
-        if ($this->elementType === null || !is_subclass_of($this->elementType, ElementInterface::class)) {
+        if (!isset($this->elementType) || !is_subclass_of($this->elementType, ElementInterface::class)) {
             throw new InvalidConfigException('Endpoint has an invalid elementType');
         }
 

@@ -40,8 +40,8 @@ class JsonFeedV1Serializer extends ArraySerializer
      */
     public function paginator(PaginatorInterface $paginator): array
     {
-        $currentPage = (int)$paginator->getCurrentPage();
-        $lastPage = (int)$paginator->getLastPage();
+        $currentPage = $paginator->getCurrentPage();
+        $lastPage = $paginator->getLastPage();
 
         if ($currentPage < $lastPage) {
             return [
