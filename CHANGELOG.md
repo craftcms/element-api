@@ -1,5 +1,10 @@
 # Release Notes for Element API
 
+## 4.1.0 - 2024-03-14
+
+- Element API now requires Craft 4.3.0+ or 5.0.0+.
+- Endpoints are no longer cached beyond the lowest expiry date in the results. ([#187](https://github.com/craftcms/element-api/issues/187))
+
 ## 4.0.0 - 2024-03-11
 
 - Added Craft 5 compatibility. ([#186](https://github.com/craftcms/element-api/pull/186))

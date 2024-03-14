@@ -123,7 +123,7 @@ class DefaultController extends Controller
                 }
 
                 $elementsService = Craft::$app->getElements();
-                $elementsService->startCollectingCacheTags();
+                $elementsService->startCollectingCacheInfo();
             }
 
             // Extract config settings that aren't meant for createResource()
@@ -233,8 +233,16 @@ class DefaultController extends Controller
             }
 
             /** @phpstan-ignore-next-line */
-            $dep = $elementsService->stopCollectingCacheTags();
+            [$dep, $maxDuration] = $elementsService->stopCollectingCacheInfo();
             $dep->tags[] = 'element-api';
+
+            if ($maxDuration) {
+                if ($expire !== null) {
+                    $expire = min($expire, $maxDuration);
+                } else {
+                    $expire = $maxDuration;
+                }
+            }
 
             $cachedContent = $this->response->content;
             if (isset($contentType)) {
