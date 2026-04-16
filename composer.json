@@ -20,8 +20,8 @@
     "email": "support@craftcms.com",
     "issues": "https://github.com/craftcms/element-api/issues?state=open",
     "source": "https://github.com/craftcms/element-api",
-    "docs": "https://github.com/craftcms/element-api/blob/4.x/README.md",
-    "rss": "https://github.com/craftcms/element-api/commits/v2.atom"
+    "docs": "https://github.com/craftcms/element-api/tree/master/README.md",
+    "rss": "https://github.com/craftcms/element-api/commits.atom"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -47,7 +47,7 @@
   "extra": {
     "name": "Element API",
     "handle": "element-api",
-    "documentationUrl": "https://github.com/craftcms/element-api/blob/4.x/README.md"
+    "documentationUrl": "https://github.com/craftcms/element-api/tree/master/README.md"
   },
   "config": {
     "platform": {
