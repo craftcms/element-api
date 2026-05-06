@@ -6,7 +6,7 @@ It’s powered by Phil Sturgeon’s excellent [Fractal](http://fractal.thephplea
 
 ## Requirements
 
-This plugin requires Craft CMS 4.3.0+ or 5.0.0+.
+This plugin requires Craft CMS 4.3.0+ or 5.0.0+ or 6.0.0-alpha.1+ with the `craftcms/yii2-adapter` package.
 
 ## Installation
 
@@ -33,7 +33,7 @@ composer require craftcms/element-api
 
 ## Setup
 
-To define your API endpoints, create a new `element-api.php` file within your `config/` folder. This file should return an array with an `endpoints` key, which defines your site’s API endpoints.
+To define your API endpoints, create a new `element-api.php` file within your `config/` folder (or `config/craft/` if you’re using Craft CMS v6). This file should return an array with an `endpoints` key, which defines your site’s API endpoints.
 
 Within the `endpoints` array, keys are URL patterns, and values are functions that define the endpoint configurations.
 
