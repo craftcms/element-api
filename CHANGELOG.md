@@ -1,5 +1,9 @@
 # Release Notes for Element API
 
+## Unreleased
+
+- Updated Fractal to 0.21. ([#202](https://github.com/craftcms/element-api/issues/202))
+
 ## 4.2.0 - 2025-01-20
 
 - Endpoint configs are now merged into the `defaults` array recursively, making it possible to specify default criteria params. ([#195](https://github.com/craftcms/element-api/issues/195))
