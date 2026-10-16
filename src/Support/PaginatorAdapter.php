@@ -1,9 +1,9 @@
 <?php
 
-namespace craft\elementapi;
+namespace CraftCms\ElementApi\Support;
 
-use Craft;
-use craft\helpers\UrlHelper;
+use CraftCms\Cms\Support\Url;
+use Illuminate\Http\Request;
 use League\Fractal\Pagination\PaginatorInterface;
 
 /**
@@ -51,8 +51,12 @@ class PaginatorAdapter implements PaginatorInterface
      * @param integer $totalElements
      * @param string $pageParam
      */
-    public function __construct(int $elementsPerPage, int $totalElements, string $pageParam)
-    {
+    public function __construct(
+        int $elementsPerPage,
+        int $totalElements,
+        string $pageParam,
+        protected Request $request,
+    ) {
         $this->elementsPerPage = $elementsPerPage;
         $this->totalElements = $totalElements;
         $this->pageParam = $pageParam;
@@ -128,16 +132,13 @@ class PaginatorAdapter implements PaginatorInterface
      */
     public function getUrl(int $page): string
     {
-        $request = Craft::$app->getRequest();
-
-        // Get the query string params without the path or `pattern`
-        parse_str($request->getQueryString(), $params);
-        $pathParam = Craft::$app->getConfig()->getGeneral()->pathParam;
-        unset($params[$pathParam], $params['pattern']);
+        // Get the query string params
+        $params = $this->request->query();
 
         // Return the URL with the page param
         $params[$this->pageParam] = $page;
-        return UrlHelper::url($request->getPathInfo(), $params);
+
+        return Url::url($this->request->path(), $params);
     }
 
     /**
@@ -147,7 +148,7 @@ class PaginatorAdapter implements PaginatorInterface
      */
     private function _currentPage(): int
     {
-        $currentPage = Craft::$app->getRequest()->getQueryParam($this->pageParam, 1);
+        $currentPage = $this->request->query($this->pageParam, 1);
 
         if (is_numeric($currentPage) && $currentPage > $this->totalPages) {
             $currentPage = $this->totalPages > 0 ? $this->totalPages : 1;

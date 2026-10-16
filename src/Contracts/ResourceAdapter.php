@@ -1,21 +1,19 @@
 <?php
 
-namespace craft\elementapi;
+namespace CraftCms\ElementApi\Contracts;
 
 use League\Fractal\Resource\ResourceInterface;
 
 /**
- * Resource adapter interface.
+ * Resource adapter contract.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 2.0
  */
-interface ResourceAdapterInterface
+interface ResourceAdapter
 {
     /**
      * Returns the Fractal data resource.
-     *
-     * @return ResourceInterface
      */
     public function getResource(): ResourceInterface;
 }
