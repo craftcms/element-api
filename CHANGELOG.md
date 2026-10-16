@@ -1,5 +1,19 @@
 # Release Notes for Element API
 
+## Unreleased
+
+### Changed
+- Element API now requires Craft 6 and PHP 8.5, and no longer uses the Yii 2 adapter.
+- The plugin was ported to Craft 6’s Laravel-based architecture, and its classes moved to the `CraftCms\ElementApi` namespace. See the [upgrade guide](UPGRADE.md) for the full list.
+- The config file moved from `config/element-api.php` to `config/craft/element-api.php`.
+- Endpoint URL patterns now use Laravel route syntax (`news/{entryId}.json`) instead of Yii URL rules (`news/<entryId:\d+>.json`).
+- Endpoint functions can set response headers with `ResponseHeaders::add()`, and can type-hint services and `Illuminate\Http\Request`.
+- Responses no longer set cookies.
+
+### Removed
+- Removed the `beforeSendData` event and `craft\elementapi\DataEvent`. Use the new `CraftCms\ElementApi\Events\SendingData` Laravel event instead.
+- Removed the `generateTransformsBeforePageLoad` override.
+
 ## 4.3.0 - 2026-08-05
 
 - Updated Fractal to 0.21. ([#202](https://github.com/craftcms/element-api/issues/202))

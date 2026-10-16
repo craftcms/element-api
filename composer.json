@@ -20,13 +20,14 @@
     "email": "support@craftcms.com",
     "issues": "https://github.com/craftcms/element-api/issues?state=open",
     "source": "https://github.com/craftcms/element-api",
-    "docs": "https://github.com/craftcms/element-api/blob/v2/README.md",
-    "rss": "https://github.com/craftcms/element-api/commits/v2.atom"
+    "docs": "https://github.com/craftcms/element-api/blob/5.x/README.md",
+    "rss": "https://github.com/craftcms/element-api/commits/5.x.atom"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "craftcms/cms": "^4.3.0|^5.0.0-beta.1",
+    "php": "^8.5",
+    "craftcms/cms": "^6.0.0",
     "league/fractal": "^0.21"
   },
   "require-dev": {
@@ -36,7 +37,7 @@
   },
   "autoload": {
     "psr-4": {
-      "craft\\elementapi\\": "src/"
+      "CraftCms\\ElementApi\\": "src/"
     }
   },
   "scripts": {
@@ -47,14 +48,10 @@
   "extra": {
     "name": "Element API",
     "handle": "element-api",
-    "documentationUrl": "https://github.com/craftcms/element-api/blob/v2/README.md"
+    "documentationUrl": "https://github.com/craftcms/element-api/blob/5.x/README.md"
   },
   "config": {
-    "platform": {
-      "php": "8.0.2"
-    },
     "allow-plugins": {
-      "yiisoft/yii2-composer": true,
       "craftcms/plugin-installer": true
     }
   }

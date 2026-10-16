@@ -1,9 +1,9 @@
 <?php
 
-namespace craft\elementapi;
+namespace CraftCms\ElementApi\Transformers;
 
-use craft\base\Element;
-use craft\base\ElementInterface;
+use CraftCms\Cms\Element\Contracts\ElementInterface;
+use CraftCms\Cms\Element\Element;
 use League\Fractal\TransformerAbstract;
 
 /**
@@ -14,6 +14,11 @@ use League\Fractal\TransformerAbstract;
  */
 class ElementTransformer extends TransformerAbstract
 {
+    /**
+     * Transforms an element into an array.
+     *
+     * @return array<string, mixed>
+     */
     public function transform(ElementInterface $element): array
     {
         // Get the serialized custom field values
