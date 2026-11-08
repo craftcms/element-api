@@ -2,12 +2,15 @@
 
 ## Unreleased
 
+### Added
+- Added a publishable example config file (`php artisan vendor:publish --tag=element-api`).
+- Endpoint functions can now return a Laravel API resource (or any `Responsable`), and `transformer` can be set to a Laravel API resource class.
+
 ### Changed
 - Element API now requires Craft 6 and PHP 8.5, and no longer uses the Yii 2 adapter.
 - The plugin was ported to Craft 6’s Laravel-based architecture, and its classes moved to the `CraftCms\ElementApi` namespace. See the [upgrade guide](UPGRADE.md) for the full list.
 - The config file moved from `config/element-api.php` to `config/craft/element-api.php`.
 - Endpoints are registered as Laravel routes, and can use Laravel route syntax (`news/{entryId}.json`). Craft 5 patterns such as `news/<entryId:\d+>.json` still work.
-- Added a publishable example config file (`php artisan vendor:publish --tag=element-api`).
 - Endpoint functions can set response headers with `ResponseHeaders::add()`, and can type-hint services and `Illuminate\Http\Request`.
 - Responses no longer set cookies.
 

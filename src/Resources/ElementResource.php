@@ -14,6 +14,7 @@ use CraftCms\ElementApi\Contracts\ResourceAdapter;
 use CraftCms\ElementApi\Support\PaginatorAdapter;
 use CraftCms\ElementApi\Transformers\ElementTransformer;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use InvalidArgumentException;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
@@ -41,7 +42,7 @@ class ElementResource extends Component implements ResourceAdapter
     public array $criteria = [];
 
     /**
-     * @var callable|class-string|array|TransformerAbstract The transformer that should be used
+     * @var callable|class-string|array|TransformerAbstract The transformer that should be used: a callable, a Fractal transformer (or its class name or config), or a Laravel `JsonResource` class name
      */
     public $transformer = ElementTransformer::class;
 
@@ -152,6 +153,13 @@ class ElementResource extends Component implements ResourceAdapter
     {
         if (is_callable($this->transformer) || $this->transformer instanceof TransformerAbstract) {
             return $this->transformer;
+        }
+
+        if (is_string($this->transformer) && is_subclass_of($this->transformer, JsonResource::class)) {
+            // A Laravel API resource class: resolve it for each element
+            $resourceClass = $this->transformer;
+
+            return fn (ElementInterface $element): array => new $resourceClass($element)->resolve($this->request);
         }
 
         if (is_array($this->transformer)) {

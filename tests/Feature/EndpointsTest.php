@@ -137,3 +137,49 @@ it('dispatches SendingData before sending the response', function () {
     expect($payloads)->toHaveCount(1)
         ->and($payloads[0]['data'][0]['title'])->toBe('Sent');
 });
+
+it('uses a Laravel API resource class as the transformer', function () {
+    $entries = collect(range(1, 2))->map(fn (int $i) => newsEntry(['title' => "Story $i"]));
+
+    $this->get('/resource-transformer.json')
+        ->assertOk()
+        ->assertExactJson([
+            'data' => [['id' => $entries[0]->id, 'headline' => 'Story 1', 'site' => 'resource-transformer.json']],
+            'meta' => ['pagination' => [
+                'total' => 2,
+                'count' => 1,
+                'per_page' => 1,
+                'current_page' => 1,
+                'total_pages' => 2,
+                'links' => ['next' => 'https://localhost/resource-transformer.json?page=2'],
+            ]],
+        ]);
+
+    // Endpoint settings such as caching still apply
+    $entries[0]->title = 'Saved';
+    Elements::saveElement($entries[0]);
+    $this->get('/resource-transformer.json')->assertJsonPath('data.0.headline', 'Saved');
+});
+
+it('sends Laravel API resources that an endpoint returns', function () {
+    $entries = collect(range(1, 2))->map(fn (int $i) => newsEntry(['title' => "Story $i"]));
+
+    $response = $this->get('/laravel-resource.json?page=2')
+        ->assertOk()
+        ->assertHeader('X-Robots-Tag', 'none')
+        ->assertHeader('Access-Control-Allow-Origin', '*')
+        ->assertJsonPath('data', [['id' => $entries[1]->id, 'headline' => 'Story 2', 'site' => 'laravel-resource.json']])
+        ->assertJsonPath('meta.current_page', 2)
+        ->assertJsonPath('meta.total', 2)
+        ->assertJsonPath('links.prev', 'http://localhost/laravel-resource.json?page=1');
+
+    expect($response->headers->getCookies())->toBe([]);
+
+    $this->get("/laravel-resource/{$entries[0]->id}.json")
+        ->assertOk()
+        ->assertExactJson(['data' => ['id' => $entries[0]->id, 'headline' => 'Story 1', 'site' => "laravel-resource/{$entries[0]->id}.json"]]);
+
+    $this->get('/laravel-resource/999999.json')
+        ->assertNotFound()
+        ->assertJsonPath('error.code', 404);
+});

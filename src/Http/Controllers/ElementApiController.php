@@ -17,6 +17,7 @@ use CraftCms\ElementApi\Http\EndpointRoutes;
 use CraftCms\ElementApi\Resources\ResourceFactory;
 use CraftCms\ElementApi\Serializers\JsonFeedV1Serializer;
 use CraftCms\ElementApi\Settings;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -47,7 +48,7 @@ class ElementApiController
         private readonly GeneralConfig $generalConfig,
     ) {}
 
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request): SymfonyResponse
     {
         $callback = null;
         $jsonOptions = null;
@@ -73,6 +74,25 @@ class ElementApiController
                 return new Response('', 200);
             }
 
+            // Prevent API endpoints from getting indexed (unless the endpoint set its own header)
+            if (! $this->hasResponseHeader('X-Robots-Tag')) {
+                $this->responseHeaders->add('X-Robots-Tag', 'none');
+            }
+
+            if ($config instanceof Responsable) {
+                // Laravel API resources (and other responsables) build their own response. Craft only adds
+                // ResponseHeaders to Illuminate\Http\Response objects, so add them to a JsonResponse here.
+                $response = $config->toResponse($request);
+
+                if (! $response instanceof Response) {
+                    foreach ($this->responseHeaders->headers as $header) {
+                        $response->headers->set($header['header'], $header['value'], $header['replace']);
+                    }
+                }
+
+                return $response;
+            }
+
             if (is_array($config)) {
                 // Merge in the defaults
                 $config = Arr::merge($this->settings->getDefaults(), $config);
@@ -82,11 +102,6 @@ class ElementApiController
             $pull = function (string $key, mixed $default = null) use (&$config): mixed {
                 return is_array($config) ? Arr::pull($config, $key, $default) : $default;
             };
-
-            // Prevent API endpoints from getting indexed (unless the endpoint set its own header)
-            if (! $this->hasResponseHeader('X-Robots-Tag')) {
-                $this->responseHeaders->add('X-Robots-Tag', 'none');
-            }
 
             // Before anything else, check the cache
             $cache = $pull('cache', true);

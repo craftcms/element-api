@@ -154,6 +154,9 @@ The [transformer](http://fractal.thephpleague.com/transformers/) that should be 
 
 // Or a Transformer class instance
 'transformer' => new MyTransformerClassName(),
+
+// Or a Laravel API resource class
+'transformer' => App\Http\Resources\NewsResource::class,
 ```
 
 Your custom transformer class would look something like this:
@@ -170,6 +173,29 @@ class MyTransformerClassName extends TransformerAbstract
     {
         return [
             // ...
+        ];
+    }
+}
+```
+
+A [Laravel API resource](https://laravel.com/docs/eloquent-resources) class works as a transformer too: its `toArray()` output is used for each element, and the endpoint’s other settings (pagination, serializer, caching) still apply.
+
+```php
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class NewsResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'url' => $this->url,
         ];
     }
 }
@@ -359,6 +385,24 @@ Craft 5-style patterns still work, including inline regular expressions and the 
 In a multi-site project, endpoints are also available under each site’s base URL path, and the requested site becomes the current site. If a site’s base URL is `https://example.com/de/`, then `https://example.com/de/news.json` serves the `news.json` endpoint for that site.
 
 Endpoints answer `GET`, `HEAD` and `OPTIONS` requests.
+
+### Returning Laravel API Resources
+
+Instead of an array of settings, an endpoint function can return a [Laravel API resource](https://laravel.com/docs/eloquent-resources), a resource collection, or anything else that implements `Illuminate\Contracts\Support\Responsable`. Element API sends the response it builds, with Laravel’s JSON format and pagination links.
+
+```php
+use App\Http\Resources\NewsResource;
+use CraftCms\Cms\Entry\Elements\Entry;
+
+'news.json' => fn() => NewsResource::collection(
+    Entry::find()->section('news')->paginate(20)
+),
+'news/{entryId}.json' => fn(int $entryId) => new NewsResource(
+    Entry::find()->id($entryId)->one() ?? abort(404)
+),
+```
+
+These endpoints still get the `X-Robots-Tag` header, headers added with `ResponseHeaders::add()`, and JSON error responses, but none of the endpoint settings above apply: they aren’t cached, and the `SendingData` event isn’t dispatched for them.
 
 ### Response Headers
 
