@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CraftCms\ElementApi\Http\Controllers;
 
 use CraftCms\Cms\Config\GeneralConfig;
@@ -30,6 +32,7 @@ use Throwable;
  * Serves an Element API endpoint.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
+ *
  * @since 2.0
  */
 class ElementApiController
@@ -52,6 +55,7 @@ class ElementApiController
         $statusCode = 200;
         $statusText = null;
         $contentType = null;
+        $cacheKey = null;
 
         try {
             $pattern = $request->route('elementApiEndpoint');
@@ -74,7 +78,7 @@ class ElementApiController
             }
 
             // Prevent API endpoints from getting indexed (unless the endpoint set its own header)
-            if (!$this->hasResponseHeader('X-Robots-Tag')) {
+            if (! $this->hasResponseHeader('X-Robots-Tag')) {
                 $this->responseHeaders->add('X-Robots-Tag', 'none');
             }
 
@@ -116,23 +120,23 @@ class ElementApiController
             $resource = $this->resources->create($config);
 
             // Load Fractal
-            $fractal = new Manager();
+            $fractal = new Manager;
 
             // Serialize the data
-            if (!$serializer instanceof SerializerAbstract) {
+            if (! $serializer instanceof SerializerAbstract) {
                 switch ($serializer) {
                     case 'dataArray':
-                        $serializer = new DataArraySerializer();
+                        $serializer = new DataArraySerializer;
                         break;
                     case 'jsonApi':
-                        $serializer = new JsonApiSerializer();
+                        $serializer = new JsonApiSerializer;
                         break;
                     case 'jsonFeed':
                         $serializer = app(JsonFeedV1Serializer::class);
                         $contentType ??= 'application/feed+json';
                         break;
                     default:
-                        $serializer = new ArraySerializer();
+                        $serializer = new ArraySerializer;
                 }
             }
 
@@ -172,7 +176,7 @@ class ElementApiController
             }
 
             // Log the exception
-            Log::error('Error resolving Element API endpoint: ' . $e->getMessage(), ['exception' => $e]);
+            Log::error('Error resolving Element API endpoint: '.$e->getMessage(), ['exception' => $e]);
             report($e);
         }
 
@@ -189,7 +193,7 @@ class ElementApiController
             $expire = Config::durationInSeconds($cache === true ? $this->generalConfig->cacheDuration : $cache) ?: null;
 
             [$dependency, $maxDuration] = $this->elementCaches->stopCollectingCacheInfo();
-            $dependency ??= new TagDependency();
+            $dependency ??= new TagDependency;
             $dependency->tags[] = 'element-api';
 
             if ($maxDuration) {
@@ -208,17 +212,17 @@ class ElementApiController
     /**
      * Encodes the data as JSON (or JSONP), and returns the body and its content type.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return array{string, string}
      */
     private function encode(array $data, ?string $callback, ?int $jsonOptions, bool $pretty, ?string $contentType): array
     {
         if ($callback !== null) {
             // JSONP responses use HTML-safe encoding, and ignore `jsonOptions` and `pretty`
-            $json = $callback . '(' . json_encode(
+            $json = $callback.'('.json_encode(
                 $data,
                 JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_THROW_ON_ERROR,
-            ) . ');';
+            ).');';
         } else {
             $json = json_encode(
                 $data,
@@ -228,7 +232,7 @@ class ElementApiController
 
         $contentType = match (true) {
             $contentType === null => $callback !== null ? 'application/javascript; charset=UTF-8' : 'application/json; charset=UTF-8',
-            !str_contains($contentType, 'charset') => "$contentType; charset=UTF-8",
+            ! str_contains($contentType, 'charset') => "$contentType; charset=UTF-8",
             default => $contentType,
         };
 
@@ -250,7 +254,7 @@ class ElementApiController
     {
         return array_any(
             $this->responseHeaders->headers,
-            fn(array $header) => strcasecmp($header['header'], $name) === 0,
+            fn (array $header) => strcasecmp($header['header'], $name) === 0,
         );
     }
 }

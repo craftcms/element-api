@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CraftCms\ElementApi\Serializers;
 
 use CraftCms\Cms\Site\Sites;
@@ -12,6 +14,7 @@ use League\Fractal\Serializer\ArraySerializer;
  * JSON Feed v1 serializer.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
+ *
  * @since 2.0
  * @link https://jsonfeed.org/version/1.1
  */
@@ -23,7 +26,7 @@ class JsonFeedV1Serializer extends ArraySerializer
     ) {}
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function collection($resourceKey, array $data): array
     {
@@ -31,7 +34,7 @@ class JsonFeedV1Serializer extends ArraySerializer
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function meta(array $meta): array
     {
@@ -44,7 +47,7 @@ class JsonFeedV1Serializer extends ArraySerializer
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function paginator(PaginatorInterface $paginator): array
     {

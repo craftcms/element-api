@@ -7,7 +7,7 @@
     "cms",
     "craftcms",
     "json",
-    "yii2"
+    "laravel"
   ],
   "license": "MIT",
   "authors": [
@@ -31,28 +31,43 @@
     "league/fractal": "^0.21"
   },
   "require-dev": {
-    "craftcms/ecs": "dev-main",
-    "craftcms/phpstan": "dev-main",
-    "craftcms/rector": "dev-main"
+    "larastan/larastan": "^3.13",
+    "laravel/pint": "^1.22",
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^5.0",
+    "pestphp/pest-plugin-laravel": "^5.0",
+    "phpstan/phpstan": "^2.1"
   },
   "autoload": {
     "psr-4": {
       "CraftCms\\ElementApi\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "CraftCms\\ElementApi\\Tests\\": "tests/",
+      "CraftCms\\Cms\\Database\\Factories\\": "vendor/craftcms/cms/database/Factories/"
+    }
+  },
   "scripts": {
-    "check-cs": "ecs check --ansi",
-    "fix-cs": "ecs check --ansi --fix",
-    "phpstan": "phpstan --memory-limit=1G"
+    "check-cs": "pint --test",
+    "fix-cs": "pint",
+    "phpstan": "phpstan --memory-limit=1G",
+    "test": "pest"
   },
   "extra": {
+    "class": "CraftCms\\ElementApi\\Plugin",
     "name": "Element API",
     "handle": "element-api",
     "documentationUrl": "https://github.com/craftcms/element-api/blob/5.x/README.md"
   },
   "config": {
+    "platform": {
+      "php": "8.5"
+    },
     "allow-plugins": {
-      "craftcms/plugin-installer": true
+      "craftcms/plugin-installer": true,
+      "pestphp/pest-plugin": true
     }
   }
 }

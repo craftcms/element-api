@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CraftCms\ElementApi;
 
 use CraftCms\Cms\Plugin\PluginSettings;
@@ -8,6 +10,7 @@ use CraftCms\Cms\Plugin\PluginSettings;
  * Element API settings. These come from the project's `config/craft/element-api.php` file.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
+ *
  * @since 2.0
  */
 class Settings extends PluginSettings

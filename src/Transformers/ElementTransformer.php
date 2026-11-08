@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CraftCms\ElementApi\Transformers;
 
 use CraftCms\Cms\Element\Contracts\ElementInterface;
@@ -10,6 +12,7 @@ use League\Fractal\TransformerAbstract;
  * Element transformer class.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
+ *
  * @since 2.0
  */
 class ElementTransformer extends TransformerAbstract

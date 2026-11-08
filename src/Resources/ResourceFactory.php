@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CraftCms\ElementApi\Resources;
 
 use CraftCms\Cms\Component\Component;
@@ -18,7 +20,7 @@ class ResourceFactory
     /**
      * Creates a Fractal resource from an endpoint config array, a resource, or a resource adapter.
      *
-     * @param array<string, mixed>|ResourceInterface|ResourceAdapter $config
+     * @param  array<string, mixed>|ResourceInterface|ResourceAdapter  $config
      */
     public function create(array|ResourceInterface|ResourceAdapter $config): ResourceInterface
     {

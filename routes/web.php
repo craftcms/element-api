@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use CraftCms\ElementApi\Http\Controllers\ElementApiController;
 use CraftCms\ElementApi\Plugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -30,7 +32,7 @@ foreach (app(Plugin::class)->getSettings()->endpoints as $pattern => $config) {
         foreach ((new ReflectionFunction($config))->getParameters() as $parameter) {
             $type = $parameter->getType();
 
-            if ($type instanceof ReflectionNamedType && $type->getName() === 'int' && str_contains($pattern, '{' . $parameter->getName() . '}')) {
+            if ($type instanceof ReflectionNamedType && $type->getName() === 'int' && str_contains($pattern, '{'.$parameter->getName().'}')) {
                 $route->whereNumber($parameter->getName());
             }
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CraftCms\ElementApi\Resources;
 
 use CraftCms\Cms\Component\Component;
@@ -23,6 +25,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * Element resource class.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
+ *
  * @since 2.0
  */
 class ElementResource extends Component implements ResourceAdapter
@@ -73,7 +76,7 @@ class ElementResource extends Component implements ResourceAdapter
     public ?array $meta = null;
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public function __construct(array $config = [], protected ?Request $request = null)
     {
@@ -86,13 +89,13 @@ class ElementResource extends Component implements ResourceAdapter
 
         $this->request ??= app(Request::class);
 
-        if (!isset($this->elementType) || !is_subclass_of($this->elementType, ElementInterface::class)) {
+        if (! isset($this->elementType) || ! is_subclass_of($this->elementType, ElementInterface::class)) {
             throw new InvalidArgumentException('Endpoint has an invalid elementType');
         }
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getResource(): ResourceInterface
     {
@@ -102,7 +105,7 @@ class ElementResource extends Component implements ResourceAdapter
         if ($this->one) {
             $element = $query->one();
 
-            if (!$element) {
+            if (! $element) {
                 throw new NotFoundHttpException('No element exists that matches the endpoint criteria');
             }
 

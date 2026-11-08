@@ -1,7 +1,8 @@
 includes:
-    - vendor/craftcms/phpstan/phpstan.neon
+    - vendor/larastan/larastan/extension.neon
 
 parameters:
     level: 4
     paths:
         - src
+        - routes
