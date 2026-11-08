@@ -13,6 +13,7 @@ use CraftCms\Cms\Support\Config;
 use CraftCms\DependencyAwareCache\Dependency\TagDependency;
 use CraftCms\DependencyAwareCache\Facades\DependencyCache;
 use CraftCms\ElementApi\Events\SendingData;
+use CraftCms\ElementApi\Http\EndpointRoutes;
 use CraftCms\ElementApi\Resources\ResourceFactory;
 use CraftCms\ElementApi\Serializers\JsonFeedV1Serializer;
 use CraftCms\ElementApi\Settings;
@@ -58,12 +59,12 @@ class ElementApiController
         $cacheKey = null;
 
         try {
-            $pattern = $request->route('elementApiEndpoint');
+            $pattern = $request->route(EndpointRoutes::ENDPOINT);
             $config = $this->settings->getEndpoint($pattern);
 
             if (is_callable($config)) {
                 // Pass the route parameters to the closure by name
-                $params = Arr::except($request->route()->parametersWithoutNulls(), 'elementApiEndpoint');
+                $params = Arr::except($request->route()->parametersWithoutNulls(), EndpointRoutes::ENDPOINT);
                 $config = app()->call($config, $params);
             }
 
@@ -77,23 +78,28 @@ class ElementApiController
                 $config = Arr::merge($this->settings->getDefaults(), $config);
             }
 
+            // Endpoints can also return a resource or resource adapter, which have no settings to pull
+            $pull = function (string $key, mixed $default = null) use (&$config): mixed {
+                return is_array($config) ? Arr::pull($config, $key, $default) : $default;
+            };
+
             // Prevent API endpoints from getting indexed (unless the endpoint set its own header)
             if (! $this->hasResponseHeader('X-Robots-Tag')) {
                 $this->responseHeaders->add('X-Robots-Tag', 'none');
             }
 
             // Before anything else, check the cache
-            $cache = Arr::pull($config, 'cache', true);
+            $cache = $pull('cache', true);
             if ($request->isPreview()) {
                 // Ignore config & disable cache for previews
                 $cache = false;
             }
 
-            $cacheKey = Arr::pull($config, 'cacheKey')
+            $cacheKey = $pull('cacheKey')
                 ?? implode(':', [
                     'elementapi',
                     $this->sites->getCurrentSite()->id,
-                    $request->path(),
+                    $this->sites->getRequestPath($request),
                     $request->getQueryString(),
                 ]);
 
@@ -108,13 +114,13 @@ class ElementApiController
             }
 
             // Extract config settings that aren't meant for the resource
-            $serializer = Arr::pull($config, 'serializer');
-            $callback = Arr::pull($config, 'callback');
-            $jsonOptions = Arr::pull($config, 'jsonOptions', JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-            $pretty = Arr::pull($config, 'pretty', false);
-            $includes = Arr::pull($config, 'includes', []);
-            $excludes = Arr::pull($config, 'excludes', []);
-            $contentType = Arr::pull($config, 'contentType');
+            $serializer = $pull('serializer');
+            $callback = $pull('callback');
+            $jsonOptions = $pull('jsonOptions', JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $pretty = $pull('pretty', false);
+            $includes = $pull('includes', []);
+            $excludes = $pull('excludes', []);
+            $contentType = $pull('contentType');
 
             // Get the data resource
             $resource = $this->resources->create($config);

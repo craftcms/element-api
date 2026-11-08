@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CraftCms\ElementApi\Support;
 
+use CraftCms\Cms\Support\Facades\Sites;
 use CraftCms\Cms\Support\Url;
 use Illuminate\Http\Request;
 use League\Fractal\Pagination\PaginatorInterface;
@@ -104,7 +105,7 @@ class PaginatorAdapter implements PaginatorInterface
         // Return the URL with the page param
         $params[$this->pageParam] = $page;
 
-        return Url::url($this->request->path(), $params);
+        return Url::url(Sites::getRequestPath($this->request), $params);
     }
 
     /**

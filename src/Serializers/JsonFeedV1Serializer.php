@@ -42,7 +42,7 @@ class JsonFeedV1Serializer extends ArraySerializer
             'version' => 'https://jsonfeed.org/version/1.1',
             'title' => $this->sites->getCurrentSite()->name,
             'home_page_url' => Url::baseSiteUrl(),
-            'feed_url' => Url::url($this->request->path()),
+            'feed_url' => Url::url($this->sites->getRequestPath($this->request)),
         ], $meta);
     }
 

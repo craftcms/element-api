@@ -43,6 +43,27 @@ it('passes route parameters to the endpoint function', function () {
     $this->get('/news/abc.json')->assertNotFound();
 });
 
+it('supports Craft 5 URL rule patterns', function () {
+    $entry = newsEntry(['title' => 'Legacy', 'slug' => 'legacy-story']);
+
+    $this->get("/legacy/$entry->id.json")->assertOk()->assertJsonPath('title', 'Legacy');
+    $this->get('/legacy/abc.json')->assertNotFound();
+
+    $this->get('/legacy-slug/legacy-story.json')->assertOk()->assertJsonPath('id', $entry->id);
+    $this->get('/legacy-slug/not%20a%20slug.json')->assertNotFound();
+});
+
+it('serves endpoints under each site’s base URL path', function () {
+    $this->get('/site.json')->assertOk()->assertExactJson(['handle' => 'default']);
+    $this->get('/de/site.json')->assertOk()->assertExactJson(['handle' => 'de']);
+
+    $this->get('/de/feed.json')
+        ->assertOk()
+        ->assertJsonPath('title', 'German')
+        ->assertJsonPath('home_page_url', 'https://localhost/de/')
+        ->assertJsonPath('feed_url', 'https://localhost/de/feed.json');
+});
+
 it('returns errors as JSON without leaking exception messages', function () {
     $this->get('/news/999999.json')
         ->assertNotFound()
