@@ -6,3 +6,11 @@ parameters:
     paths:
         - src
         - routes
+    ignoreErrors:
+        # Craft registers isPreview() as a Request macro (CraftCms\Cms\Http\Mixins\RequestMixin) when it boots.
+        # Larastan sees it locally but not on the CI runner, for reasons not yet known.
+        -
+            message: '#Call to an undefined method Illuminate\\Http\\Request::isPreview\(\)#'
+            identifier: method.notFound
+            path: src/Http/Controllers/ElementApiController.php
+            reportUnmatched: false
