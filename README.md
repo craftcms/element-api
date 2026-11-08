@@ -6,7 +6,7 @@ It’s powered by Phil Sturgeon’s excellent [Fractal](http://fractal.thephplea
 
 ## Requirements
 
-This plugin requires Craft CMS 6.0.0-alpha.1 or later, and PHP 8.5 or later. It doesn’t need the Yii 2 adapter.
+This plugin requires Craft CMS 6 and PHP 8.5 or later. It doesn’t need the Yii 2 adapter.
 
 Using Craft 4 or 5? Stay on the 4.x line of this plugin. Upgrading a Craft 5 project that already uses Element API? See the [upgrade guide](UPGRADE.md).
 
@@ -35,7 +35,11 @@ php artisan craft:plugin:install element-api
 
 ## Setup
 
-To define your API endpoints, create a new `element-api.php` file within your `config/craft/` folder. This file should return an array with an `endpoints` key, which defines your site’s API endpoints.
+To define your API endpoints, create a new `element-api.php` file within your `config/craft/` folder. This file should return an array with an `endpoints` key, which defines your site’s API endpoints. You can start from the plugin’s example file:
+
+```bash
+php artisan vendor:publish --tag=element-api
+```
 
 Within the `endpoints` array, keys are URL patterns ([Laravel route syntax](https://laravel.com/docs/routing#route-parameters), such as `news/{entryId}.json`), and values are functions that define the endpoint configurations.
 
@@ -100,7 +104,7 @@ The class name of the element type that the API should be associated with. Craft
 - `CraftCms\Cms\Address\Elements\Address`
 
 > **Note**  
-> As of Craft 6.0.0-alpha.20, categories, tags and global sets only exist as legacy classes in the Yii 2 adapter (`craft\elements\Category`, `craft\elements\Tag`, `craft\elements\GlobalSet`), so they can’t be queried without it yet.
+> Craft 6 has no native classes for categories, tags and global sets yet. They only exist as legacy classes in the Yii 2 adapter (`craft\elements\Category`, `craft\elements\Tag`, `craft\elements\GlobalSet`), so they can’t be queried without it.
 
 ```php
 'elementType' => CraftCms\Cms\Entry\Elements\Entry::class,
@@ -350,6 +354,10 @@ If you type-hint a parameter as `int`, the route only matches digits for it, so 
 },
 ```
 
+Craft 5-style patterns still work, including inline regular expressions and the `{handle}`, `{slug}` and `{uid}` tokens, so `news/<entryId:\d+>.json` and `news/<slug:{slug}>.json` only match the values their expressions allow.
+
+In a multi-site project, endpoints are also available under each site’s base URL path, and the requested site becomes the current site. If a site’s base URL is `https://example.com/de/`, then `https://example.com/de/news.json` serves the `news.json` endpoint for that site.
+
 Endpoints answer `GET`, `HEAD` and `OPTIONS` requests.
 
 ### Response Headers
@@ -387,7 +395,7 @@ Event::listen(function(SendingData $event): void {
 
 - Cached responses are tagged with `element-api`. Use **Utilities** → **Clear Caches** → **Element API responses** to clear them. Saving or deleting a relevant element clears them automatically.
 - Your endpoint functions are closures, which Laravel can’t serialize, so don’t run `php artisan config:cache` in a project that uses them.
-- If you cache routes with `php artisan route:cache`, run it again (or `route:clear`) whenever you change your endpoints.
+- If you cache routes with `php artisan route:cache`, run it again (or `route:clear`) whenever you change your endpoints or a site’s base URL.
 
 ### Setting Default Configuration Settings
 

@@ -4,7 +4,7 @@ This guide lists what changed when Element API moved to Craft 6, and what to upd
 
 ## Requirements
 
-- Craft CMS 6.0.0-alpha.1 or later
+- Craft CMS 6
 - PHP 8.5 or later
 - The plugin no longer needs `craftcms/yii2-adapter`. Your project may still use it for other plugins and modules.
 
@@ -12,8 +12,8 @@ This guide lists what changed when Element API moved to Craft 6, and what to upd
 
 1. Upgrade your project to Craft 6 first.
 2. Require the Craft 6 version of the plugin: `composer require craftcms/element-api`.
-3. Move `config/element-api.php` to `config/craft/element-api.php`.
-4. Update your endpoint patterns and the Craft 5 classes used in your endpoint functions, using the changes below.
+3. Move `config/element-api.php` to `config/craft/element-api.php`. (For a new project, `php artisan vendor:publish --tag=element-api` creates an example file there.)
+4. Update the Craft 5 classes used in your endpoint functions, using the changes below. Your endpoint patterns keep working, but you can move them to Laravel route syntax.
 5. Clear the Element API cache (**Utilities** → **Clear Caches** → **Element API responses**).
 
 ## Breaking changes
@@ -26,15 +26,16 @@ This guide lists what changed when Element API moved to Craft 6, and what to upd
 
 ### Endpoint URL patterns
 
-Patterns now use Laravel route syntax instead of Yii URL rules.
+Endpoints are registered as Laravel routes. Craft 5 (Yii) patterns still work: Element API converts them, keeping their inline regular expressions and the `{handle}`, `{slug}` and `{uid}` tokens. New endpoints can use Laravel route syntax instead.
 
-| Before | After |
+| Craft 5 pattern (still supported) | Laravel route syntax |
 | --- | --- |
-| `'news/<entryId:\d+>.json'` | `'news/{entryId}.json'` |
+| `'news/<entryId:\d+>.json'` | `'news/{entryId}.json'` with `function(int $entryId)` |
 | `'ingredients/<slug:{slug}>.json'` | `'ingredients/{slug}.json'` |
 
-- There are no inline regular expressions, and no `{handle}` or `{slug}` tokens. A parameter matches any value, except that one your function type-hints as `int` only matches digits (so `news/abc.json` is a 404).
+- A Laravel-style parameter matches any value except `/`. One your function type-hints as `int` only matches digits (so `news/abc.json` is a 404).
 - Parameters are still passed to your function by name. Your function can now also type-hint services and `Illuminate\Http\Request`.
+- As before, endpoints also answer under each site’s base URL path (`de/news.json` for a site at `https://example.com/de/`), with that site as the current site.
 - Endpoints answer `GET`, `HEAD` and `OPTIONS` requests. They used to answer any method.
 
 Before:
@@ -75,7 +76,7 @@ Your config file runs on Craft 6 now, so anything it calls has to exist there. W
 | `Craft::$app->request->getQueryParam('q')` | `$request->query('q')`, with `Illuminate\Http\Request $request` as an argument of your function |
 | `'orderBy' => 'id asc'` (deprecated in Craft 6) | `'orderBy' => ['id' => SORT_ASC]` |
 
-Categories, tags and global sets have no native Craft 6 classes in 6.0.0-alpha.20 (they only exist as legacy classes in the adapter), so endpoints for them need the adapter for now.
+Categories, tags and global sets have no native Craft 6 classes yet (they only exist as legacy classes in the adapter), so endpoints for them need the adapter for now.
 
 Before:
 
@@ -169,11 +170,11 @@ If your endpoint sets `'class'` to your own resource class, it is created with `
 - **Cache duration:** `'cache' => true` caches for the `cacheDuration` general config setting (or until a relevant element changes), as before. `0` still means until a relevant element changes.
 - **JSONP:** unchanged. `jsonOptions` and `pretty` are still ignored when `callback` is set.
 - **Logging:** failed requests are logged through Laravel’s logger.
-- **Deployment:** closures can’t be serialized, so `php artisan config:cache` fails in a project that uses them. Run `php artisan route:cache` again after you change your endpoints.
+- **Deployment:** closures can’t be serialized, so `php artisan config:cache` fails in a project that uses them. Run `php artisan route:cache` again after you change your endpoints or a site’s base URL.
 
 ## Removed
 
-- `Plugin::registerUrlRules()` and the `EVENT_REGISTER_SITE_URL_RULES` listener. Endpoints are registered as Laravel routes.
+- `Plugin::registerUrlRules()` and the `EVENT_REGISTER_SITE_URL_RULES` listener. Endpoints are registered as Laravel routes by `CraftCms\ElementApi\Http\EndpointRoutes`.
 - The `generateTransformsBeforePageLoad` setting the controller used to turn on. It has no Craft 6 equivalent.
 - The `pageParam` check against the `p` path parameter. Craft 6 has no path parameter.
 - The `stubs/BaseYii.stub` PHPStan stub.
