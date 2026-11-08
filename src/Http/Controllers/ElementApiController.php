@@ -80,17 +80,8 @@ class ElementApiController
             }
 
             if ($config instanceof Responsable) {
-                // Laravel API resources (and other responsables) build their own response. Craft only adds
-                // ResponseHeaders to Illuminate\Http\Response objects, so add them to a JsonResponse here.
-                $response = $config->toResponse($request);
-
-                if (! $response instanceof Response) {
-                    foreach ($this->responseHeaders->headers as $header) {
-                        $response->headers->set($header['header'], $header['value'], $header['replace']);
-                    }
-                }
-
-                return $response;
+                // Laravel API resources (and other responsables) build their own response
+                return $config->toResponse($request);
             }
 
             if (is_array($config)) {
