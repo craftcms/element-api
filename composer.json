@@ -27,7 +27,7 @@
   "prefer-stable": true,
   "require": {
     "php": "^8.5",
-    "craftcms/cms": "^6.0.0",
+    "craftcms/cms": "^6.0.0-beta.1",
     "league/fractal": "^0.21"
   },
   "require-dev": {
