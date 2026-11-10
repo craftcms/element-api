@@ -11,5 +11,5 @@ parameters:
         -
             message: '#Call to an undefined method Illuminate\\Http\\Request::isPreview\(\)#'
             identifier: method.notFound
-            path: src/Http/Controllers/ElementApiController.php
+            path: src/Http/EndpointResponse.php
             reportUnmatched: false
