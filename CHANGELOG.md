@@ -1,6 +1,6 @@
 # Release Notes for Element API
 
-## Unreleased
+## 4.4.0 - 2026-11-10
 
 - Added support for Craft CMS 6 when the `craftcms/yii2-adapter` package is installed. Endpoints are defined in `config/craft/element-api.php` on Craft 6.
 
