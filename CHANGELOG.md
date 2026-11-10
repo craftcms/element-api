@@ -15,6 +15,7 @@
 - Responses no longer set cookies, and endpoints no longer start a session.
 
 ### Removed
+- Removed the `first` endpoint setting. Use `one` instead.
 - Removed the `beforeSendData` event and `craft\elementapi\DataEvent`. Use the new `CraftCms\ElementApi\Events\SendingData` Laravel event instead.
 - Removed the `generateTransformsBeforePageLoad` override.
 

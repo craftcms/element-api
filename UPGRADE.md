@@ -175,6 +175,7 @@ If your endpoint sets `'class'` to your own resource class, it is created with `
 
 ## Removed
 
+- The `first` endpoint setting, deprecated since Element API 2.0. Use `one` instead: an endpoint that still sets `first` now returns every matching element.
 - `Plugin::registerUrlRules()` and the `EVENT_REGISTER_SITE_URL_RULES` listener. Endpoints are registered as Laravel routes by `CraftCms\ElementApi\Http\EndpointRoutes`.
 - The `generateTransformsBeforePageLoad` setting the controller used to turn on. It has no Craft 6 equivalent.
 - The `pageParam` check against the `p` path parameter. Craft 6 has no path parameter.

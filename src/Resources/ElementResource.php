@@ -8,7 +8,6 @@ use CraftCms\Cms\Component\Component;
 use CraftCms\Cms\Element\Contracts\ElementInterface;
 use CraftCms\Cms\Element\Queries\Contracts\ElementQueryInterface;
 use CraftCms\Cms\Support\Arr;
-use CraftCms\Cms\Support\Facades\Deprecator;
 use CraftCms\Cms\Support\Typecast;
 use CraftCms\ElementApi\Contracts\ResourceAdapter;
 use CraftCms\ElementApi\Support\PaginatorAdapter;
@@ -81,11 +80,6 @@ class ElementResource extends Component implements ResourceAdapter
      */
     public function __construct(array $config = [], protected ?Request $request = null)
     {
-        if (array_key_exists('first', $config)) {
-            $config['one'] = Arr::pull($config, 'first');
-            Deprecator::log('ElementAPI:first', 'The `first` Element API endpoint setting has been renamed to `one`.');
-        }
-
         parent::__construct($config);
 
         $this->request ??= app(Request::class);
