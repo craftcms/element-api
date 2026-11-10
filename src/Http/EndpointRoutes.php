@@ -12,12 +12,7 @@ use CraftCms\Cms\Support\Str;
 use CraftCms\Cms\Validation\Rules\HandleRule;
 use CraftCms\ElementApi\Http\Controllers\ElementApiController;
 use CraftCms\ElementApi\Settings;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Router;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
 use ReflectionFunction;
 use ReflectionNamedType;
 
@@ -50,16 +45,7 @@ readonly class EndpointRoutes
             foreach ($sitePaths as $sitePath) {
                 $this->router->match(['GET', 'HEAD', 'OPTIONS'], ltrim("$sitePath/$uri", '/'), ElementApiController::class)
                     ->defaults(self::ENDPOINT, $pattern)
-                    ->where($wheres)
-                    // A read-only JSON API doesn't need cookies or a session, and shouldn't set any
-                    // (a Set-Cookie header stops CDNs and reverse proxies from caching the response).
-                    ->withoutMiddleware([
-                        EncryptCookies::class,
-                        AddQueuedCookiesToResponse::class,
-                        StartSession::class,
-                        ShareErrorsFromSession::class,
-                        PreventRequestForgery::class,
-                    ]);
+                    ->where($wheres);
             }
         }
     }

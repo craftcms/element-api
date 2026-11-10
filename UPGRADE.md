@@ -167,6 +167,7 @@ If your endpoint sets `'class'` to your own resource class, it is created with `
 ## Behavior changes
 
 - **No cookies:** responses no longer set a session or `XSRF-TOKEN` cookie, so reverse proxies and CDNs can cache them.
+- **No sessions:** endpoints run in Craft’s `craft` middleware group but not `craft.web`, so they don’t start a session, read the session cookie or run the queue. An endpoint function can’t see the user who is signed in to the control panel. Previews still work, and skip the cache as before.
 - **Cache duration:** `'cache' => true` caches for the `cacheDuration` general config setting (or until a relevant element changes), as before. `0` still means until a relevant element changes.
 - **JSONP:** unchanged. `jsonOptions` and `pretty` are still ignored when `callback` is set.
 - **Logging:** failed requests are logged through Laravel’s logger.

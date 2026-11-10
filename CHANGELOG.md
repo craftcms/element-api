@@ -12,7 +12,7 @@
 - The config file moved from `config/element-api.php` to `config/craft/element-api.php`.
 - Endpoints are registered as Laravel routes, and can use Laravel route syntax (`news/{entryId}.json`). Craft 5 patterns such as `news/<entryId:\d+>.json` still work.
 - Endpoint functions can set response headers with `ResponseHeaders::add()`, and can type-hint services and `Illuminate\Http\Request`.
-- Responses no longer set cookies.
+- Responses no longer set cookies, and endpoints no longer start a session.
 
 ### Removed
 - Removed the `beforeSendData` event and `craft\elementapi\DataEvent`. Use the new `CraftCms\ElementApi\Events\SendingData` Laravel event instead.
