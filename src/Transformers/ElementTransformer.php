@@ -1,19 +1,27 @@
 <?php
 
-namespace craft\elementapi;
+declare(strict_types=1);
 
-use craft\base\Element;
-use craft\base\ElementInterface;
+namespace CraftCms\ElementApi\Transformers;
+
+use CraftCms\Cms\Element\Contracts\ElementInterface;
+use CraftCms\Cms\Element\Element;
 use League\Fractal\TransformerAbstract;
 
 /**
  * Element transformer class.
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
+ *
  * @since 2.0
  */
 class ElementTransformer extends TransformerAbstract
 {
+    /**
+     * Transforms an element into an array.
+     *
+     * @return array<string, mixed>
+     */
     public function transform(ElementInterface $element): array
     {
         // Get the serialized custom field values

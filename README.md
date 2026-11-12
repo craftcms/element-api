@@ -6,7 +6,9 @@ It’s powered by Phil Sturgeon’s excellent [Fractal](http://fractal.thephplea
 
 ## Requirements
 
-This plugin requires Craft CMS 4.3.0+ or 5.0.0+.
+This plugin requires Craft CMS 6 and PHP 8.5 or later. It doesn’t need the Yii 2 adapter.
+
+Using Craft 4 or 5? Stay on the 4.x line of this plugin. Upgrading a Craft 5 project that already uses Element API? See the [upgrade guide](UPGRADE.md).
 
 ## Installation
 
@@ -28,57 +30,89 @@ cd /path/to/my-project.test
 composer require craftcms/element-api
 
 # tell Craft to install the plugin
-./craft plugin/install element-api
+php artisan craft:plugin:install element-api
 ```
 
 ## Setup
 
-To define your API endpoints, create a new `element-api.php` file within your `config/` folder. This file should return an array with an `endpoints` key, which defines your site’s API endpoints.
+To define your API endpoints, create a new `element-api.php` file within your `config/craft/` folder. This file should return an array with an `endpoints` key, which defines your site’s API endpoints. You can start from the plugin’s example file:
 
-Within the `endpoints` array, keys are URL patterns, and values are functions that define the endpoint configurations.
+```bash
+php artisan vendor:publish --tag=element-api
+```
+
+Within the `endpoints` array, keys are URL patterns ([Laravel route syntax](https://laravel.com/docs/routing#route-parameters), such as `news/{entryId}.json`), and values are the names of invokable endpoint classes. Each class’s `__invoke()` method returns the endpoint’s configuration.
 
 ```php
 <?php
 
-use craft\elements\Entry;
-use craft\helpers\UrlHelper;
+use App\Http\Endpoints\NewsEndpoint;
+use App\Http\Endpoints\NewsEntryEndpoint;
 
 return [
     'endpoints' => [
-        'news.json' => function() {
-            return [
-                'elementType' => Entry::class,
-                'criteria' => ['section' => 'news'],
-                'transformer' => function(Entry $entry) {
-                    return [
-                        'id' => $entry->id,
-                        'title' => $entry->title,
-                        'url' => $entry->url,
-                        'jsonUrl' => UrlHelper::url("news/$entry->id.json"),
-                        'summary' => $entry->summary,
-                    ];
-                },
-            ];
-        },
-        'news/<entryId:\d+>.json' => function($entryId) {
-            return [
-                'elementType' => Entry::class,
-                'criteria' => ['id' => $entryId],
-                'one' => true,
-                'transformer' => function(Entry $entry) {
-                    return [
-                        'title' => $entry->title,
-                        'url' => $entry->url,
-                        'summary' => $entry->summary,
-                        'body' => $entry->body,
-                    ];
-                },
-            ];
-        },
-    ]
+        'news.json' => NewsEndpoint::class,
+        'news/{entryId}.json' => NewsEntryEndpoint::class,
+    ],
 ];
-
 ```
+
+```php
+<?php
+
+namespace App\Http\Endpoints;
+
+use CraftCms\Cms\Entry\Elements\Entry;
+use CraftCms\Cms\Support\Url;
+
+class NewsEndpoint
+{
+    public function __invoke(): array
+    {
+        return [
+            'elementType' => Entry::class,
+            'criteria' => ['section' => 'news'],
+            'transformer' => fn(Entry $entry) => [
+                'id' => $entry->id,
+                'title' => $entry->title,
+                'url' => $entry->url,
+                'jsonUrl' => Url::url("news/$entry->id.json"),
+                'summary' => $entry->summary,
+            ],
+        ];
+    }
+}
+```
+
+```php
+<?php
+
+namespace App\Http\Endpoints;
+
+use CraftCms\Cms\Entry\Elements\Entry;
+
+class NewsEntryEndpoint
+{
+    public function __invoke(int $entryId): array
+    {
+        return [
+            'elementType' => Entry::class,
+            'criteria' => ['id' => $entryId],
+            'one' => true,
+            'transformer' => fn(Entry $entry) => [
+                'title' => $entry->title,
+                'url' => $entry->url,
+                'summary' => $entry->summary,
+                'body' => $entry->body,
+            ],
+        ];
+    }
+}
+```
+
+Because the config file only contains class names, you can cache it with `php artisan config:cache`.
+
+An endpoint can also be a function in the config file (`'news.json' => fn() => [/* ... */]`), which is handy while you prototype. Laravel can’t cache a config file that contains functions, though, so `php artisan config:cache` fails until you move them into classes. For brevity, the examples below show each endpoint as a function; in an endpoint class, return the same array from `__invoke()`.
 
 ### Endpoint Configuration Settings
 
@@ -86,22 +120,22 @@ Endpoint configuration arrays can contain the following settings:
 
 #### `class`
 
-The class name of the Fractal resource that should be used to serve the request. If this isn’t set, it will default to `craft\elementapi\resources\ElementResource`. (All of the following configuration settings are specific to that default class.)
+The class name of the Fractal resource that should be used to serve the request. If this isn’t set, it will default to `CraftCms\ElementApi\Resources\ElementResource`. (All of the following configuration settings are specific to that default class.)
 
 #### `elementType` _(Required)_
 
-The class name of the element type that the API should be associated with. Craft’s built-in element type classes are:
+The class name of the element type that the API should be associated with. Craft’s built-in element type classes include:
 
-- `craft\elements\Asset`
-- `craft\elements\Category`
-- `craft\elements\Entry`
-- `craft\elements\GlobalSet`
-- `craft\elements\MatrixBlock`
-- `craft\elements\Tag`
-- `craft\elements\User`
+- `CraftCms\Cms\Asset\Elements\Asset`
+- `CraftCms\Cms\Entry\Elements\Entry`
+- `CraftCms\Cms\User\Elements\User`
+- `CraftCms\Cms\Address\Elements\Address`
+
+> **Note**  
+> Categories, tags and global sets are deprecated, and have no Craft 6 element types. Use entries instead.
 
 ```php
-'elementType' => craft\elements\Entry::class,
+'elementType' => CraftCms\Cms\Entry\Elements\Entry::class,
 ````
 
 #### `criteria`
@@ -131,11 +165,11 @@ By default, the content type will be:
 
 #### `transformer`
 
-The [transformer](http://fractal.thephpleague.com/transformers/) that should be used to define the data that should be returned for each element. If you don’t set this, the default transformer will be used, which includes all of the element’s direct attribute values, but no custom field values.
+The [transformer](http://fractal.thephpleague.com/transformers/) that should be used to define the data that should be returned for each element. If you don’t set this, the default transformer will be used, which includes all of the element’s attribute values and its serialized custom field values.
 
 ```php
 // Can be set to a function
-'transformer' => function(craft\elements\Entry $entry) {
+'transformer' => function(CraftCms\Cms\Entry\Elements\Entry $entry) {
     return [
         'title' => $entry->title,
         'id' => $entry->id,
@@ -148,6 +182,9 @@ The [transformer](http://fractal.thephpleague.com/transformers/) that should be 
 
 // Or a Transformer class instance
 'transformer' => new MyTransformerClassName(),
+
+// Or a Laravel API resource class
+'transformer' => App\Http\Resources\NewsResource::class,
 ```
 
 Your custom transformer class would look something like this:
@@ -155,7 +192,7 @@ Your custom transformer class would look something like this:
 ```php
 <?php
 
-use craft\elements\Entry;
+use CraftCms\Cms\Entry\Elements\Entry;
 use League\Fractal\TransformerAbstract;
 
 class MyTransformerClassName extends TransformerAbstract
@@ -164,6 +201,29 @@ class MyTransformerClassName extends TransformerAbstract
     {
         return [
             // ...
+        ];
+    }
+}
+```
+
+A [Laravel API resource](https://laravel.com/docs/eloquent-resources) class works as a transformer too: its `toArray()` output is used for each element, and the endpoint’s other settings (pagination, serializer, caching) still apply.
+
+```php
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class NewsResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'url' => $this->url,
         ];
     }
 }
@@ -201,8 +261,6 @@ The query string param name that should be used to identify which page is being 
 'pageParam' => 'pg',
 ```
 
-Note that it cannot be set to `'p'` because that’s the parameter Craft uses to check the requested path.
-
 #### `resourceKey`
 
 The key that the elements should be nested under in the response data. By default this will be `'data'`.
@@ -238,7 +296,12 @@ Possible values are:
 The [include names](http://fractal.thephpleague.com/transformers/#including-data) that should be included for the current request, if any.
 
 ```php
-'includes' => (array)Craft::$app->request->getQueryParam('include'),
+'news.json' => function(\Illuminate\Http\Request $request) {
+    return [
+        'includes' => (array) $request->query('include'),
+        // ...
+    ];
+},
 ```
 
 Note that this setting requires a custom transformer class that’s prepped to handle includes:
@@ -317,7 +380,7 @@ Possible values are:
 - an integer – results are cached for the given number of seconds.
 - a [interval spec](http://www.php.net/manual/en/dateinterval.construct.php) string – results are cached for the duration specified.
 
-Note that the `onBeforeSendData` event does not get triggered when the cache is warm.
+Note that the [`SendingData` event](#events) does not get triggered when the cache is warm.
 
 ```php
 'cache' => 'PT1M', // one minute
@@ -329,53 +392,107 @@ The key that responses should be cached with, if something custom is needed.
 
 ### Dynamic URL Patterns
 
-URL patterns can contain dynamic subpatterns in the format of `<subpatternName:regex>`, where `subpatternName` is the name of the subpattern, and `regex` is a valid regular expression. For example, the URL pattern “`news/<entryId:\d+>.json`” will match URLs like `news/100.json`. You can also use the tokens `{handle}` and `{slug}` within your regular expression, which will be replaced with the appropriate regex patterns for matching handles and  element slugs.
+URL patterns use [Laravel route syntax](https://laravel.com/docs/routing#route-parameters). Wrap a parameter in curly braces to make it dynamic: the pattern “`news/{entryId}.json`” will match URLs like `news/100.json`.
 
-Any subpattern matches in the URL pattern will be mapped to the endpoint config function’s arguments. For example, if a URL pattern contains an `entryId` subpattern, then you can add an `$entryId` argument to your endpoint config function, and whatever matches the URL subpattern will be passed to `$entryId`.
+Any parameters in the URL pattern are passed to the endpoint class’s `__invoke()` method (or the endpoint function) by name. For example, if a URL pattern contains `{entryId}`, then you can add an `$entryId` argument, and whatever matches the URL will be passed to `$entryId`. It can also type-hint services and the request, such as `Illuminate\Http\Request $request`.
+
+If you type-hint a parameter as `int`, the route only matches digits for it, so `news/abc.json` is a 404.
 
 ```php
-'news/<entryId:\d+>.json' => function($entryId) {
+'news/{entryId}.json' => function(int $entryId) {
     return [
-        'elementType' => craft\elements\Entry::class,
+        'elementType' => CraftCms\Cms\Entry\Elements\Entry::class,
         'criteria' => ['id' => $entryId],
         'one' => true,
     ];
 },
 ```
 
+Craft 5-style patterns still work, including inline regular expressions and the `{handle}`, `{slug}` and `{uid}` tokens, so `news/<entryId:\d+>.json` and `news/<slug:{slug}>.json` only match the values their expressions allow.
+
+In a multi-site project, endpoints are also available under each site’s base URL path, and the requested site becomes the current site. If a site’s base URL is `https://example.com/de/`, then `https://example.com/de/news.json` serves the `news.json` endpoint for that site.
+
+Endpoints answer `GET`, `HEAD` and `OPTIONS` requests.
+
+### Returning Laravel API Resources
+
+Instead of an array of settings, an endpoint function can return a [Laravel API resource](https://laravel.com/docs/eloquent-resources), a resource collection, or anything else that implements `Illuminate\Contracts\Support\Responsable`. Element API sends the response it builds, with Laravel’s JSON format and pagination links.
+
+```php
+use App\Http\Resources\NewsResource;
+use CraftCms\Cms\Entry\Elements\Entry;
+
+'news.json' => fn() => NewsResource::collection(
+    Entry::find()->section('news')->paginate(20)
+),
+'news/{entryId}.json' => fn(int $entryId) => new NewsResource(
+    Entry::find()->id($entryId)->one() ?? abort(404)
+),
+```
+
+These endpoints still get the `X-Robots-Tag` header, headers added with `ResponseHeaders::add()`, and JSON error responses, but none of the endpoint settings above apply: they aren’t cached, and the `SendingData` event isn’t dispatched for them.
+
+### Response Headers
+
+To add response headers (for example CORS headers), call `ResponseHeaders::add()` from your endpoint function. Craft applies them to the response, whether it comes from the cache or not.
+
+```php
+use CraftCms\Cms\Support\Facades\ResponseHeaders;
+
+'news.json' => function() {
+    ResponseHeaders::add('Access-Control-Allow-Origin', '*');
+
+    return [
+        // ...
+    ];
+},
+```
+
+Endpoints send `X-Robots-Tag: none` unless you set that header yourself. Responses don’t set any cookies.
+
+### Events
+
+Element API dispatches a `CraftCms\ElementApi\Events\SendingData` event before an endpoint’s data is serialized and sent. Its `payload` property is the Fractal `Scope` for the response.
+
+```php
+use CraftCms\ElementApi\Events\SendingData;
+use Illuminate\Support\Facades\Event;
+
+Event::listen(function(SendingData $event): void {
+    $scope = $event->payload;
+});
+```
+
+### Caching and Deployment Notes
+
+- Cached responses are tagged with `element-api`. To clear them, go to **Utilities** → **Caches**, and invalidate **Element API responses** under **Invalidate Data Caches**. Saving or deleting a relevant element clears them automatically.
+- Laravel can’t cache a config file that contains functions, so `php artisan config:cache` only works once your endpoints (and `defaults`) are classes and plain values.
+- Image transforms are generated before an endpoint responds, so responses (and the cache) contain the transforms’ final URLs.
+- If you cache routes with `php artisan route:cache`, run it again (or `route:clear`) whenever you change your endpoints or a site’s base URL.
+
 ### Setting Default Configuration Settings
 
 You can specify default values for your endpoint configuration settings by adding a `defaults` key alongside your `endpoints` key (**not** within it).
 
 ```php
-use craft\elements\Entry;
+use CraftCms\Cms\Entry\Elements\Entry;
 
 return [
     'defaults' => [
         'elementType' => Entry::class,
         'elementsPerPage' => 10,
         'pageParam' => 'pg',
-        'transformer' => function(Entry $entry) {
-            return [
-                'title' => $entry->title,
-                'id' => $entry->id,
-                'url' => $entry->url,
-            ];
-        },
+        'transformer' => App\Transformers\EntryTransformer::class,
     ],
 
     'endpoints' => [
-        'news.json' => function() {
-            return [
-                'criteria' => ['section' => 'news'],
-            ]
-        },
-        'news/<entryId:\d+>.json' => function($entryId) {
-            return [
-                'criteria' => ['id' => $entryId],
-                'one' => true,
-            ];
-        },
+        'news.json' => fn() => [
+            'criteria' => ['section' => 'news'],
+        ],
+        'news/{entryId}.json' => fn(int $entryId) => [
+            'criteria' => ['id' => $entryId],
+            'one' => true,
+        ],
     ]
 ];
 ```
@@ -391,11 +508,11 @@ Here are a few endpoint examples, and what their response would look like.
     return [
         'criteria' => ['section' => 'ingredients'],
         'elementsPerPage' => 10,
-        'transformer' => function(craft\elements\Entry $entry) {
+        'transformer' => function(CraftCms\Cms\Entry\Elements\Entry $entry) {
             return [
                 'title' => $entry->title,
                 'url' => $entry->url,
-                'jsonUrl' => UrlHelper::url("ingredients/$entry->slug.json"),
+                'jsonUrl' => Url::url("ingredients/$entry->slug.json"),
             ];
         },
         'pretty' => true,
@@ -426,7 +543,7 @@ Here are a few endpoint examples, and what their response would look like.
             "current_page": 1,
             "total_pages": 7,
             "links": {
-                "next": "/ingredients.json?p=2"
+                "next": "/ingredients.json?page=2"
             }
         }
     }
@@ -436,14 +553,14 @@ Here are a few endpoint examples, and what their response would look like.
 ### Single Entry Endpoint
 
 ```php
-'ingredients/<slug:{slug}>.json' => function($slug) {
+'ingredients/{slug}.json' => function($slug) {
     return [
         'criteria' => [
             'section' => 'ingredients',
             'slug' => $slug
         ],
         'one' => true,
-        'transformer' => function(craft\elements\Entry $entry) {
+        'transformer' => function(CraftCms\Cms\Entry\Elements\Entry $entry) {
             // Create an array of all the photo URLs
             $photos = [];
             foreach ($entry->photos->all() as $photo) {
@@ -477,15 +594,15 @@ Here are a few endpoint examples, and what their response would look like.
 
 Here’s how to set up a [JSON Feed](https://jsonfeed.org/) ([Version 1.1](https://www.jsonfeed.org/version/1.1/)) for your site with Element API.
 
-Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
+Note that `photos`, `body`, and `summary` are imaginary custom fields.
 
 ```php
 'feed.json' => function() {
     return [
         'serializer' => 'jsonFeed',
-        'elementType' => craft\elements\Entry::class,
+        'elementType' => CraftCms\Cms\Entry\Elements\Entry::class,
         'criteria' => ['section' => 'news'],
-        'transformer' => function(craft\elements\Entry $entry) {
+        'transformer' => function(CraftCms\Cms\Entry\Elements\Entry $entry) {
             $image = $entry->photos->one();
     
             return [
@@ -501,7 +618,6 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
                     ['name' => $entry->author->name],
                 ],
                 'language' => $entry->getSite()->language,
-                'tags' => array_map('strval', $entry->tags->all()),
             ];
         },
         'meta' => [
@@ -514,11 +630,11 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
 
 ```json5
 {
-    "version": "https://jsonfeed.org/version/1",
+    "version": "https://jsonfeed.org/version/1.1",
     "title": "Happy Lager",
     "home_page_url": "http://domain.com/",
     "feed_url": "http://domain.com/feed.json",
-    "description": "Craft demo site",
+    "description": "Recent news from Happy Lager",
     "items": [
         {
             "id": "24",
@@ -527,26 +643,19 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
             "content_html": "<p>Nam libero tempore, cum soluta nobis est eligendi ...</p>",
             "date_published": "2016-05-07T00:00:00+00:00",
             "date_modified": "2016-06-03T17:43:36+00:00",
-            "author": {
-                "name": "Liz Murphy"
-            },
-            "tags": [
-                "augmented reality",
-                "futurism"
+            "authors": [
+                {"name": "Liz Murphy"}
             ]
         },
         {
             "id": "4",
             "url": "http://domain.com/news/barrel-aged-digital-natives",
             "title": "Barrel Aged Digital Natives",
-            "content_html": "<p>Nam libero tempore, cum soluta nobis est eligendi ...</p>",,
+            "content_html": "<p>Nam libero tempore, cum soluta nobis est eligendi ...</p>",
             "date_published": "2016-05-06T00:00:00+00:00",
             "date_modified": "2017-05-18T13:20:27+00:00",
-            "author": {
-                "name": "Liz Murphy"
-            },
-            "tags": [
-                "barrel-aged"
+            "authors": [
+                {"name": "Liz Murphy"}
             ]
         },
         // ...

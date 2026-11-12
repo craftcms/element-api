@@ -1,5 +1,32 @@
 # Release Notes for Element API
 
+## 5.0.0 - 2026-11-12
+
+### Added
+- Added a publishable example config file (`php artisan vendor:publish --tag=element-api`).
+- Endpoint functions can now return a Laravel API resource (or any `Responsable`), and `transformer` can be set to a Laravel API resource class.
+- Endpoints can now be the name of an invokable class, so the config file can be cached with `php artisan config:cache`.
+
+### Changed
+- Element API now requires Craft 6 and PHP 8.5, and no longer uses the Yii 2 adapter.
+- The plugin was ported to Craft 6’s Laravel-based architecture, and its classes moved to the `CraftCms\ElementApi` namespace. See the [upgrade guide](UPGRADE.md) for the full list.
+- The config file moved from `config/element-api.php` to `config/craft/element-api.php`.
+- Endpoints are registered as Laravel routes, and can use Laravel route syntax (`news/{entryId}.json`). Craft 5 patterns such as `news/<entryId:\d+>.json` still work.
+- Endpoint functions can set response headers with `ResponseHeaders::add()`, and can type-hint services and `Illuminate\Http\Request`.
+- Responses no longer set cookies, and endpoints no longer start a session.
+
+### Removed
+- Removed the `first` endpoint setting. Use `one` instead.
+- Removed the `beforeSendData` event and `craft\elementapi\DataEvent`. Use the new `CraftCms\ElementApi\Events\SendingData` Laravel event instead.
+
+## 4.4.1 - 2026-11-10
+
+- Element API now suggests the `craftcms/yii2-adapter` package, which it requires on Craft CMS 6.
+
+## 4.4.0 - 2026-11-10
+
+- Added support for Craft CMS 6 when the `craftcms/yii2-adapter` package is installed. Endpoints are defined in `config/craft/element-api.php` on Craft 6.
+
 ## 4.3.0 - 2026-08-05
 
 - Updated Fractal to 0.21. ([#202](https://github.com/craftcms/element-api/issues/202))

@@ -1,21 +1,32 @@
 <?php
 
-namespace craft\elementapi;
+declare(strict_types=1);
 
-use Craft;
-use craft\helpers\UrlHelper;
+namespace CraftCms\ElementApi\Serializers;
+
+use CraftCms\Cms\Site\Sites;
+use CraftCms\Cms\Support\Url;
+use Illuminate\Http\Request;
 use League\Fractal\Pagination\PaginatorInterface;
 use League\Fractal\Serializer\ArraySerializer;
 
 /**
- * Serializer for JSON Feed: Version 1
+ * JSON Feed v1 serializer.
  *
- * @see https://jsonfeed.org/version/1
+ * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
+ *
+ * @since 2.0
+ * @link https://jsonfeed.org/version/1.1
  */
 class JsonFeedV1Serializer extends ArraySerializer
 {
+    public function __construct(
+        private readonly Request $request,
+        private readonly Sites $sites,
+    ) {}
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function collection($resourceKey, array $data): array
     {
@@ -23,20 +34,20 @@ class JsonFeedV1Serializer extends ArraySerializer
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function meta(array $meta): array
     {
         return array_merge([
             'version' => 'https://jsonfeed.org/version/1.1',
-            'title' => \Craft::$app->getSites()->getCurrentSite()->name,
-            'home_page_url' => UrlHelper::baseSiteUrl(),
-            'feed_url' => UrlHelper::url(Craft::$app->getRequest()->getPathInfo()),
+            'title' => $this->sites->getCurrentSite()->name,
+            'home_page_url' => Url::baseSiteUrl(),
+            'feed_url' => Url::url($this->sites->getRequestPath($this->request)),
         ], $meta);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function paginator(PaginatorInterface $paginator): array
     {
