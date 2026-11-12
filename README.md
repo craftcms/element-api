@@ -41,50 +41,78 @@ To define your API endpoints, create a new `element-api.php` file within your `c
 php artisan vendor:publish --tag=element-api
 ```
 
-Within the `endpoints` array, keys are URL patterns ([Laravel route syntax](https://laravel.com/docs/routing#route-parameters), such as `news/{entryId}.json`), and values are functions that define the endpoint configurations.
+Within the `endpoints` array, keys are URL patterns ([Laravel route syntax](https://laravel.com/docs/routing#route-parameters), such as `news/{entryId}.json`), and values are the names of invokable endpoint classes. Each class’s `__invoke()` method returns the endpoint’s configuration.
 
 ```php
 <?php
 
-use CraftCms\Cms\Entry\Elements\Entry;
-use CraftCms\Cms\Support\Url;
+use App\Http\Endpoints\NewsEndpoint;
+use App\Http\Endpoints\NewsEntryEndpoint;
 
 return [
     'endpoints' => [
-        'news.json' => function() {
-            return [
-                'elementType' => Entry::class,
-                'criteria' => ['section' => 'news'],
-                'transformer' => function(Entry $entry) {
-                    return [
-                        'id' => $entry->id,
-                        'title' => $entry->title,
-                        'url' => $entry->url,
-                        'jsonUrl' => Url::url("news/$entry->id.json"),
-                        'summary' => $entry->summary,
-                    ];
-                },
-            ];
-        },
-        'news/{entryId}.json' => function(int $entryId) {
-            return [
-                'elementType' => Entry::class,
-                'criteria' => ['id' => $entryId],
-                'one' => true,
-                'transformer' => function(Entry $entry) {
-                    return [
-                        'title' => $entry->title,
-                        'url' => $entry->url,
-                        'summary' => $entry->summary,
-                        'body' => $entry->body,
-                    ];
-                },
-            ];
-        },
-    ]
+        'news.json' => NewsEndpoint::class,
+        'news/{entryId}.json' => NewsEntryEndpoint::class,
+    ],
 ];
-
 ```
+
+```php
+<?php
+
+namespace App\Http\Endpoints;
+
+use CraftCms\Cms\Entry\Elements\Entry;
+use CraftCms\Cms\Support\Url;
+
+class NewsEndpoint
+{
+    public function __invoke(): array
+    {
+        return [
+            'elementType' => Entry::class,
+            'criteria' => ['section' => 'news'],
+            'transformer' => fn(Entry $entry) => [
+                'id' => $entry->id,
+                'title' => $entry->title,
+                'url' => $entry->url,
+                'jsonUrl' => Url::url("news/$entry->id.json"),
+                'summary' => $entry->summary,
+            ],
+        ];
+    }
+}
+```
+
+```php
+<?php
+
+namespace App\Http\Endpoints;
+
+use CraftCms\Cms\Entry\Elements\Entry;
+
+class NewsEntryEndpoint
+{
+    public function __invoke(int $entryId): array
+    {
+        return [
+            'elementType' => Entry::class,
+            'criteria' => ['id' => $entryId],
+            'one' => true,
+            'transformer' => fn(Entry $entry) => [
+                'title' => $entry->title,
+                'url' => $entry->url,
+                'summary' => $entry->summary,
+                'body' => $entry->body,
+            ],
+        ];
+    }
+}
+```
+
+Because the config file only contains class names, you can cache it with `php artisan config:cache`.
+
+An endpoint can also be a function in the config file (`'news.json' => fn() => [/* ... */]`), which is handy while you prototype. Laravel can’t cache a config file that contains functions, though, so `php artisan config:cache` fails until you move them into classes. For brevity, the examples below show each endpoint as a function; in an endpoint class, return the same array from `__invoke()`.
 
 ### Endpoint Configuration Settings
 
@@ -104,7 +132,7 @@ The class name of the element type that the API should be associated with. Craft
 - `CraftCms\Cms\Address\Elements\Address`
 
 > **Note**  
-> Craft 6 has no native classes for categories, tags and global sets yet. They only exist as legacy classes in the Yii 2 adapter (`craft\elements\Category`, `craft\elements\Tag`, `craft\elements\GlobalSet`), so they can’t be queried without it.
+> Categories, tags and global sets are deprecated, and have no Craft 6 element types. Use entries instead.
 
 ```php
 'elementType' => CraftCms\Cms\Entry\Elements\Entry::class,
@@ -137,7 +165,7 @@ By default, the content type will be:
 
 #### `transformer`
 
-The [transformer](http://fractal.thephpleague.com/transformers/) that should be used to define the data that should be returned for each element. If you don’t set this, the default transformer will be used, which includes all of the element’s direct attribute values, but no custom field values.
+The [transformer](http://fractal.thephpleague.com/transformers/) that should be used to define the data that should be returned for each element. If you don’t set this, the default transformer will be used, which includes all of the element’s attribute values and its serialized custom field values.
 
 ```php
 // Can be set to a function
@@ -366,7 +394,7 @@ The key that responses should be cached with, if something custom is needed.
 
 URL patterns use [Laravel route syntax](https://laravel.com/docs/routing#route-parameters). Wrap a parameter in curly braces to make it dynamic: the pattern “`news/{entryId}.json`” will match URLs like `news/100.json`.
 
-Any parameters in the URL pattern are passed to the endpoint config function by name. For example, if a URL pattern contains `{entryId}`, then you can add an `$entryId` argument to your endpoint config function, and whatever matches the URL will be passed to `$entryId`. The function can also type-hint services and the request, such as `Illuminate\Http\Request $request`.
+Any parameters in the URL pattern are passed to the endpoint class’s `__invoke()` method (or the endpoint function) by name. For example, if a URL pattern contains `{entryId}`, then you can add an `$entryId` argument, and whatever matches the URL will be passed to `$entryId`. It can also type-hint services and the request, such as `Illuminate\Http\Request $request`.
 
 If you type-hint a parameter as `int`, the route only matches digits for it, so `news/abc.json` is a 404.
 
@@ -437,8 +465,9 @@ Event::listen(function(SendingData $event): void {
 
 ### Caching and Deployment Notes
 
-- Cached responses are tagged with `element-api`. Use **Utilities** → **Clear Caches** → **Element API responses** to clear them. Saving or deleting a relevant element clears them automatically.
-- Your endpoint functions are closures, which Laravel can’t serialize, so don’t run `php artisan config:cache` in a project that uses them.
+- Cached responses are tagged with `element-api`. To clear them, go to **Utilities** → **Caches**, and invalidate **Element API responses** under **Invalidate Data Caches**. Saving or deleting a relevant element clears them automatically.
+- Laravel can’t cache a config file that contains functions, so `php artisan config:cache` only works once your endpoints (and `defaults`) are classes and plain values.
+- Image transforms are generated before an endpoint responds, so responses (and the cache) contain the transforms’ final URLs.
 - If you cache routes with `php artisan route:cache`, run it again (or `route:clear`) whenever you change your endpoints or a site’s base URL.
 
 ### Setting Default Configuration Settings
@@ -453,27 +482,17 @@ return [
         'elementType' => Entry::class,
         'elementsPerPage' => 10,
         'pageParam' => 'pg',
-        'transformer' => function(Entry $entry) {
-            return [
-                'title' => $entry->title,
-                'id' => $entry->id,
-                'url' => $entry->url,
-            ];
-        },
+        'transformer' => App\Transformers\EntryTransformer::class,
     ],
 
     'endpoints' => [
-        'news.json' => function() {
-            return [
-                'criteria' => ['section' => 'news'],
-            ]
-        },
-        'news/{entryId}.json' => function(int $entryId) {
-            return [
-                'criteria' => ['id' => $entryId],
-                'one' => true,
-            ];
-        },
+        'news.json' => fn() => [
+            'criteria' => ['section' => 'news'],
+        ],
+        'news/{entryId}.json' => fn(int $entryId) => [
+            'criteria' => ['id' => $entryId],
+            'one' => true,
+        ],
     ]
 ];
 ```
@@ -575,7 +594,7 @@ Here are a few endpoint examples, and what their response would look like.
 
 Here’s how to set up a [JSON Feed](https://jsonfeed.org/) ([Version 1.1](https://www.jsonfeed.org/version/1.1/)) for your site with Element API.
 
-Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
+Note that `photos`, `body`, and `summary` are imaginary custom fields.
 
 ```php
 'feed.json' => function() {
@@ -599,7 +618,6 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
                     ['name' => $entry->author->name],
                 ],
                 'language' => $entry->getSite()->language,
-                'tags' => array_map('strval', $entry->tags->all()),
             ];
         },
         'meta' => [
@@ -612,11 +630,11 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
 
 ```json5
 {
-    "version": "https://jsonfeed.org/version/1",
+    "version": "https://jsonfeed.org/version/1.1",
     "title": "Happy Lager",
     "home_page_url": "http://domain.com/",
     "feed_url": "http://domain.com/feed.json",
-    "description": "Craft demo site",
+    "description": "Recent news from Happy Lager",
     "items": [
         {
             "id": "24",
@@ -625,26 +643,19 @@ Note that `photos`, `body`, `summary`, and `tags` are imaginary custom fields.
             "content_html": "<p>Nam libero tempore, cum soluta nobis est eligendi ...</p>",
             "date_published": "2016-05-07T00:00:00+00:00",
             "date_modified": "2016-06-03T17:43:36+00:00",
-            "author": {
-                "name": "Liz Murphy"
-            },
-            "tags": [
-                "augmented reality",
-                "futurism"
+            "authors": [
+                {"name": "Liz Murphy"}
             ]
         },
         {
             "id": "4",
             "url": "http://domain.com/news/barrel-aged-digital-natives",
             "title": "Barrel Aged Digital Natives",
-            "content_html": "<p>Nam libero tempore, cum soluta nobis est eligendi ...</p>",,
+            "content_html": "<p>Nam libero tempore, cum soluta nobis est eligendi ...</p>",
             "date_published": "2016-05-06T00:00:00+00:00",
             "date_modified": "2017-05-18T13:20:27+00:00",
-            "author": {
-                "name": "Liz Murphy"
-            },
-            "tags": [
-                "barrel-aged"
+            "authors": [
+                {"name": "Liz Murphy"}
             ]
         },
         // ...

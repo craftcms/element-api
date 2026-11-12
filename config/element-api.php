@@ -11,7 +11,8 @@ declare(strict_types=1);
  * See https://github.com/craftcms/element-api/blob/5.x/README.md for every endpoint setting.
  */
 
-// use CraftCms\Cms\Entry\Elements\Entry;
+// use App\Http\Endpoints\NewsEndpoint;
+// use App\Http\Endpoints\NewsEntryEndpoint;
 
 return [
     // Settings every endpoint starts from. Endpoints can override them.
@@ -20,20 +21,10 @@ return [
     ],
 
     // The endpoints, keyed by URL pattern (Laravel route syntax, such as `news/{entryId}.json`).
-    // Each value is a function that returns the endpoint’s settings.
+    // Each value is an invokable class whose `__invoke()` method returns the endpoint’s settings.
+    // (Functions work too, but Laravel can’t cache a config file that contains them.)
     'endpoints' => [
-        // 'news.json' => fn () => [
-        //     'elementType' => Entry::class,
-        //     'criteria' => ['section' => 'news'],
-        //     'transformer' => fn (Entry $entry) => [
-        //         'title' => $entry->title,
-        //         'url' => $entry->url,
-        //     ],
-        // ],
-        // 'news/{entryId}.json' => fn (int $entryId) => [
-        //     'elementType' => Entry::class,
-        //     'criteria' => ['id' => $entryId],
-        //     'one' => true,
-        // ],
+        // 'news.json' => NewsEndpoint::class,
+        // 'news/{entryId}.json' => NewsEntryEndpoint::class,
     ],
 ];
