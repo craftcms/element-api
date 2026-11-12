@@ -51,5 +51,7 @@ return [
             'transformer' => fn (Asset $asset) => ['url' => $asset->transform(['width' => 20])->url],
         ],
         'broken.json' => fn () => throw new RuntimeException('Secret internal detail'),
+        'unknown-criteria.json' => fn () => $news(['criteria' => ['sectionn' => 'news']]),
+        'unknown-setting.json' => fn () => $news(['elementsPerPages' => 1]),
     ],
 ];

@@ -98,6 +98,14 @@ it('returns errors as JSON without leaking exception messages', function () {
     expect($response->getContent())->not->toContain('Secret');
 });
 
+it('rejects unknown criteria params and endpoint settings', function (string $uri) {
+    newsEntry();
+
+    $this->get($uri)
+        ->assertStatus(500)
+        ->assertExactJson(['error' => ['code' => 0, 'message' => 'A server error occurred.']]);
+})->with(['/unknown-criteria.json', '/unknown-setting.json']);
+
 it('sends no cookies and asks robots not to index responses', function () {
     newsEntry();
 

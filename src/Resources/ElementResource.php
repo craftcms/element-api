@@ -80,6 +80,13 @@ class ElementResource extends Component implements ResourceAdapter
      */
     public function __construct(array $config = [], protected ?Request $request = null)
     {
+        // Unknown settings would be silently ignored otherwise
+        foreach (array_keys($config) as $name) {
+            if (! $this->canSetProperty($name)) {
+                throw new InvalidArgumentException("Unknown endpoint setting: $name");
+            }
+        }
+
         parent::__construct($config);
 
         $this->request ??= app(Request::class);
@@ -135,6 +142,14 @@ class ElementResource extends Component implements ResourceAdapter
     {
         $elementType = $this->elementType;
         $query = $elementType::find();
+
+        // Unknown params would be silently ignored otherwise, returning elements the endpoint didn't ask for
+        foreach (array_keys($this->criteria) as $name) {
+            if ($query instanceof Component && ! $query->canSetProperty($name)) {
+                throw new InvalidArgumentException("Unknown criteria param: $name");
+            }
+        }
+
         Typecast::configure($query, $this->criteria);
 
         return $query;
