@@ -2,10 +2,15 @@
 
 declare(strict_types=1);
 
+use CraftCms\Cms\Asset\Models\Asset;
+use CraftCms\Cms\Asset\Models\Volume;
+use CraftCms\Cms\Asset\Models\VolumeFolder;
 use CraftCms\Cms\Support\Facades\Elements;
 use CraftCms\ElementApi\Events\SendingData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Storage;
 
 it('paginates elements and links to the other pages', function () {
     $entries = collect(range(1, 3))->map(fn (int $i) => newsEntry(['title' => "Story $i"]));
@@ -32,6 +37,12 @@ it('paginates elements and links to the other pages', function () {
         ->assertOk()
         ->assertJsonPath('data', [['id' => $entries[2]->id, 'title' => 'Story 3']])
         ->assertJsonPath('meta.pagination.links', ['previous' => 'https://localhost/news.json?page=1']);
+
+    // Pages below 1 are the first page
+    $this->get('/news.json?page=0')
+        ->assertOk()
+        ->assertJsonPath('meta.pagination.current_page', 1)
+        ->assertJsonPath('data.0.id', $entries[0]->id);
 });
 
 it('passes route parameters to the endpoint function', function () {
@@ -41,6 +52,17 @@ it('passes route parameters to the endpoint function', function () {
 
     // `int` parameters only match digits, so this doesn't reach the endpoint function (which would be a 500)
     $this->get('/news/abc.json')->assertNotFound();
+});
+
+it('calls invokable endpoint classes with the route parameters', function () {
+    $entry = newsEntry(['title' => 'Invoked']);
+
+    $this->get("/invokable/$entry->id.json")
+        ->assertOk()
+        ->assertExactJson(['id' => $entry->id, 'headline' => 'Invoked', 'site' => "invokable/$entry->id.json"]);
+
+    // `int` parameters of `__invoke()` only match digits too
+    $this->get('/invokable/abc.json')->assertNotFound();
 });
 
 it('supports Craft 5 URL rule patterns', function () {
@@ -182,4 +204,32 @@ it('sends Laravel API resources that an endpoint returns', function () {
     $this->get('/laravel-resource/999999.json')
         ->assertNotFound()
         ->assertJsonPath('error.code', 404);
+});
+
+it('generates image transforms before responding', function () {
+    Queue::fake();
+    config()->set('filesystems.disks.uploads', [
+        'driver' => 'local',
+        'root' => storage_path('framework/testing/element-api-transforms'),
+        'url' => 'https://localhost/uploads',
+    ]);
+    Storage::disk('uploads')->deleteDirectory('');
+    $volume = Volume::factory()->create(['fs' => 'uploads', 'hasUrls' => true]);
+    $asset = Asset::factory()->createElement([
+        'volumeId' => $volume->id,
+        'folderId' => VolumeFolder::factory()->create(['volumeId' => $volume->id])->id,
+        'filename' => 'photo.jpg',
+        'width' => 40,
+        'height' => 20,
+        'dateModified' => now()->subMinute(),
+    ]);
+    ob_start();
+    imagejpeg(imagecreatetruecolor(40, 20));
+    Storage::disk('uploads')->put($asset->getPath(), ob_get_clean());
+
+    // The final URL of a generated file, not a temporary `generate-transform` URL that would get cached
+    $url = $this->get("/transform/$asset->id.json")->assertOk()->json('url');
+
+    expect($url)->toStartWith('https://localhost/uploads/')
+        ->and(Storage::disk('uploads')->exists(strtok(substr($url, strlen('https://localhost/uploads/')), '?')))->toBeTrue();
 });

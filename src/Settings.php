@@ -21,7 +21,7 @@ class Settings extends PluginSettings
     public mixed $defaults = [];
 
     /**
-     * @var array<string, array<string, mixed>|callable> The endpoints, indexed by Laravel route pattern (e.g. `news/{entryId}`)
+     * @var array<string, array<string, mixed>|callable|class-string> The endpoints, indexed by Laravel route pattern (e.g. `news/{entryId}`). Each one is a settings array, an invokable class name, or a function.
      */
     public array $endpoints = [];
 
@@ -38,9 +38,9 @@ class Settings extends PluginSettings
     /**
      * Returns the configuration for an endpoint.
      *
-     * @return array<string, mixed>|callable|null
+     * @return array<string, mixed>|callable|class-string|null
      */
-    public function getEndpoint(string $pattern): array|callable|null
+    public function getEndpoint(string $pattern): array|callable|string|null
     {
         return $this->endpoints[$pattern] ?? null;
     }

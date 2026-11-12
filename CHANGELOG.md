@@ -5,6 +5,7 @@
 ### Added
 - Added a publishable example config file (`php artisan vendor:publish --tag=element-api`).
 - Endpoint functions can now return a Laravel API resource (or any `Responsable`), and `transformer` can be set to a Laravel API resource class.
+- Endpoints can now be the name of an invokable class, so the config file can be cached with `php artisan config:cache`.
 
 ### Changed
 - Element API now requires Craft 6 and PHP 8.5, and no longer uses the Yii 2 adapter.
@@ -17,7 +18,6 @@
 ### Removed
 - Removed the `first` endpoint setting. Use `one` instead.
 - Removed the `beforeSendData` event and `craft\elementapi\DataEvent`. Use the new `CraftCms\ElementApi\Events\SendingData` Laravel event instead.
-- Removed the `generateTransformsBeforePageLoad` override.
 
 ## 4.3.0 - 2026-08-05
 

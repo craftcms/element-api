@@ -14,6 +14,7 @@ use CraftCms\ElementApi\Http\Controllers\ElementApiController;
 use CraftCms\ElementApi\Settings;
 use Illuminate\Routing\Router;
 use ReflectionFunction;
+use ReflectionMethod;
 use ReflectionNamedType;
 
 /**
@@ -113,20 +114,34 @@ readonly class EndpointRoutes
     }
 
     /**
-     * A parameter that the endpoint function type-hints as `int` only matches digits,
+     * Returns whether an endpoint is configured with the name of an invokable class, such as `NewsEndpoint::class`.
+     */
+    public static function isInvokableClass(mixed $config): bool
+    {
+        return is_string($config) && class_exists($config) && method_exists($config, '__invoke');
+    }
+
+    /**
+     * A parameter that the endpoint function (or invokable class) type-hints as `int` only matches digits,
      * so `news/abc.json` is a 404 rather than an error.
      *
      * @return array<string, string>
      */
     private function numericParameters(string $uri, mixed $config): array
     {
-        if (! $config instanceof Closure) {
+        $function = match (true) {
+            $config instanceof Closure => new ReflectionFunction($config),
+            self::isInvokableClass($config) => new ReflectionMethod($config, '__invoke'),
+            default => null,
+        };
+
+        if ($function === null) {
             return [];
         }
 
         $wheres = [];
 
-        foreach ((new ReflectionFunction($config))->getParameters() as $parameter) {
+        foreach ($function->getParameters() as $parameter) {
             $type = $parameter->getType();
 
             if ($type instanceof ReflectionNamedType && $type->getName() === 'int' && str_contains($uri, '{'.$parameter->getName().'}')) {
