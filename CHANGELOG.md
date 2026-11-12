@@ -19,6 +19,14 @@
 - Removed the `first` endpoint setting. Use `one` instead.
 - Removed the `beforeSendData` event and `craft\elementapi\DataEvent`. Use the new `CraftCms\ElementApi\Events\SendingData` Laravel event instead.
 
+## 4.4.1 - 2026-11-10
+
+- Element API now suggests the `craftcms/yii2-adapter` package, which it requires on Craft CMS 6.
+
+## 4.4.0 - 2026-11-10
+
+- Added support for Craft CMS 6 when the `craftcms/yii2-adapter` package is installed. Endpoints are defined in `config/craft/element-api.php` on Craft 6.
+
 ## 4.3.0 - 2026-08-05
 
 - Updated Fractal to 0.21. ([#202](https://github.com/craftcms/element-api/issues/202))
