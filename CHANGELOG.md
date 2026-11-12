@@ -1,6 +1,6 @@
 # Release Notes for Element API
 
-## Unreleased
+## 5.0.0 - 2026-11-12
 
 ### Added
 - Added a publishable example config file (`php artisan vendor:publish --tag=element-api`).
