@@ -194,6 +194,8 @@ If your endpoint sets `'class'` to your own resource class, it is created with `
 - **Cache duration:** `'cache' => true` caches for the `cacheDuration` general config setting (or until a relevant element changes), as before. `0` still means until a relevant element changes.
 - **JSONP:** unchanged. `jsonOptions` and `pretty` are still ignored when `callback` is set.
 - **Logging:** failed requests are logged through Laravel’s logger.
+- **Error messages:** only the messages of HTTP exceptions are sent to the client. Craft 6 has no `yii\base\UserException`, so replace `throw new UserException('Message')` with `abort(500, 'Message')`, which returns the same 500 response with the message.
+- **Overriding defaults:** endpoint settings are still merged into `defaults` recursively, but Yii’s `ReplaceArrayValue` and `UnsetArrayValue` aren’t available. A nested value can still be overridden with another value (for example `'criteria' => ['section' => null]`), but a list can’t be replaced, because lists are appended to. Move values that some endpoints need to replace out of `defaults` and into your endpoint classes, for example a shared base class or trait.
 - **Image transforms:** still generated before an endpoint responds, as in Craft 5, so responses and the cache contain final transform URLs.
 - **Deployment:** `php artisan config:cache` only works when your endpoints are classes rather than functions. Run `php artisan route:cache` again after you change your endpoints or a site’s base URL.
 
